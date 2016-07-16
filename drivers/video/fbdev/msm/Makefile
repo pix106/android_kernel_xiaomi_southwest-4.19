@@ -69,4 +69,5 @@ obj-$(CONFIG_FB_MSM_MDSS_DP_PANEL) += mdss_dp_hdcp2p2.o
 obj-$(CONFIG_FB_MSM_MDSS_WRITEBACK) += mdss_wb.o
 
 obj-$(CONFIG_FB_MSM_MDSS) += mdss_fb.o mdss_util.o
+obj-$(CONFIG_FB_MSM_MDSS_KCAL_CTRL) += mdss_mdp_kcal_ctrl.o
 obj-$(CONFIG_COMPAT) += mdss_compat_utils.o
