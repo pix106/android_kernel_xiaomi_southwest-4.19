@@ -31,7 +31,7 @@
 
 	chosen {
 		stdout-path = "serial0";
-		bootargs = "rcupdate.rcu_normal_after_boot=1 quiet noirqdebug nodebugmon rcu_nocbs=0-7 pstore.compress=none";
+		bootargs = "quiet rcupdate.rcu_normal_after_boot=1 quiet noirqdebug nodebugmon rcu_nocbs=0-7 pstore.compress=none";
 		rng-seed = <0x12345678>;
 	};
 
