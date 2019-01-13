@@ -293,7 +293,7 @@ schedtune_cpu_update(int cpu, u64 now)
 	/* The root boost group is always active */
 	boost_max = bg->group[0].boost;
 	boost_ts = now;
-	for (idx = 1; idx < BOOSTGROUPS_COUNT; ++idx) {
+	for (idx = 0; idx < BOOSTGROUPS_COUNT; ++idx) {
 
 		/* Ignore non boostgroups not mapping a cgroup */
 		if (!bg->group[idx].valid)
