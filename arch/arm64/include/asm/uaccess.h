@@ -35,7 +35,6 @@
 #include <asm/compiler.h>
 #include <asm/extable.h>
 
-#define get_ds()	(KERNEL_DS)
 #define get_fs()	(current_thread_info()->addr_limit)
 
 static inline void set_fs(mm_segment_t fs)
