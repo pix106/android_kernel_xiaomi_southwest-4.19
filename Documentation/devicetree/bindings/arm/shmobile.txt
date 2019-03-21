@@ -131,6 +131,10 @@ Boards:
     compatible = "renesas,salvator-xs", "renesas,r8a7796"
   - Salvator-XS (Salvator-X 2nd version, RTP0RC77965SIPB012S)
     compatible = "renesas,salvator-xs", "renesas,r8a77965"
+  - Silicon Linux RZ/G2E 96board platform (CAT874)
+    compatible = "si-linux,cat874", "renesas,r8a774c0"
+  - Silicon Linux sub board for CAT874 (CAT875)
+    compatible = "si-linux,cat875", "si-linux,cat874", "renesas,r8a774c0"
   - SILK (RTP0RC7794LCB00011S)
     compatible = "renesas,silk", "renesas,r8a7794"
   - SK-RZG1E (YR8A77450S000BE)
