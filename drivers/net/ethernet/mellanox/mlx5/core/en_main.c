@@ -128,6 +128,8 @@ static bool mlx5e_rx_is_linear_skb(struct mlx5_core_dev *mdev,
 	return !params->lro_en && frag_sz <= PAGE_SIZE;
 }
 
+#define MLX5_MAX_MPWQE_LOG_WQE_STRIDE_SZ ((BIT(__mlx5_bit_sz(wq, log_wqe_stride_size)) - 1) + \
+					  MLX5_MPWQE_LOG_STRIDE_SZ_BASE)
 static bool mlx5e_rx_mpwqe_is_linear_skb(struct mlx5_core_dev *mdev,
 					 struct mlx5e_params *params)
 {
@@ -136,6 +138,9 @@ static bool mlx5e_rx_mpwqe_is_linear_skb(struct mlx5_core_dev *mdev,
 	u8 log_num_strides;
 
 	if (!mlx5e_rx_is_linear_skb(mdev, params))
+		return false;
+
+	if (order_base_2(frag_sz) > MLX5_MAX_MPWQE_LOG_WQE_STRIDE_SZ)
 		return false;
 
 	if (MLX5_CAP_GEN(mdev, ext_stride_num_range))
@@ -1383,6 +1388,7 @@ static void mlx5e_close_txqsq(struct mlx5e_txqsq *sq)
 	struct mlx5_core_dev *mdev = c->mdev;
 	struct mlx5_rate_limit rl = {0};
 
+	cancel_work_sync(&sq->dim.work);
 	mlx5e_destroy_sq(mdev, sq->sqn);
 	if (sq->rate_limit) {
 		rl.rate = sq->rate_limit;
@@ -1752,7 +1758,7 @@ static void mlx5e_close_cq(struct mlx5e_cq *cq)
 
 static int mlx5e_get_cpu(struct mlx5e_priv *priv, int ix)
 {
-	return cpumask_first(priv->mdev->priv.irq_info[ix].mask);
+	return cpumask_first(priv->mdev->priv.irq_info[ix + MLX5_EQ_VEC_COMP_BASE].mask);
 }
 
 static int mlx5e_open_tx_cqs(struct mlx5e_channel *c,
@@ -2884,6 +2890,7 @@ void mlx5e_activate_priv_channels(struct mlx5e_priv *priv)
 
 	mlx5e_build_tx2sq_maps(priv);
 	mlx5e_activate_channels(&priv->channels);
+	mlx5e_xdp_tx_enable(priv);
 	netif_tx_start_all_queues(priv->netdev);
 
 	if (MLX5_ESWITCH_MANAGER(priv->mdev))
@@ -2905,6 +2912,7 @@ void mlx5e_deactivate_priv_channels(struct mlx5e_priv *priv)
 	 */
 	netif_tx_stop_all_queues(priv->netdev);
 	netif_tx_disable(priv->netdev);
+	mlx5e_xdp_tx_disable(priv);
 	mlx5e_deactivate_channels(&priv->channels);
 }
 
@@ -3726,6 +3734,12 @@ static netdev_features_t mlx5e_fix_features(struct net_device *netdev,
 			netdev_warn(netdev, "Disabling LRO, not supported in legacy RQ\n");
 	}
 
+	if (MLX5E_GET_PFLAG(params, MLX5E_PFLAG_RX_CQE_COMPRESS)) {
+		features &= ~NETIF_F_RXHASH;
+		if (netdev->features & NETIF_F_RXHASH)
+			netdev_warn(netdev, "Disabling rxhash, not supported when CQE compress is active\n");
+	}
+
 	mutex_unlock(&priv->state_lock);
 
 	return features;
@@ -3753,7 +3767,7 @@ int mlx5e_change_mtu(struct net_device *netdev, int new_mtu,
 	if (params->xdp_prog &&
 	    !mlx5e_rx_is_linear_skb(priv->mdev, &new_channels.params)) {
 		netdev_err(netdev, "MTU(%d) > %d is not allowed while XDP enabled\n",
-			   new_mtu, MLX5E_XDP_MAX_MTU);
+			   new_mtu, mlx5e_xdp_max_mtu(params));
 		err = -EINVAL;
 		goto out;
 	}
@@ -3851,6 +3865,9 @@ int mlx5e_hwstamp_set(struct mlx5e_priv *priv, struct ifreq *ifr)
 
 	memcpy(&priv->tstamp, &config, sizeof(config));
 	mutex_unlock(&priv->state_lock);
+
+	/* might need to fix some features */
+	netdev_update_features(priv->netdev);
 
 	return copy_to_user(ifr->ifr_data, &config,
 			    sizeof(config)) ? -EFAULT : 0;
@@ -4219,7 +4236,8 @@ static int mlx5e_xdp_allowed(struct mlx5e_priv *priv, struct bpf_prog *prog)
 
 	if (!mlx5e_rx_is_linear_skb(priv->mdev, &new_channels.params)) {
 		netdev_warn(netdev, "XDP is not allowed with MTU(%d) > %d\n",
-			    new_channels.params.sw_mtu, MLX5E_XDP_MAX_MTU);
+			    new_channels.params.sw_mtu,
+			    mlx5e_xdp_max_mtu(&new_channels.params));
 		return -EINVAL;
 	}
 
@@ -4692,6 +4710,10 @@ static void mlx5e_build_nic_netdev(struct net_device *netdev)
 
 	if (!priv->channels.params.scatter_fcs_en)
 		netdev->features  &= ~NETIF_F_RXFCS;
+
+	/* prefere CQE compression over rxhash */
+	if (MLX5E_GET_PFLAG(&priv->channels.params, MLX5E_PFLAG_RX_CQE_COMPRESS))
+		netdev->features &= ~NETIF_F_RXHASH;
 
 #define FT_CAP(f) MLX5_CAP_FLOWTABLE(mdev, flow_table_properties_nic_receive.f)
 	if (FT_CAP(flow_modify_en) &&

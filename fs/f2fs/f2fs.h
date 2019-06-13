@@ -450,7 +450,6 @@ struct f2fs_flush_device {
 
 /* for inline stuff */
 #define DEF_INLINE_RESERVED_SIZE	1
-#define DEF_MIN_INLINE_SIZE		1
 static inline int get_extra_isize(struct inode *inode);
 static inline int get_inline_xattr_addrs(struct inode *inode);
 #define MAX_INLINE_DATA(inode)	(sizeof(__le32) *			\
@@ -1336,6 +1335,17 @@ static inline bool time_to_inject(struct f2fs_sb_info *sbi, int type)
 	return false;
 }
 #endif
+
+/*
+ * Test if the mounted volume is a multi-device volume.
+ *   - For a single regular disk volume, sbi->s_ndevs is 0.
+ *   - For a single zoned disk volume, sbi->s_ndevs is 1.
+ *   - For a multi-device volume, sbi->s_ndevs is always 2 or more.
+ */
+static inline bool f2fs_is_multi_device(struct f2fs_sb_info *sbi)
+{
+	return sbi->s_ndevs > 1;
+}
 
 /* For write statistics. Suppose sector size is 512 bytes,
  * and the return value is in kbytes. s is of struct f2fs_sb_info.
@@ -2613,8 +2623,17 @@ static inline bool is_dot_dotdot(const struct qstr *str)
 
 static inline bool f2fs_may_extent_tree(struct inode *inode)
 {
-	if (!test_opt(F2FS_I_SB(inode), EXTENT_CACHE) ||
+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+
+	if (!test_opt(sbi, EXTENT_CACHE) ||
 			is_inode_flag_set(inode, FI_NO_EXTENT))
+		return false;
+
+	/*
+	 * for recovered files during mount do not create extents
+	 * if shrinker is not registered.
+	 */
+	if (list_empty(&sbi->s_list))
 		return false;
 
 	return S_ISREG(inode->i_mode);
@@ -3401,11 +3420,20 @@ static inline int get_blkz_type(struct f2fs_sb_info *sbi,
 }
 #endif
 
-static inline bool f2fs_discard_en(struct f2fs_sb_info *sbi)
+static inline bool f2fs_hw_should_discard(struct f2fs_sb_info *sbi)
 {
-	struct request_queue *q = bdev_get_queue(sbi->sb->s_bdev);
+	return f2fs_sb_has_blkzoned(sbi->sb);
+}
 
-	return blk_queue_discard(q) || f2fs_sb_has_blkzoned(sbi->sb);
+static inline bool f2fs_hw_support_discard(struct f2fs_sb_info *sbi)
+{
+	return blk_queue_discard(bdev_get_queue(sbi->sb->s_bdev));
+}
+
+static inline bool f2fs_realtime_discard_enable(struct f2fs_sb_info *sbi)
+{
+	return (test_opt(sbi, DISCARD) && f2fs_hw_support_discard(sbi)) ||
+					f2fs_hw_should_discard(sbi);
 }
 
 static inline void set_opt_mode(struct f2fs_sb_info *sbi, unsigned int mt)
@@ -3438,7 +3466,7 @@ static inline bool f2fs_force_buffered_io(struct inode *inode, int rw)
 {
 	return (f2fs_post_read_required(inode) ||
 			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
-			F2FS_I_SB(inode)->s_ndevs);
+			f2fs_is_multi_device(F2FS_I_SB(inode)));
 }
 
 #ifdef CONFIG_F2FS_FAULT_INJECTION

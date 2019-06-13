@@ -605,7 +605,7 @@ static int ocelot_mact_mc_add(struct ocelot_port *port,
 			      struct netdev_hw_addr *hw_addr)
 {
 	struct ocelot *ocelot = port->ocelot;
-	struct netdev_hw_addr *ha = kzalloc(sizeof(*ha), GFP_KERNEL);
+	struct netdev_hw_addr *ha = kzalloc(sizeof(*ha), GFP_ATOMIC);
 
 	if (!ha)
 		return -ENOMEM;
@@ -733,7 +733,7 @@ static int ocelot_fdb_add(struct ndmsg *ndm, struct nlattr *tb[],
 	}
 
 	return ocelot_mact_learn(ocelot, port->chip_port, addr, vid,
-				 ENTRYTYPE_NORMAL);
+				 ENTRYTYPE_LOCKED);
 }
 
 static int ocelot_fdb_del(struct ndmsg *ndm, struct nlattr *tb[],

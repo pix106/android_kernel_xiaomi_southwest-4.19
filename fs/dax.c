@@ -229,8 +229,8 @@ static void put_unlocked_mapping_entry(struct address_space *mapping,
  *
  * Must be called with the i_pages lock held.
  */
-static void *__get_unlocked_mapping_entry(struct address_space *mapping,
-		pgoff_t index, void ***slotp, bool (*wait_fn)(void))
+static void *get_unlocked_mapping_entry(struct address_space *mapping,
+		pgoff_t index, void ***slotp)
 {
 	void *entry, **slot;
 	struct wait_exceptional_entry_queue ewait;
@@ -240,8 +240,6 @@ static void *__get_unlocked_mapping_entry(struct address_space *mapping,
 	ewait.wait.func = wake_exceptional_entry_func;
 
 	for (;;) {
-		bool revalidate;
-
 		entry = __radix_tree_lookup(&mapping->i_pages, index, NULL,
 					  &slot);
 		if (!entry ||
@@ -256,30 +254,37 @@ static void *__get_unlocked_mapping_entry(struct address_space *mapping,
 		prepare_to_wait_exclusive(wq, &ewait.wait,
 					  TASK_UNINTERRUPTIBLE);
 		xa_unlock_irq(&mapping->i_pages);
-		revalidate = wait_fn();
+		schedule();
 		finish_wait(wq, &ewait.wait);
 		xa_lock_irq(&mapping->i_pages);
-		if (revalidate) {
-			put_unlocked_mapping_entry(mapping, index, entry);
-			return ERR_PTR(-EAGAIN);
-		}
 	}
 }
 
-static bool entry_wait(void)
+/*
+ * The only thing keeping the address space around is the i_pages lock
+ * (it's cycled in clear_inode() after removing the entries from i_pages)
+ * After we call xas_unlock_irq(), we cannot touch xas->xa.
+ */
+static void wait_entry_unlocked(struct address_space *mapping, pgoff_t index,
+		void ***slotp, void *entry)
 {
-	schedule();
-	/*
-	 * Never return an ERR_PTR() from
-	 * __get_unlocked_mapping_entry(), just keep looping.
-	 */
-	return false;
-}
+	struct wait_exceptional_entry_queue ewait;
+	wait_queue_head_t *wq;
 
-static void *get_unlocked_mapping_entry(struct address_space *mapping,
-		pgoff_t index, void ***slotp)
-{
-	return __get_unlocked_mapping_entry(mapping, index, slotp, entry_wait);
+	init_wait(&ewait.wait);
+	ewait.wait.func = wake_exceptional_entry_func;
+
+	wq = dax_entry_waitqueue(mapping, index, entry, &ewait.key);
+	/*
+	 * Unlike get_unlocked_entry() there is no guarantee that this
+	 * path ever successfully retrieves an unlocked entry before an
+	 * inode dies. Perform a non-exclusive wait in case this path
+	 * never successfully performs its own wake up.
+	 */
+	prepare_to_wait(wq, &ewait.wait, TASK_UNINTERRUPTIBLE);
+	xa_unlock_irq(&mapping->i_pages);
+	schedule();
+	finish_wait(wq, &ewait.wait);
 }
 
 static void unlock_mapping_entry(struct address_space *mapping, pgoff_t index)
@@ -398,19 +403,6 @@ static struct page *dax_busy_page(void *entry)
 	return NULL;
 }
 
-static bool entry_wait_revalidate(void)
-{
-	rcu_read_unlock();
-	schedule();
-	rcu_read_lock();
-
-	/*
-	 * Tell __get_unlocked_mapping_entry() to take a break, we need
-	 * to revalidate page->mapping after dropping locks
-	 */
-	return true;
-}
-
 bool dax_lock_mapping_entry(struct page *page)
 {
 	pgoff_t index;
@@ -446,14 +438,15 @@ bool dax_lock_mapping_entry(struct page *page)
 		}
 		index = page->index;
 
-		entry = __get_unlocked_mapping_entry(mapping, index, &slot,
-				entry_wait_revalidate);
+		entry = __radix_tree_lookup(&mapping->i_pages, index,
+						NULL, &slot);
 		if (!entry) {
 			xa_unlock_irq(&mapping->i_pages);
 			break;
-		} else if (IS_ERR(entry)) {
-			xa_unlock_irq(&mapping->i_pages);
-			WARN_ON_ONCE(PTR_ERR(entry) != -EAGAIN);
+		} else if (slot_locked(mapping, slot)) {
+			rcu_read_unlock();
+			wait_entry_unlocked(mapping, index, &slot, entry);
+			rcu_read_lock();
 			continue;
 		}
 		lock_slot(mapping, slot);
@@ -1667,8 +1660,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
 		}
 
 		trace_dax_pmd_insert_mapping(inode, vmf, PMD_SIZE, pfn, entry);
-		result = vmf_insert_pfn_pmd(vma, vmf->address, vmf->pmd, pfn,
-					    write);
+		result = vmf_insert_pfn_pmd(vmf, pfn, write);
 		break;
 	case IOMAP_UNWRITTEN:
 	case IOMAP_HOLE:
@@ -1782,8 +1774,7 @@ static vm_fault_t dax_insert_pfn_mkwrite(struct vm_fault *vmf,
 		break;
 #ifdef CONFIG_FS_DAX_PMD
 	case PE_SIZE_PMD:
-		ret = vmf_insert_pfn_pmd(vmf->vma, vmf->address, vmf->pmd,
-			pfn, true);
+		ret = vmf_insert_pfn_pmd(vmf, pfn, FAULT_FLAG_WRITE);
 		break;
 #endif
 	default:
