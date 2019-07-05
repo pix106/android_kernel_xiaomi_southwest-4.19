@@ -14,6 +14,7 @@
 #include <linux/mutex.h>
 #include <linux/regulator/consumer.h>
 #include <linux/fb.h>
+#include <linux/moduleparam.h>
 
 /*add by Wenke Ma, for hall switch key code*/
 #define KEY_HALL_OPEN                0x284
@@ -22,6 +23,9 @@
 #define GPIO_HALL_EINT_PIN 107
 #define CONFIG_HALL_SYS
 
+static bool hall_toggle = true;
+
+module_param(hall_toggle, bool, 0644);
 
 struct hall_switch_info
 {
@@ -44,17 +48,17 @@ static irqreturn_t hall_interrupt(int irq, void *data)
 	int hall_gpio;
 	hall_gpio = gpio_get_value_cansleep(hall_info->irq_gpio);
 	pr_err("Macle hall irq interrupt gpio = %d\n", hall_gpio);
-	if (hall_gpio == hall_info->hall_switch_state) {
+	if (hall_gpio == hall_info->hall_switch_state && hall_toggle) {
 		return IRQ_HANDLED;
-	} else {
+	} else if (hall_toggle){
 		hall_info->hall_switch_state = hall_gpio;
 		pr_err("Macle hall report key s ");
 	}
 
-	if (hall_gpio) {
+	if (hall_gpio && hall_toggle) {
 			input_report_switch(hall_info->ipdev, SW_LID, 0);
 			input_sync(hall_info->ipdev);
-	} else {
+	} else if (hall_toggle){
 			input_report_switch(hall_info->ipdev, SW_LID, 1);
 			input_sync(hall_info->ipdev);
 	}
