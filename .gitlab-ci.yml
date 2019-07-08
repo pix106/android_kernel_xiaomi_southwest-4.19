@@ -1,0 +1,68 @@
+variables:
+  GIT_STRATEGY: clone
+  GIT_DEPTH: 10
+  DOCKER_DRIVER: overlay2
+
+build_arm_renesas_shmobile_defconfig:
+  stage: build
+  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-v1
+  variables:
+    BUILD_ARCH: arm
+    CONFIG: renesas_shmobile_defconfig
+    CONFIG_LOC: cip-kernel-config
+    DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
+    DTBS: arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dtb
+  script:
+    - /opt/build_kernel.sh
+  artifacts:
+    name: "$CI_JOB_NAME"
+    when: on_success
+    paths:
+      - output
+
+build_arm64_renesas_defconfig:
+  stage: build
+  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-v1
+  variables:
+    BUILD_ARCH: arm64
+    CONFIG: renesas_defconfig
+    CONFIG_LOC: cip-kernel-config
+    DEVICES: r8a774c0-ek874
+    DTBS: arch/arm64/boot/dts/renesas/r8a774c0-ek874.dtb
+  script:
+    - /opt/build_kernel.sh
+  artifacts:
+    name: "$CI_JOB_NAME"
+    when: on_success
+    paths:
+      - output
+
+build_arm_shmobile_defconfig:
+  stage: build
+  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-v1
+  variables:
+    BUILD_ARCH: arm
+    CONFIG: shmobile_defconfig
+    CONFIG_LOC: intree
+    DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
+    DTBS: arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dtb
+  script:
+    - /opt/build_kernel.sh
+  artifacts:
+    name: "$CI_JOB_NAME"
+    when: on_success
+    paths:
+      - output
+
+run_tests:
+  stage: test
+  image: registry.gitlab.com/cip-playground/linux-cip-ci:test-v1
+  when: always
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - /opt/submit_tests.sh
+  artifacts:
+    name: "$CI_JOB_NAME"
+    paths:
+      - output
