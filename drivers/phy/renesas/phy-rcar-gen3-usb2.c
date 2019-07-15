@@ -85,6 +85,7 @@
 
 struct rcar_gen3_chan {
 	void __iomem *base;
+	struct device *dev;	/* platform_device's device */
 	struct extcon_dev *extcon;
 	struct phy *phy;
 	struct regulator *vbus;
@@ -125,7 +126,7 @@ static void rcar_gen3_set_host_mode(struct rcar_gen3_chan *ch, int host)
 	void __iomem *usb2_base = ch->base;
 	u32 val = readl(usb2_base + USB2_COMMCTRL);
 
-	dev_vdbg(&ch->phy->dev, "%s: %08x, %d\n", __func__, val, host);
+	dev_vdbg(ch->dev, "%s: %08x, %d\n", __func__, val, host);
 	if (host)
 		val &= ~USB2_COMMCTRL_OTG_PERI;
 	else
@@ -138,7 +139,7 @@ static void rcar_gen3_set_linectrl(struct rcar_gen3_chan *ch, int dp, int dm)
 	void __iomem *usb2_base = ch->base;
 	u32 val = readl(usb2_base + USB2_LINECTRL1);
 
-	dev_vdbg(&ch->phy->dev, "%s: %08x, %d, %d\n", __func__, val, dp, dm);
+	dev_vdbg(ch->dev, "%s: %08x, %d, %d\n", __func__, val, dp, dm);
 	val &= ~(USB2_LINECTRL1_DP_RPD | USB2_LINECTRL1_DM_RPD);
 	if (dp)
 		val |= USB2_LINECTRL1_DP_RPD;
@@ -152,7 +153,7 @@ static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
 	void __iomem *usb2_base = ch->base;
 	u32 val = readl(usb2_base + USB2_ADPCTRL);
 
-	dev_vdbg(&ch->phy->dev, "%s: %08x, %d\n", __func__, val, vbus);
+	dev_vdbg(ch->dev, "%s: %08x, %d\n", __func__, val, vbus);
 	if (vbus)
 		val |= USB2_ADPCTRL_DRVVBUS;
 	else
@@ -413,7 +414,7 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
 	irqreturn_t ret = IRQ_NONE;
 
 	if (status & USB2_OBINT_BITS) {
-		dev_vdbg(&ch->phy->dev, "%s: %08x\n", __func__, status);
+		dev_vdbg(ch->dev, "%s: %08x\n", __func__, status);
 		writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
 		rcar_gen3_device_recognition(ch);
 		ret = IRQ_HANDLED;
@@ -532,6 +533,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, channel);
 	phy_set_drvdata(channel->phy, channel);
+	channel->dev = dev;
 
 	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
 	if (IS_ERR(provider)) {
