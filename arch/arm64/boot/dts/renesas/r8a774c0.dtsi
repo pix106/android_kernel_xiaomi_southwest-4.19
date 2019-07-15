@@ -378,6 +378,71 @@
 			resets = <&cpg 407>;
 		};
 
+		tmu0: timer@e61e0000 {
+			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
+			reg = <0 0xe61e0000 0 0x30>;
+			interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&cpg CPG_MOD 125>;
+			clock-names = "fck";
+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+			resets = <&cpg 125>;
+			status = "disabled";
+		};
+
+		tmu1: timer@e6fc0000 {
+			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
+			reg = <0 0xe6fc0000 0 0x30>;
+			interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&cpg CPG_MOD 124>;
+			clock-names = "fck";
+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+			resets = <&cpg 124>;
+			status = "disabled";
+		};
+
+		tmu2: timer@e6fd0000 {
+			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
+			reg = <0 0xe6fd0000 0 0x30>;
+			interrupts = <GIC_SPI 303 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&cpg CPG_MOD 123>;
+			clock-names = "fck";
+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+			resets = <&cpg 123>;
+			status = "disabled";
+		};
+
+		tmu3: timer@e6fe0000 {
+			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
+			reg = <0 0xe6fe0000 0 0x30>;
+			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&cpg CPG_MOD 122>;
+			clock-names = "fck";
+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+			resets = <&cpg 122>;
+			status = "disabled";
+		};
+
+		tmu4: timer@ffc00000 {
+			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
+			reg = <0 0xffc00000 0 0x30>;
+			interrupts = <GIC_SPI 406 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 407 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&cpg CPG_MOD 121>;
+			clock-names = "fck";
+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+			resets = <&cpg 121>;
+			status = "disabled";
+		};
+
 		i2c0: i2c@e6500000 {
 			#address-cells = <1>;
 			#size-cells = <0>;
@@ -518,71 +583,6 @@
 			resets = <&cpg 926>;
 			dmas = <&dmac0 0x11>, <&dmac0 0x10>;
 			dma-names = "tx", "rx";
-			status = "disabled";
-		};
-
-		tmu0: timer@e61e0000 {
-			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
-			reg = <0 0xe61e0000 0 0x30>;
-			interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
-				     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
-				     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&cpg CPG_MOD 125>;
-			clock-names = "fck";
-			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-			resets = <&cpg 125>;
-			status = "disabled";
-		};
-
-		tmu1: timer@e6fc0000 {
-			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
-			reg = <0 0xe6fc0000 0 0x30>;
-			interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
-				     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
-				     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&cpg CPG_MOD 124>;
-			clock-names = "fck";
-			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-			resets = <&cpg 124>;
-			status = "disabled";
-		};
-
-		tmu2: timer@e6fd0000 {
-			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
-			reg = <0 0xe6fd0000 0 0x30>;
-			interrupts = <GIC_SPI 303 IRQ_TYPE_LEVEL_HIGH>,
-				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&cpg CPG_MOD 123>;
-			clock-names = "fck";
-			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-			resets = <&cpg 123>;
-			status = "disabled";
-		};
-
-		tmu3: timer@e6fe0000 {
-			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
-			reg = <0 0xe6fe0000 0 0x30>;
-			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
-				     <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
-				     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&cpg CPG_MOD 122>;
-			clock-names = "fck";
-			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-			resets = <&cpg 122>;
-			status = "disabled";
-		};
-
-		tmu4: timer@ffc00000 {
-			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
-			reg = <0 0xffc00000 0 0x30>;
-			interrupts = <GIC_SPI 406 IRQ_TYPE_LEVEL_HIGH>,
-				     <GIC_SPI 407 IRQ_TYPE_LEVEL_HIGH>,
-				     <GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&cpg CPG_MOD 121>;
-			clock-names = "fck";
-			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-			resets = <&cpg 121>;
 			status = "disabled";
 		};
 
@@ -1279,65 +1279,6 @@
 			};
 		};
 
-		xhci0: usb@ee000000 {
-			compatible = "renesas,xhci-r8a774c0",
-				     "renesas,rcar-gen3-xhci";
-			reg = <0 0xee000000 0 0xc00>;
-			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&cpg CPG_MOD 328>;
-			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-			resets = <&cpg 328>;
-			status = "disabled";
-		};
-
-		usb3_peri0: usb@ee020000 {
-			compatible = "renesas,r8a774c0-usb3-peri",
-				     "renesas,rcar-gen3-usb3-peri";
-			reg = <0 0xee020000 0 0x400>;
-			interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&cpg CPG_MOD 328>;
-			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-			resets = <&cpg 328>;
-			status = "disabled";
-		};
-
-		ohci0: usb@ee080000 {
-			compatible = "generic-ohci";
-			reg = <0 0xee080000 0 0x100>;
-			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
-			phys = <&usb2_phy0>;
-			phy-names = "usb";
-			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-			resets = <&cpg 703>, <&cpg 704>;
-			status = "disabled";
-		};
-
-		ehci0: usb@ee080100 {
-			compatible = "generic-ehci";
-			reg = <0 0xee080100 0 0x100>;
-			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
-			phys = <&usb2_phy0>;
-			phy-names = "usb";
-			companion = <&ohci0>;
-			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-			resets = <&cpg 703>, <&cpg 704>;
-			status = "disabled";
-		};
-
-		usb2_phy0: usb-phy@ee080200 {
-			compatible = "renesas,usb2-phy-r8a774c0",
-				     "renesas,rcar-gen3-usb2-phy";
-			reg = <0 0xee080200 0 0x700>;
-			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
-			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-			resets = <&cpg 703>, <&cpg 704>;
-			#phy-cells = <0>;
-			status = "disabled";
-		};
-
 		rcar_sound: sound@ec500000 {
 			/*
 			 * #sound-dai-cells is required
@@ -1585,6 +1526,65 @@
 				 <&ipmmu_mp 10>, <&ipmmu_mp 11>,
 				 <&ipmmu_mp 12>, <&ipmmu_mp 13>,
 				 <&ipmmu_mp 14>, <&ipmmu_mp 15>;
+		};
+
+		xhci0: usb@ee000000 {
+			compatible = "renesas,xhci-r8a774c0",
+				     "renesas,rcar-gen3-xhci";
+			reg = <0 0xee000000 0 0xc00>;
+			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&cpg CPG_MOD 328>;
+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+			resets = <&cpg 328>;
+			status = "disabled";
+		};
+
+		usb3_peri0: usb@ee020000 {
+			compatible = "renesas,r8a774c0-usb3-peri",
+				     "renesas,rcar-gen3-usb3-peri";
+			reg = <0 0xee020000 0 0x400>;
+			interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&cpg CPG_MOD 328>;
+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+			resets = <&cpg 328>;
+			status = "disabled";
+		};
+
+		ohci0: usb@ee080000 {
+			compatible = "generic-ohci";
+			reg = <0 0xee080000 0 0x100>;
+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
+			phys = <&usb2_phy0>;
+			phy-names = "usb";
+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+			resets = <&cpg 703>, <&cpg 704>;
+			status = "disabled";
+		};
+
+		ehci0: usb@ee080100 {
+			compatible = "generic-ehci";
+			reg = <0 0xee080100 0 0x100>;
+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
+			phys = <&usb2_phy0>;
+			phy-names = "usb";
+			companion = <&ohci0>;
+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+			resets = <&cpg 703>, <&cpg 704>;
+			status = "disabled";
+		};
+
+		usb2_phy0: usb-phy@ee080200 {
+			compatible = "renesas,usb2-phy-r8a774c0",
+				     "renesas,rcar-gen3-usb2-phy";
+			reg = <0 0xee080200 0 0x700>;
+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+			resets = <&cpg 703>, <&cpg 704>;
+			#phy-cells = <0>;
+			status = "disabled";
 		};
 
 		sdhi0: sd@ee100000 {
