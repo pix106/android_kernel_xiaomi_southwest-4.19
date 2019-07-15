@@ -52,8 +52,18 @@
 	};
 };
 
+&ehci0 {
+	dr_mode = "host";
+	status = "okay";
+};
+
 &extal_clk {
 	clock-frequency = <48000000>;
+};
+
+&ohci0 {
+	dr_mode = "host";
+	status = "okay";
 };
 
 &pcie_bus_clk {
@@ -102,5 +112,10 @@
 	bus-width = <4>;
 	sd-uhs-sdr50;
 	sd-uhs-sdr104;
+	status = "okay";
+};
+
+&usb2_phy0 {
+	renesas,no-otg-pins;
 	status = "okay";
 };
