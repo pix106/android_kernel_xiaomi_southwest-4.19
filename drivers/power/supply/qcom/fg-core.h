@@ -331,6 +331,9 @@ struct fg_batt_props {
 	char		*batt_profile;
 	int		float_volt_uv;
 	int		vbatt_full_mv;
+#ifdef CONFIG_MACH_XIAOMI_CLOVER
+	int		batt_capacity_mah;
+#endif
 	int		fastchg_curr_ma;
 	int		*therm_coeffs;
 	int		therm_ctr_offset;
