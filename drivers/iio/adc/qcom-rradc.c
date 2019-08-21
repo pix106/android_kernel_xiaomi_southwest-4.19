@@ -192,6 +192,10 @@
 #define FG_RR_TP_REV_VERSION2		29
 #define FG_RR_TP_REV_VERSION3		32
 
+#ifdef CONFIG_MACH_XIAOMI_TULIP
+int rradc_die = 0;
+#endif
+
 /*
  * The channel number is not a physical index in hardware,
  * rather it's a list of supported channels and an index to
@@ -1314,6 +1318,21 @@ static int rradc_probe(struct platform_device *pdev)
 	indio_dev->channels = chip->iio_chans;
 	indio_dev->num_channels = chip->nchannels;
 
+#ifdef CONFIG_MACH_XIAOMI_TULIP
+	chip->batt_psy = power_supply_get_by_name("battery");
+	if (!chip->batt_psy)
+		pr_debug("Error obtaining battery power supply\n");
+
+	chip->bms_psy = power_supply_get_by_name("bms");
+	if (!chip->bms_psy)
+		pr_debug("Error obtaining bms power supply\n");
+
+	chip->nb.notifier_call = rradc_psy_notifier_cb;
+	rc = power_supply_reg_notifier(&chip->nb);
+	if (rc < 0)
+		pr_err("Error registering psy notifier rc = %d\n", rc);
+	INIT_WORK(&chip->psy_notify_work, psy_notify_work);
+#endif
 	chip->usb_trig = power_supply_get_by_name("usb");
 	if (!chip->usb_trig)
 		pr_debug("Error obtaining usb power supply\n");
