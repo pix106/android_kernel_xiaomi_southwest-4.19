@@ -50,6 +50,18 @@ extern int hwc_check_global;
 extern bool is_poweroff_charge;
 #endif
 
+#ifdef CONFIG_MACH_XIAOMI_CLOVER
+#include <linux/proc_fs.h>
+#include <linux/fs.h>
+#include <linux/uaccess.h>
+
+#include <linux/slab.h>
+#define LENGTH 32
+#define CHG_NAME "driver/chg_enable"
+static int charger_limit_enbale = 1;
+static struct proc_dir_entry *proc_chg;
+#endif
+
 #define SMB2_DEFAULT_WPWR_UW	8000000
 
 static struct smb_params v1_params = {
@@ -202,6 +214,11 @@ struct smb2 {
 };
 
 static int __debug_mask;
+
+#ifdef CONFIG_MACH_XIAOMI_CLOVER
+struct smb_charger *smbchg_dev;
+#endif
+
 
 static int __weak_chg_icl_ua = 500000;
 static ssize_t weak_chg_icl_ua_show(struct device *dev, struct device_attribute
@@ -453,6 +470,9 @@ static enum power_supply_property smb2_usb_props[] = {
 	POWER_SUPPLY_PROP_CURRENT_MAX,
 	POWER_SUPPLY_PROP_TYPE,
 	POWER_SUPPLY_PROP_TYPEC_MODE,
+#ifdef CONFIG_MACH_XIAOMI_CLOVER
+	POWER_SUPPLY_PROP_USB_OTG,
+#endif
 	POWER_SUPPLY_PROP_TYPEC_POWER_ROLE,
 	POWER_SUPPLY_PROP_TYPEC_CC_ORIENTATION,
 	POWER_SUPPLY_PROP_TYPEC_SRC_RP,
@@ -517,6 +537,11 @@ static int smb2_usb_get_prop(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
 		rc = smblib_get_prop_usb_voltage_now(chg, val);
 		break;
+#ifdef CONFIG_MACH_XIAOMI_CLOVER
+	case POWER_SUPPLY_PROP_USB_OTG:
+		rc = smblib_get_chg_otg_present(chg, val);
+		break;
+#endif
 	case POWER_SUPPLY_PROP_PD_CURRENT_MAX:
 		val->intval = get_client_vote(chg->usb_icl_votable, PD_VOTER);
 		break;
@@ -1108,6 +1133,10 @@ static enum power_supply_property smb2_batt_props[] = {
 	POWER_SUPPLY_PROP_VOLTAGE_MAX,
 	POWER_SUPPLY_PROP_VOLTAGE_QNOVO,
 	POWER_SUPPLY_PROP_CURRENT_NOW,
+#ifdef CONFIG_MACH_XIAOMI_CLOVER
+	POWER_SUPPLY_PROP_RESISTANCE_ID,
+	POWER_SUPPLY_PROP_CHARGING_ENABLED,
+#endif
 	POWER_SUPPLY_PROP_CURRENT_QNOVO,
 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX,
 #ifndef CONFIG_MACH_LONGCHEER
@@ -1207,6 +1236,21 @@ static int smb2_batt_get_prop(struct power_supply *psy,
 		val->intval = get_client_vote_locked(chg->fv_votable,
 				QNOVO_VOTER);
 		break;
+#ifdef CONFIG_MACH_XIAOMI_CLOVER
+	case POWER_SUPPLY_PROP_CHARGING_ENABLED:
+		val->intval = get_effective_result(chg->usb_icl_votable);
+		if (val->intval < 0) /* no votes */
+			val->intval = 1;
+		else
+			val->intval = !!val->intval;
+		break;
+	case POWER_SUPPLY_PROP_RESISTANCE_ID:
+		rc = smblib_get_prop_batt_resistance_id(chg, val);
+		break;
+	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
+		rc = smblib_get_prop_batt_charge_full_design(chg, val);
+		break;
+#endif
 	case POWER_SUPPLY_PROP_CURRENT_QNOVO:
 		val->intval = get_client_vote_locked(chg->fcc_votable,
 				QNOVO_VOTER);
@@ -1222,7 +1266,7 @@ static int smb2_batt_get_prop(struct power_supply *psy,
 		break;
 #endif
 	case POWER_SUPPLY_PROP_TECHNOLOGY:
-#ifdef CONFIG_MACH_LONGCHEER
+#if defined(CONFIG_MACH_LONGCHEER) || defined(CONFIG_MACH_XIAOMI_CLOVER)
 		val->intval = POWER_SUPPLY_TECHNOLOGY_LIPO;
 #else
 		val->intval = POWER_SUPPLY_TECHNOLOGY_LION;
@@ -1258,9 +1302,6 @@ static int smb2_batt_get_prop(struct power_supply *psy,
 		break;
 	case POWER_SUPPLY_PROP_CHARGE_COUNTER:
 	case POWER_SUPPLY_PROP_CHARGE_FULL:
-#ifndef CONFIG_MACH_LONGCHEER
-	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
-#endif
 	case POWER_SUPPLY_PROP_CYCLE_COUNT:
 	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
 	case POWER_SUPPLY_PROP_TEMP:
@@ -1373,6 +1414,11 @@ static int smb2_batt_set_prop(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_RERUN_AICL:
 		rc = smblib_rerun_aicl(chg);
 		break;
+#ifdef CONFIG_MACH_XIAOMI_CLOVER
+	case POWER_SUPPLY_PROP_CHARGING_ENABLED:
+		rc = vote(chg->usb_icl_votable,DEFAULT_VOTER, !val->intval, 0);
+		break;
+#endif
 	case POWER_SUPPLY_PROP_DP_DM:
 		rc = smblib_dp_dm(chg, val->intval);
 		break;
@@ -1900,7 +1946,11 @@ static int smb2_init_hw(struct smb2 *chip)
 	vote(chg->hvdcp_disable_votable_indirect, VBUS_CC_SHORT_VOTER,
 		(chg->connector_type == POWER_SUPPLY_CONNECTOR_TYPEC), 0);
 	vote(chg->pd_disallowed_votable_indirect, MICRO_USB_VOTER,
+#ifdef CONFIG_MACH_XIAOMI_CLOVER
+                        true, 0);
+#else
 		(chg->connector_type == POWER_SUPPLY_CONNECTOR_MICRO_USB), 0);
+#endif
 	vote(chg->hvdcp_enable_votable, MICRO_USB_VOTER,
 		(chg->connector_type == POWER_SUPPLY_CONNECTOR_MICRO_USB), 0);
 
@@ -2723,6 +2773,63 @@ static int lct_unregister_powermanager(struct smb_charger *chg)
 	return 0;
 }
 #endif
+#endif
+#ifdef CONFIG_MACH_XIAOMI_CLOVER
+struct smb_charger *chip_b;
+
+static ssize_t chg_read_proc_enable(struct file *file, char __user *page, size_t size, loff_t *ppos)
+{
+	char *ptr = page;
+	if (*ppos)
+		return 0;
+
+	ptr += sprintf(ptr, "%d\n", charger_limit_enbale);
+
+	*ppos += ptr - page;
+	return (ptr - page);
+}
+static ssize_t chg_write_proc_enable(struct file *file, const char __user *buff, size_t size, loff_t *ppos)
+{
+	char write_buff[LENGTH] = {0};
+	int rc = 0;
+
+	if (size > LENGTH)
+		return -EFAULT;
+	if (copy_from_user(&write_buff,buff,size))
+		return -ENOMEM;
+
+	if (write_buff[0] == '1') {
+		charger_limit_enbale = 1;
+		rc = vote(chip_b->chg_disable_votable, DEFAULT_VOTER, !charger_limit_enbale, 0);
+		pr_info("chg set enable\n");
+		if (rc < 0)
+			pr_debug("chg set enable charging fail\n");
+	} else if (write_buff[0] == '0') {
+		charger_limit_enbale = 0;
+		rc = vote(chip_b->chg_disable_votable, DEFAULT_VOTER, !charger_limit_enbale, 0);
+		pr_info("chg set disenable\n");
+		if (rc < 0)
+			pr_debug("chg set disenable charging fail\n");
+	}
+	return size;
+}
+
+static struct file_operations file_ops = {
+	.read = chg_read_proc_enable,
+	.write = chg_write_proc_enable,
+};
+
+static int proc_create_chg_enable(void)
+{
+	int rc = 0;
+
+	proc_chg = proc_create(CHG_NAME,0664,NULL, &file_ops);
+	if (proc_chg == NULL)
+		return -ENOMEM;
+
+	return rc;
+}
+#endif
 
 static int smb2_probe(struct platform_device *pdev)
 {
@@ -2751,6 +2858,9 @@ static int smb2_probe(struct platform_device *pdev)
 	chg->name = "PMI";
 	chg->audio_headset_drp_wait_ms = &__audio_headset_drp_wait_ms;
 
+#ifdef CONFIG_MACH_XIAOMI_CLOVER
+	smbchg_dev = chg;
+#endif
 	chg->regmap = dev_get_regmap(chg->dev->parent, NULL);
 	if (!chg->regmap) {
 		pr_err("parent regmap is missing\n");
@@ -2922,6 +3032,10 @@ static int smb2_probe(struct platform_device *pdev)
 	chg->charging_enabled = true;
 #endif
 
+#ifdef CONFIG_MACH_XIAOMI_CLOVER
+	chip_b = chg;
+	proc_create_chg_enable();
+#endif
 	pr_info("QPNP SMB2 probed successfully usb:present=%d type=%d batt:present = %d health = %d charge = %d\n",
 		usb_present, chg->real_charger_type,
 		batt_present, batt_health, batt_charge_type);
@@ -2970,6 +3084,10 @@ static int smb2_remove(struct platform_device *pdev)
 	regulator_unregister(chg->vbus_vreg->rdev);
 	sysfs_remove_groups(&chg->dev->kobj, smb2_groups);
 	debugfs_remove_recursive(chip->dfs_root);
+
+#ifdef CONFIG_MACH_XIAOMI_CLOVER
+	proc_remove(proc_chg);
+#endif
 	platform_set_drvdata(pdev, NULL);
 	return 0;
 }
