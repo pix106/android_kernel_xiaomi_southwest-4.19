@@ -282,6 +282,9 @@ struct smb_charger {
 
 	/* votables */
 	struct votable		*dc_suspend_votable;
+#ifdef CONFIG_MACH_XIAOMI_CLOVER
+	struct votable		*usb_suspend_votable;
+#endif
 	struct votable		*fcc_votable;
 	struct votable		*fv_votable;
 	struct votable		*usb_icl_votable;
@@ -315,6 +318,10 @@ struct smb_charger {
 	struct work_struct	legacy_detection_work;
 	struct delayed_work	uusb_otg_work;
 	struct delayed_work	bb_removal_work;
+#ifdef CONFIG_MACH_XIAOMI_CLOVER
+	struct delayed_work	update_current_work;
+	struct delayed_work	typec_disable_cmd_work;
+#endif
 
 	/* cached status */
 	int			voltage_min_uv;
@@ -459,9 +466,18 @@ int smblib_get_prop_batt_health(struct smb_charger *chg,
 int smblib_get_prop_system_temp_level(struct smb_charger *chg,
 				union power_supply_propval *val);
 int smblib_get_prop_system_temp_level_max(struct smb_charger *chg,
+                                union power_supply_propval *val);
+
+#ifdef CONFIG_MACH_XIAOMI_CLOVER
+int smblib_get_prop_batt_voltage_now(struct smb_charger *chg,
+				union power_supply_propval *val);
+int smblib_get_prop_batt_current_now(struct smb_charger *chg,
 				union power_supply_propval *val);
 int smblib_get_prop_input_current_limited(struct smb_charger *chg,
 				union power_supply_propval *val);
+int smblib_get_prop_batt_charge_full_design(struct smb_charger *chg,
+				     union power_supply_propval *val);
+#endif
 int smblib_set_prop_input_suspend(struct smb_charger *chg,
 				const union power_supply_propval *val);
 #ifdef CONFIG_MACH_LONGCHEER
@@ -578,4 +594,9 @@ int smblib_set_prop_rerun_apsd(struct smb_charger *chg,
 #endif
 int smblib_init(struct smb_charger *chg);
 int smblib_deinit(struct smb_charger *chg);
+#ifdef CONFIG_MACH_XIAOMI_CLOVER
+int smblib_get_prop_batt_resistance_id(struct smb_charger *chg,
+				     union power_supply_propval *val);
+int smblib_get_chg_otg_present(struct smb_charger *chg,union power_supply_propval *val);
+#endif
 #endif /* __SMB2_CHARGER_H */
