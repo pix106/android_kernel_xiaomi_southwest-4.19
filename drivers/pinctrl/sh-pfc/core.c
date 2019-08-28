@@ -777,9 +777,15 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
 
 	for (i = 0; i < info->nr_functions; i++) {
 		func = &info->functions[i];
+		if (!func->name) {
+			pr_err("%s: empty function %u\n", drvname, i);
+			sh_pfc_errors++;
+			continue;
+		}
 		for (j = 0; j < func->nr_groups; j++) {
 			for (k = 0; k < info->nr_groups; k++) {
-				if (!strcmp(func->groups[j],
+				if (info->groups[k].name &&
+				    !strcmp(func->groups[j],
 					    info->groups[k].name)) {
 					refcnts[k]++;
 					break;
@@ -795,6 +801,11 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
 	}
 
 	for (i = 0; i < info->nr_groups; i++) {
+		if (!info->groups[i].name) {
+			pr_err("%s: empty group %u\n", drvname, i);
+			sh_pfc_errors++;
+			continue;
+		}
 		if (!refcnts[i]) {
 			pr_err("%s: orphan group %s\n", drvname,
 			       info->groups[i].name);
