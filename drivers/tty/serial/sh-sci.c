@@ -1264,6 +1264,20 @@ static void start_hrtimer_us(struct hrtimer *hrt, unsigned long usec)
 	hrtimer_start(hrt, t, HRTIMER_MODE_REL);
 }
 
+static void sci_dma_rx_reenable_irq(struct sci_port *s)
+{
+	struct uart_port *port = &s->port;
+	u16 scr;
+
+	/* Direct new serial port interrupts back to CPU */
+	scr = serial_port_in(port, SCSCR);
+	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
+		scr &= ~SCSCR_RDRQE;
+		enable_irq(s->irqs[SCIx_RXI_IRQ]);
+	}
+	serial_port_out(port, SCSCR, scr | SCSCR_RIE);
+}
+
 static void sci_dma_rx_complete(void *arg)
 {
 	struct sci_port *s = arg;
@@ -1451,7 +1465,6 @@ static enum hrtimer_restart rx_timer_fn(struct hrtimer *t)
 	unsigned long flags;
 	unsigned int read;
 	int active, count;
-	u16 scr;
 
 	dev_dbg(port->dev, "DMA Rx timed out\n");
 
@@ -1501,13 +1514,7 @@ static enum hrtimer_restart rx_timer_fn(struct hrtimer *t)
 	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
 		sci_submit_rx(s, true);
 
-	/* Direct new serial port interrupts back to CPU */
-	scr = serial_port_in(port, SCSCR);
-	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
-		scr &= ~SCSCR_RDRQE;
-		enable_irq(s->irqs[SCIx_RXI_IRQ]);
-	}
-	serial_port_out(port, SCSCR, scr | SCSCR_RIE);
+	sci_dma_rx_reenable_irq(s);
 
 	spin_unlock_irqrestore(&port->lock, flags);
 
