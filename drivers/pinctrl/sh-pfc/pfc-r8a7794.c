@@ -10,6 +10,7 @@
  * as published by the Free Software Foundation.
  */
 
+#include <linux/errno.h>
 #include <linux/kernel.h>
 
 #include "core.h"
