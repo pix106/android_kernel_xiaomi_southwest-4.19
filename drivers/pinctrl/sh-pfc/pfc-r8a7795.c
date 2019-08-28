@@ -8,6 +8,7 @@
  * the Free Software Foundation; version 2 of the License.
  */
 
+#include <linux/errno.h>
 #include <linux/kernel.h>
 #include <linux/sys_soc.h>
 
