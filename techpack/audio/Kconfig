@@ -154,5 +154,21 @@ config WCD_DSP_GLINK
 	tristate "WCD_DSP_GLINK"
 config WSA_MACRO
 	tristate "WSA_MACRO"
+config SND_SOC_TAS2557
+	tristate "Texas Instruments TAS2557 SmartAmp(R)"
+if SND_SOC_TAS2557
+config TAS2557_REGMAP
+	bool "Use of RegMap API"
+config TAS2557_CODEC
+	bool "Codec Driver support"
+config TAS2557_MISC
+	bool "Misc Driver support"
+endif # SND_SOC_TAS2557
+config SND_I2S_PRIMARY
+	bool "Primary I2S Driver support"
+config SND_SOC_MAX98937
+	tristate "maxim Instruments 98937 SmartAmp(R)"
+config ELLIPTICLABS
+	tristate "Elliptic Labs fake proximity sensor support"
 
 endmenu
