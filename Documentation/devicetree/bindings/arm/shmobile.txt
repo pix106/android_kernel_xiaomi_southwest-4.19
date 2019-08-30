@@ -89,6 +89,11 @@ Boards:
     compatible = "renesas,h3ulcb", "renesas,r8a7795"
   - Henninger
     compatible = "renesas,henninger", "renesas,r8a7791"
+  - HopeRun expansion board for HiHope RZ/G2 platforms
+    compatible = "hoperun,hihope-rzg2-ex", "hoperun,hihope-rzg2m",
+                 "renesas,r8a774a1"
+  - HopeRun HiHope RZ/G2M platform
+    compatible = "hoperun,hihope-rzg2m", "renesas,r8a774a1"
   - iWave Systems RZ/G1C Single Board Computer (iW-RainboW-G23S)
     compatible = "iwave,g23s", "renesas,r8a77470"
   - iWave Systems RZ/G1E SODIMM SOM Development Platform (iW-RainboW-G22D)
