@@ -109,8 +109,8 @@ arm64_renesas_defconfig:
     BUILD_ARCH: arm64
     CONFIG: renesas_defconfig
     CONFIG_LOC: cip-kernel-config
-    DEVICES: r8a774c0-ek874
-    DTBS: r8a774c0-ek874.dtb
+    DEVICES: r8a774c0-ek874 r8a774a1-hihope-rzg2m-ex
+    DTBS: r8a774c0-ek874.dtb r8a774a1-hihope-rzg2m-ex.dtb
   script:
     - /opt/build_kernel.sh
   artifacts:
@@ -208,8 +208,8 @@ arm64_defconfig:
     BUILD_ARCH: arm64
     CONFIG: defconfig
     CONFIG_LOC: intree
-    DEVICES: r8a774c0-ek874
-    DTBS: r8a774c0-ek874.dtb
+    DEVICES: r8a774c0-ek874 r8a774a1-hihope-rzg2m-ex
+    DTBS: r8a774c0-ek874.dtb r8a774a1-hihope-rzg2m-ex.dtb
   script:
     - /opt/build_kernel.sh
   artifacts:
