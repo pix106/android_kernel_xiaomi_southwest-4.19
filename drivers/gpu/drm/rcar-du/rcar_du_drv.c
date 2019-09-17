@@ -259,7 +259,7 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
 		},
 	},
 	.num_lvds = 1,
-	.dpll_ch =  BIT(2) | BIT(1),
+	.dpll_mask =  BIT(2) | BIT(1),
 };
 
 static const struct rcar_du_device_info rcar_du_r8a7796_info = {
@@ -289,7 +289,7 @@ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
 		},
 	},
 	.num_lvds = 1,
-	.dpll_ch =  BIT(1),
+	.dpll_mask =  BIT(1),
 };
 
 static const struct rcar_du_device_info rcar_du_r8a77965_info = {
@@ -319,7 +319,7 @@ static const struct rcar_du_device_info rcar_du_r8a77965_info = {
 		},
 	},
 	.num_lvds = 1,
-	.dpll_ch =  BIT(1),
+	.dpll_mask =  BIT(1),
 };
 
 static const struct rcar_du_device_info rcar_du_r8a77970_info = {

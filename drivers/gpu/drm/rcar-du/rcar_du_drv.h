@@ -57,6 +57,7 @@ struct rcar_du_output_routing {
  * @channels_mask: bit mask of available DU channels
  * @routes: array of CRTC to output routes, indexed by output (RCAR_DU_OUTPUT_*)
  * @num_lvds: number of internal LVDS encoders
+ * @dpll_mask: bit mask of DU channels equipped with a DPLL
  */
 struct rcar_du_device_info {
 	unsigned int gen;
@@ -65,7 +66,7 @@ struct rcar_du_device_info {
 	unsigned int channels_mask;
 	struct rcar_du_output_routing routes[RCAR_DU_OUTPUT_MAX];
 	unsigned int num_lvds;
-	unsigned int dpll_ch;
+	unsigned int dpll_mask;
 };
 
 #define RCAR_DU_MAX_CRTCS		4
