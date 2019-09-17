@@ -225,7 +225,7 @@ run_tests:
   when: always
   variables:
     GIT_STRATEGY: none
-    TEST_TIMEOUT: 30
+    TEST_TIMEOUT: 60
   script:
     - /opt/submit_tests.sh
   artifacts:
