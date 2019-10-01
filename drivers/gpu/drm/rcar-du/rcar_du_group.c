@@ -151,7 +151,7 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
 
 	rcar_du_group_setup_pins(rgrp);
 
-	if (rcar_du_has(rgrp->dev, RCAR_DU_FEATURE_EXT_CTRL_REGS)) {
+	if (rcdu->info->gen >= 2) {
 		rcar_du_group_setup_defr8(rgrp);
 		rcar_du_group_setup_didsr(rgrp);
 	}
@@ -251,7 +251,7 @@ int rcar_du_set_dpad0_vsp1_routing(struct rcar_du_device *rcdu)
 	unsigned int index;
 	int ret;
 
-	if (!rcar_du_has(rcdu, RCAR_DU_FEATURE_EXT_CTRL_REGS))
+	if (rcdu->info->gen < 2)
 		return 0;
 
 	/*
