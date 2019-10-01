@@ -24,7 +24,6 @@
 struct clk;
 struct device;
 struct drm_device;
-struct drm_fbdev_cma;
 struct rcar_du_device;
 struct rcar_du_encoder;
 
