@@ -78,7 +78,6 @@ test:arm_renesas_shmobile_defconfig:
   image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:test-$DOCKER_IMAGE_TAG
   variables:
     GIT_STRATEGY: none
-    TEST_TIMEOUT: 60
   script:
     - /opt/submit_tests.sh
   artifacts:
@@ -142,7 +141,6 @@ test:arm64_renesas_defconfig:
   image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:test-$DOCKER_IMAGE_TAG
   variables:
     GIT_STRATEGY: none
-    TEST_TIMEOUT: 60
   script:
     - /opt/submit_tests.sh
   artifacts:
