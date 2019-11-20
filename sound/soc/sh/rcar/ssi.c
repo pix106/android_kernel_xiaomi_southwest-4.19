@@ -150,11 +150,6 @@ int rsnd_ssi_use_busif(struct rsnd_dai_stream *io)
 	return use_busif;
 }
 
-int rsnd_ssi_get_busif(struct rsnd_dai_stream *io)
-{
-	return 0; /* BUSIF0 only for now */
-}
-
 static void rsnd_ssi_status_clear(struct rsnd_mod *mod)
 {
 	rsnd_mod_write(mod, SSISR, 0);
@@ -773,7 +768,7 @@ static int rsnd_ssi_common_probe(struct rsnd_mod *mod,
 {
 	struct device *dev = rsnd_priv_to_dev(priv);
 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
-	int ret;
+	int ret = 0;
 
 	/*
 	 * SSIP/SSIU/IRQ are not needed on
@@ -786,10 +781,6 @@ static int rsnd_ssi_common_probe(struct rsnd_mod *mod,
 	 * It can't judge ssi parent at this point
 	 * see rsnd_ssi_pcm_new()
 	 */
-
-	ret = rsnd_ssiu_attach(io, mod);
-	if (ret < 0)
-		return ret;
 
 	/*
 	 * SSI might be called again as PIO fallback
@@ -984,6 +975,17 @@ static struct dma_chan *rsnd_ssi_dma_req(struct rsnd_dai_stream *io,
 	struct rsnd_priv *priv = rsnd_mod_to_priv(mod);
 	int is_play = rsnd_io_is_play(io);
 	char *name;
+
+	/*
+	 * It should use "rcar_sound,ssiu" on DT.
+	 * But, we need to keep compatibility for old version.
+	 *
+	 * If it has "rcar_sound.ssiu", it will be used.
+	 * If not, "rcar_sound.ssi" will be used.
+	 * see
+	 *	rsnd_ssiu_dma_req()
+	 *	rsnd_dma_of_path()
+	 */
 
 	if (rsnd_ssi_use_busif(io))
 		name = is_play ? "rxu" : "txu";
