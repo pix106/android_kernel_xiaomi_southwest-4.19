@@ -1008,19 +1008,19 @@ return:
 *******************************************************/
 static void nvt_ts_work_func(struct work_struct *work)
 {
-	int32_t ret = -1;
-	uint8_t point_data[POINT_DATA_LEN + 1] = {0};
-	uint32_t position = 0;
-	uint32_t input_x = 0;
-	uint32_t input_y = 0;
-	uint32_t input_w = 0;
-	uint32_t input_p = 0;
-	uint8_t input_id = 0;
+	int32_t ret;
+	uint8_t point_data[POINT_DATA_LEN + 1] = { 0, };
+	uint32_t position;
+	uint32_t input_x;
+	uint32_t input_y;
+	uint32_t input_w;
+	uint32_t input_p;
+	uint8_t input_id;
 #if MT_PROTOCOL_B
 	uint8_t press_id[TOUCH_MAX_FINGER_NUM] = {0};
 #endif /* MT_PROTOCOL_B */
-	int32_t i = 0;
-	int32_t finger_cnt = 0;
+	int32_t i;
+	int32_t finger_cnt;
 
 	mutex_lock(&ts->lock);
 
