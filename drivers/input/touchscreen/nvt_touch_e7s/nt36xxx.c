@@ -1027,7 +1027,7 @@ static void nvt_ts_work_func(struct work_struct *work)
 	ret = CTP_I2C_READ(ts->client, I2C_FW_Address, point_data, POINT_DATA_LEN + 1);
 	if (unlikely(ret < 0)) {
 		NVT_ERR("CTP_I2C_READ failed.(%d)\n", ret);
-		goto XFER_ERROR;
+		goto out;
 	}
 /*
 	//--- dump I2C buf ---
@@ -1040,7 +1040,7 @@ static void nvt_ts_work_func(struct work_struct *work)
 #if NVT_TOUCH_ESD_PROTECT
 	if (nvt_fw_recovery(point_data)) {
 		nvt_esd_check_enable(true);
-		goto XFER_ERROR;
+		goto out;
 	}
 #endif /* #if NVT_TOUCH_ESD_PROTECT */
 
@@ -1048,9 +1048,7 @@ static void nvt_ts_work_func(struct work_struct *work)
 	if (unlikely(bTouchIsAwake == 0)) {
 		input_id = (uint8_t)(point_data[1] >> 3);
 		nvt_ts_wakeup_gesture_report(input_id, point_data);
-		enable_irq(ts->client->irq);
-		mutex_unlock(&ts->lock);
-		return;
+		goto out;
 	}
 #endif
 
@@ -1141,9 +1139,8 @@ static void nvt_ts_work_func(struct work_struct *work)
 
 	input_sync(ts->input_dev);
 
-XFER_ERROR:
+out:
 	enable_irq(ts->client->irq);
-
 	mutex_unlock(&ts->lock);
 }
 
