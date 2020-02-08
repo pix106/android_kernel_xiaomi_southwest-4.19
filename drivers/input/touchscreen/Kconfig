@@ -1388,4 +1388,6 @@ source "drivers/input/touchscreen/synaptics_dsx_e7s/Kconfig"
 
 source "drivers/input/touchscreen/synaptics_tcm/Kconfig"
 
+source "drivers/input/touchscreen/synaptics_dsx_force/Kconfig"
+
 endif
