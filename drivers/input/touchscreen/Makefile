@@ -119,3 +119,4 @@ obj-$(CONFIG_TOUCHSCREEN_NVT_A) 	+= nvt_touch_a/
 obj-$(CONFIG_TOUCHSCREEN_NVT_F7A) 	+= nvt_touch_f7a/
 obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_E7S)	+= synaptics_dsx_e7s/
 obj-$(CONFIG_TOUCHSCREEN_NVT_E7S) 	+= nvt_touch_e7s/
+obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_FORCE) += synaptics_dsx_force/
