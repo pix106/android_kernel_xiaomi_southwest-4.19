@@ -743,6 +743,10 @@ static int handle_jeita(struct step_chg_info *chip)
 			vote(chip->usb_icl_votable, JEITA_VOTER, false, 0);
 	}
 
+#ifdef CONFIG_MACH_MI
+	if (fv_uv > 0)
+#endif
+
 set_jeita_fv:
 	vote(chip->fv_votable, JEITA_VOTER, fv_uv ? true : false, fv_uv);
 
@@ -908,6 +912,8 @@ int qcom_step_chg_init(struct device *dev,
 	chip->jeita_fcc_config->param.prop_name = "BATT_TEMP";
 #ifdef CONFIG_MACH_LONGCHEER
 	chip->jeita_fcc_config->param.hysteresis = 0;
+#elif defined(CONFIG_MACH_MI)
+	chip->jeita_fcc_config->param.hysteresis = 5;
 #else
 	chip->jeita_fcc_config->param.hysteresis = 10;
 #endif
@@ -915,6 +921,8 @@ int qcom_step_chg_init(struct device *dev,
 	chip->jeita_fv_config->param.prop_name = "BATT_TEMP";
 #ifdef CONFIG_MACH_LONGCHEER
 	chip->jeita_fv_config->param.hysteresis = 0;
+#elif defined(CONFIG_MACH_MI)
+	chip->jeita_fv_config->param.hysteresis = 5;
 #else
 	chip->jeita_fv_config->param.hysteresis = 10;
 #endif
