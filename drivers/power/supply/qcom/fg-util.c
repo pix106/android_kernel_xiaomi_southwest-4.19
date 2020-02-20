@@ -1703,7 +1703,7 @@ void fg_stay_awake(struct fg_dev *fg, int awake_reason)
 	spin_lock(&fg->awake_lock);
 
 	if (!fg->awake_status)
-		pm_stay_awake(fg->dev);
+		pm_wakeup_event(fg->dev, 500);
 
 	fg->awake_status |= awake_reason;
 
