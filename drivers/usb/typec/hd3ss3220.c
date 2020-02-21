@@ -127,7 +127,7 @@ static int hd3ss3220_set_role(struct hd3ss3220 *hd3ss3220)
 	return 0;
 }
 
-irqreturn_t hd3ss3220_irq(struct hd3ss3220 *hd3ss3220)
+static irqreturn_t hd3ss3220_irq(struct hd3ss3220 *hd3ss3220)
 {
 	int err;
 
