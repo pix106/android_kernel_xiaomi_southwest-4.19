@@ -164,7 +164,7 @@
 	};
 };
 &pm660l_wled {
-	qcom,led-strings-list = [00 01 02];
+	qcom,string-cfg = <15>;
 	qcom,en-cabc;
 };
 &pm660l_l3 {
