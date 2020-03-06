@@ -28,9 +28,6 @@
 #include "gt9xx_update.c"
 #include "goodix_tool.c"
 
-#ifdef CONFIG_HQ_HARDWARE_INFO
-#include <linux/hardware_info.h>
-#endif
 #define GOODIX_COORDS_ARR_SIZE	4
 #define PROP_NAME_SIZE		24
 #define I2C_MAX_TRANSFER_SIZE   255
@@ -1390,15 +1387,6 @@ static int gtp_read_Color(struct i2c_client *client,struct goodix_ts_data *ts)
 	sprintf(temp,"%02x%02x%02x%02x%02x%02x%02x%02x", buf[2], buf[3], buf[4], buf[5], buf[6],buf[7],buf[8],buf[9]);
 	dev_err(&ts->client->dev,"Color : %s\n",temp);
 	strcpy(tp_lockdown_info,temp);
-	get_hardware_info_data(HWID_CTP_LOCKDOWN_INFO,tp_lockdown_info);
-	if (!strncmp(&tp_lockdown_info[0] + 4, "32", 2))
-	{
-	    get_hardware_info_data(HWID_CTP_COLOR_INFO, " 0x32 black");
-	}
-	if (!strncmp(&tp_lockdown_info[0] + 4, "31", 2))
-	{
-	    get_hardware_info_data(HWID_CTP_COLOR_INFO, "0x31 white");
-		 }
 	return ret;
 }
 static int gtp_lockdown_proc_show(struct seq_file *file, void *data)
@@ -1461,8 +1449,6 @@ static void ctp_vendor_info(struct i2c_client *client, struct goodix_fw_info *gt
 		sprintf(temp, "%x", cfgbuf[2]);
 		strcat(tp_info_summary,temp);
 		strcat(tp_info_summary,"\0");
-
-		get_hardware_info_data(HWID_CTP_FW_INFO,tp_info_summary);
 
 }
 #endif
