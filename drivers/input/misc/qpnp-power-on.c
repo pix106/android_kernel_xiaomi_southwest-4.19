@@ -794,15 +794,8 @@ int qpnp_pon_is_ps_hold_reset(void)
 
 	rc = regmap_read(pon->regmap, QPNP_POFF_REASON1(pon), &reg);
 	if (rc) {
-		dev_err(pon->dev,
-			"Unable to read addr=%x, rc(%d)\n",
-			QPNP_POFF_REASON1(pon), rc);
 		return 0;
 	}
-
-	dev_info(pon->dev,
-			"hw_reset reason1 is 0x%x\n",
-			reg);
 
 	/* The bit 1 is 1, means by PS_HOLD/MSM controlled shutdown */
 	if (reg & 0x2)
@@ -810,9 +803,6 @@ int qpnp_pon_is_ps_hold_reset(void)
 
 	rc = regmap_read(pon->regmap, QPNP_POFF_REASON2(pon), &reg);
 
-	dev_info(pon->dev,
-			"hw_reset reason2 is 0x%x\n",
-			reg);
 	return 0;
 }
 EXPORT_SYMBOL(qpnp_pon_is_ps_hold_reset);
@@ -828,24 +818,14 @@ int qpnp_pon_is_lpk(void)
 
 	rc = regmap_read(pon->regmap, QPNP_POFF_REASON1(pon), &reg);
 	if (rc) {
-		dev_err(pon->dev,
-			"Unable to read addr=%x, rc(%d)\n",
-			QPNP_POFF_REASON1(pon), rc);
 		return 0;
 	}
-
-	dev_info(pon->dev,
-			"hw_reset reason1 is 0x%x\n",
-			reg);
 
 	if (reg & 0x80)
 		return 1;
 
 	rc = regmap_read(pon->regmap, QPNP_POFF_REASON2(pon), &reg);
 
-	dev_info(pon->dev,
-			"hw_reset reason2 is 0x%x\n",
-			reg);
 	return 0;
 }
 EXPORT_SYMBOL(qpnp_pon_is_lpk);
