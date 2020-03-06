@@ -25,9 +25,6 @@
  */
 #include "focaltech_core.h"
 #include "focaltech_flash.h"
-#ifdef CONFIG_HQ_HARDWARE_INFO
-#include <linux/hardware_info.h>
-#endif
 
 /*
  * Static variables
@@ -1506,13 +1503,6 @@ int fts_fwupg_upgrade(struct i2c_client *client, struct fts_upgrade *upg)
 	bool upgrade_flag = false;
 	int upgrade_count = 0;
 	u8 ver = 0;
-#ifdef CONFIG_HQ_HARDWARE_INFO
-	struct fts_ts_data *ts_data = NULL;
-	struct i2c_client **p_client = &client;
-	extern void wdl_update_fts_hq_hardinfo(struct fts_ts_data *ts_data);
-
-	ts_data = container_of(p_client, struct fts_ts_data, client);
-#endif
 
 	FTS_INFO("fw auto upgrade function");
 	if ((NULL == upg) || (NULL == upg->func)) {
@@ -1533,9 +1523,6 @@ int fts_fwupg_upgrade(struct i2c_client *client, struct fts_upgrade *upg)
 				} else {
 					fts_fwupg_get_ver_in_tp(client, &ver);
 					FTS_INFO("success upgrade to fw version %02x", ver);
-				#ifdef CONFIG_HQ_HARDWARE_INFO
-					wdl_update_fts_hq_hardinfo(ts_data);
-				#endif
 					break;
 				}
 			} else {

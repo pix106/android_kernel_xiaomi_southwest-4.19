@@ -35,9 +35,6 @@
 #define FTS_SUSPEND_LEVEL 1
 #endif
 
-#ifdef CONFIG_HQ_HARDWARE_INFO
-#include <linux/hardware_info.h>
-#endif
 #include <linux/proc_fs.h>
 
 /*****************************************************************************
