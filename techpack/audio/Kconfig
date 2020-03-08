@@ -186,5 +186,7 @@ config ELLIPTICLABS
 	tristate "Elliptic Labs fake proximity sensor support"
 config SOUND_CONTROL
 	bool "Sound Control for msm89xx"
+config SND_SOC_USB_HEADSET
+	tristate "Xiaomi USB analog headset driver"
 
 endmenu
