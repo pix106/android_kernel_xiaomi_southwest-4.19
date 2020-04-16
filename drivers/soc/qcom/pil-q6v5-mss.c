@@ -152,7 +152,7 @@ static void restart_modem(struct modem_data *drv)
 {
 	log_modem_sfr(drv);
 	drv->ignore_errors = true;
-#ifdef CONFIG_XIAOMI_CLOVER
+#ifdef CONFIG_MACH_XIAOMI_CLOVER
 	if (strnstr(last_modem_sfr_reason, STR_NV_SIGNATURE_DESTROYED, strlen(last_modem_sfr_reason))) {
 		pr_err("errimei_dev: the NV has been destroyed, should restart to recovery\n");
 		schedule_delayed_work(&create_kobj_work, msecs_to_jiffies(1*1000));
