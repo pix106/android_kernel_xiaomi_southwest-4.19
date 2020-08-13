@@ -402,6 +402,12 @@ void drm_atomic_private_obj_fini(struct drm_private_obj *obj);
 struct drm_private_state * __must_check
 drm_atomic_get_private_obj_state(struct drm_atomic_state *state,
 				 struct drm_private_obj *obj);
+struct drm_private_state *
+drm_atomic_get_old_private_obj_state(struct drm_atomic_state *state,
+				     struct drm_private_obj *obj);
+struct drm_private_state *
+drm_atomic_get_new_private_obj_state(struct drm_atomic_state *state,
+				     struct drm_private_obj *obj);
 
 struct drm_connector *
 drm_atomic_get_old_connector_for_encoder(struct drm_atomic_state *state,
