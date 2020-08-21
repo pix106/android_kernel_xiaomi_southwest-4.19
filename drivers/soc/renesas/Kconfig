@@ -13,6 +13,7 @@ config SOC_RENESAS
 	select SYSC_R8A774A1 if ARCH_R8A774A1
 	select SYSC_R8A774B1 if ARCH_R8A774B1
 	select SYSC_R8A774C0 if ARCH_R8A774C0
+	select SYSC_R8A774E1 if ARCH_R8A774E1
 	select SYSC_R8A7779 if ARCH_R8A7779
 	select SYSC_R8A7790 if ARCH_R8A7790
 	select SYSC_R8A7791 if ARCH_R8A7791 || ARCH_R8A7793
@@ -51,6 +52,10 @@ config SYSC_R8A774B1
 
 config SYSC_R8A774C0
 	bool "RZ/G2E System Controller support" if COMPILE_TEST
+	select SYSC_RCAR
+
+config SYSC_R8A774E1
+	bool "RZ/G2H System Controller support" if COMPILE_TEST
 	select SYSC_RCAR
 
 config SYSC_R8A7779
