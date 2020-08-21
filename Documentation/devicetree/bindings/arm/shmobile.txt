@@ -94,9 +94,12 @@ Boards:
   - Henninger
     compatible = "renesas,henninger", "renesas,r8a7791"
   - HopeRun expansion board for HiHope RZ/G2 platforms
-    compatible = "hoperun,hihope-rzg2m", "renesas,r8a774a1",
+    compatible = "hoperun,hihope-rzg2h", "renesas,r8a774e1",
+                 "hoperun,hihope-rzg2m", "renesas,r8a774a1",
                  "hoperun,hihope-rzg2n", "renesas,r8a774b1",
                  "hoperun,hihope-rzg2-ex"
+  - HopeRun HiHope RZ/G2H platform
+    compatible = "hoperun,hihope-rzg2h", "renesas,r8a774e1"
   - HopeRun HiHope RZ/G2M platform
     compatible = "hoperun,hihope-rzg2m", "renesas,r8a774a1"
   - HopeRun HiHope RZ/G2N platform
