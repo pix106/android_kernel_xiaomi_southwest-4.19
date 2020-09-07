@@ -83,6 +83,19 @@ config ATMEL_TCB_CLKSRC_BLOCK
 	  TC can be used for other purposes, such as PWM generation and
 	  interval timing.
 
+config BATTERY_SAVER
+	bool "Battery saver mode for kernelspace"
+	help
+	  This driver creates a sysfs toggle that can be enabled when
+	  battery saver mode is activated in userspace, and provides
+	  functions to check the status of battery saver and to activate
+	  it from anywhere in the kernel.
+
+	  The former can be used to disable features that may otherwise
+	  drain battery faster, such as CPU and DDR boosting.
+
+	  If in doubt, say N.
+
 config DUMMY_IRQ
 	tristate "Dummy IRQ handler"
 	default n
