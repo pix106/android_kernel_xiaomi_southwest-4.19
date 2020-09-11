@@ -28,7 +28,7 @@ struct crypto_vops_qti_entry {
 int crypto_qti_init_crypto(struct device *dev, void __iomem *mmio_base,
 			   void **priv_data);
 int crypto_qti_enable(void *priv_data);
-int crypto_qti_disable(void *priv_data);
+void crypto_qti_disable(void *priv_data);
 int crypto_qti_resume(void *priv_data);
 int crypto_qti_debug(void *priv_data);
 int crypto_qti_keyslot_program(void *priv_data,
@@ -51,7 +51,7 @@ static inline int crypto_qti_enable(void *priv_data)
 {
 	return 0;
 }
-static inline int crypto_qti_disable(void *priv_data)
+static inline void crypto_qti_disable(void *priv_data)
 {
 	return 0;
 }
