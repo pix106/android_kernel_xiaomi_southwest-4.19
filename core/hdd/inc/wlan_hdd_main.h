@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012-2020 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -2235,16 +2236,6 @@ QDF_STATUS hdd_adapter_iterate(hdd_adapter_iterate_cb cb,
 			       void *context);
 
 /**
- * hdd_for_each_adapter - adapter iterator macro
- * @hdd_ctx: the global HDD context
- * @adapter: an hdd_adapter pointer to use as a cursor
- */
-#define hdd_for_each_adapter(hdd_ctx, adapter) \
-	for (hdd_get_front_adapter(hdd_ctx, &adapter); \
-	     adapter; \
-	     hdd_get_next_adapter(hdd_ctx, adapter, &adapter))
-
-/**
  * __hdd_take_ref_and_fetch_front_adapter - Helper macro to lock, fetch front
  * adapter, take ref and unlock.
  * @hdd_ctx: the global HDD context
@@ -2304,32 +2295,6 @@ QDF_STATUS hdd_adapter_iterate(hdd_adapter_iterate_cb cb,
  * @adapter: an hdd_adapter pointer to use as a cursor
  */
 #define __hdd_is_adapter_valid(_adapter) !!_adapter
-
-/**
- * hdd_for_each_adapter_dev_held - Adapter iterator with dev_hold called
- * @hdd_ctx: the global HDD context
- * @adapter: an hdd_adapter pointer to use as a cursor
- *
- * This iterator will take the reference of the netdev associated with the
- * given adapter so as to prevent it from being removed in other context.
- * If the control goes inside the loop body then the dev_hold has been invoked.
- *
- *                           ***** NOTE *****
- * Before the end of each iteration, dev_put(adapter->dev) must be
- * called. Not calling this will keep hold of a reference, thus preventing
- * unregister of the netdevice.
- *
- * Usage example:
- *                 hdd_for_each_adapter_dev_held(hdd_ctx, adapter) {
- *                         <work involving adapter>
- *                         <some more work>
- *                         dev_put(adapter->dev)
- *                 }
- */
-#define hdd_for_each_adapter_dev_held(hdd_ctx, adapter) \
-	for (__hdd_take_ref_and_fetch_front_adapter(hdd_ctx, adapter); \
-	     __hdd_is_adapter_valid(adapter); \
-	     __hdd_take_ref_and_fetch_next_adapter(hdd_ctx, adapter))
 
 /**
  * hdd_for_each_adapter_dev_held_safe - Adapter iterator with dev_hold called

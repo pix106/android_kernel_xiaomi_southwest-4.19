@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012-2020 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -5188,11 +5189,11 @@ wlan_hdd_set_no_dfs_flag_config_policy[QCA_WLAN_VENDOR_ATTR_SET_NO_DFS_FLAG_MAX
 static bool wlan_hdd_check_dfs_channel_for_adapter(struct hdd_context *hdd_ctx,
 				enum QDF_OPMODE device_mode)
 {
-	struct hdd_adapter *adapter;
+	struct hdd_adapter *adapter, *next_adapter = NULL;
 	struct hdd_ap_ctx *ap_ctx;
 	struct hdd_station_ctx *sta_ctx;
 
-	hdd_for_each_adapter(hdd_ctx, adapter) {
+	hdd_for_each_adapter_dev_held_safe(hdd_ctx, adapter, next_adapter) {
 		if ((device_mode == adapter->device_mode) &&
 		    (device_mode == QDF_SAP_MODE)) {
 			ap_ctx =
@@ -5209,6 +5210,9 @@ static bool wlan_hdd_check_dfs_channel_for_adapter(struct hdd_context *hdd_ctx,
 						hdd_ctx->pdev,
 						ap_ctx->operating_channel)) {
 				hdd_err("SAP running on DFS channel");
+				dev_put(adapter->dev);
+				if (next_adapter)
+					dev_put(next_adapter->dev);
 				return true;
 			}
 		}
@@ -5227,9 +5231,13 @@ static bool wlan_hdd_check_dfs_channel_for_adapter(struct hdd_context *hdd_ctx,
 				wlan_reg_get_channel_state(hdd_ctx->pdev,
 					sta_ctx->conn_info.channel))) {
 				hdd_err("client connected on DFS channel");
+				dev_put(adapter->dev);
+				if (next_adapter)
+					dev_put(next_adapter->dev);
 				return true;
 			}
 		}
+		dev_put(adapter->dev);
 	}
 
 	return false;
@@ -10311,13 +10319,15 @@ static enum sta_roam_policy_dfs_mode wlan_hdd_get_sta_roam_dfs_mode(
  */
 uint8_t hdd_get_sap_operating_band(struct hdd_context *hdd_ctx)
 {
-	struct hdd_adapter *adapter;
+	struct hdd_adapter *adapter, *next_adapter = NULL;
 	uint8_t  operating_channel = 0;
 	uint8_t sap_operating_band = 0;
 
-	hdd_for_each_adapter(hdd_ctx, adapter) {
-		if (adapter->device_mode != QDF_SAP_MODE)
+	hdd_for_each_adapter_dev_held_safe(hdd_ctx, adapter, next_adapter) {
+		if (adapter->device_mode != QDF_SAP_MODE) {
+			dev_put(adapter->dev);
 			continue;
+		}
 
 		operating_channel = adapter->session.ap.operating_channel;
 		if (IS_24G_CH(operating_channel))
@@ -10326,6 +10336,8 @@ uint8_t hdd_get_sap_operating_band(struct hdd_context *hdd_ctx)
 			sap_operating_band = BAND_5G;
 		else
 			sap_operating_band = BAND_ALL;
+
+		dev_put(adapter->dev);
 	}
 
 	return sap_operating_band;
