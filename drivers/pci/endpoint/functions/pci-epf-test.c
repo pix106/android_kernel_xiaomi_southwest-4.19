@@ -73,6 +73,36 @@ static struct pci_epf_header test_header = {
 
 static size_t bar_size[] = { 512, 512, 1024, 16384, 131072, 1048576 };
 
+static void pci_epf_test_print_rate(const char *ops, u64 size,
+				    struct timespec64 *start,
+				    struct timespec64 *end, bool dma)
+{
+	struct timespec64 ts;
+	u64 rate, ns;
+
+	ts = timespec64_sub(*end, *start);
+
+	/* convert both size (stored in 'rate') and time in terms of 'ns' */
+	ns = timespec64_to_ns(&ts);
+	rate = size * NSEC_PER_SEC;
+
+	/* Divide both size (stored in 'rate') and ns by a common factor */
+	while (ns > UINT_MAX) {
+		rate >>= 1;
+		ns >>= 1;
+	}
+
+	if (!ns)
+		return;
+
+	/* calculate the rate */
+	do_div(rate, (uint32_t)ns);
+
+	pr_info("\n%s => Size: %llu bytes\t DMA: %s\t Time: %llu.%09u seconds\t"
+		"Rate: %llu KB/s\n", ops, size, dma ? "YES" : "NO",
+		(u64)ts.tv_sec, (u32)ts.tv_nsec, rate / 1024);
+}
+
 static int pci_epf_test_copy(struct pci_epf_test *epf_test)
 {
 	int ret;
@@ -80,6 +110,7 @@ static int pci_epf_test_copy(struct pci_epf_test *epf_test)
 	void __iomem *dst_addr;
 	phys_addr_t src_phys_addr;
 	phys_addr_t dst_phys_addr;
+	struct timespec64 start, end;
 	struct pci_epf *epf = epf_test->epf;
 	struct device *dev = &epf->dev;
 	struct pci_epc *epc = epf->epc;
@@ -118,7 +149,10 @@ static int pci_epf_test_copy(struct pci_epf_test *epf_test)
 		goto err_dst_addr;
 	}
 
+	ktime_get_ts64(&start);
 	memcpy(dst_addr, src_addr, reg->size);
+	ktime_get_ts64(&end);
+	pci_epf_test_print_rate("COPY", reg->size, &start, &end, false);
 
 	pci_epc_unmap_addr(epc, epf->func_no, dst_phys_addr);
 
@@ -142,6 +176,7 @@ static int pci_epf_test_read(struct pci_epf_test *epf_test)
 	void *buf;
 	u32 crc32;
 	phys_addr_t phys_addr;
+	struct timespec64 start, end;
 	struct pci_epf *epf = epf_test->epf;
 	struct device *dev = &epf->dev;
 	struct pci_epc *epc = epf->epc;
@@ -170,7 +205,11 @@ static int pci_epf_test_read(struct pci_epf_test *epf_test)
 		goto err_map_addr;
 	}
 
+	ktime_get_ts64(&start);
 	memcpy_fromio(buf, src_addr, reg->size);
+	ktime_get_ts64(&end);
+
+	pci_epf_test_print_rate("READ", reg->size, &start, &end, false);
 
 	crc32 = crc32_le(~0, buf, reg->size);
 	if (crc32 != reg->checksum)
@@ -194,6 +233,7 @@ static int pci_epf_test_write(struct pci_epf_test *epf_test)
 	void __iomem *dst_addr;
 	void *buf;
 	phys_addr_t phys_addr;
+	struct timespec64 start, end;
 	struct pci_epf *epf = epf_test->epf;
 	struct device *dev = &epf->dev;
 	struct pci_epc *epc = epf->epc;
@@ -225,7 +265,11 @@ static int pci_epf_test_write(struct pci_epf_test *epf_test)
 	get_random_bytes(buf, reg->size);
 	reg->checksum = crc32_le(~0, buf, reg->size);
 
+	ktime_get_ts64(&start);
 	memcpy_toio(dst_addr, buf, reg->size);
+	ktime_get_ts64(&end);
+
+	pci_epf_test_print_rate("WRITE", reg->size, &start, &end, false);
 
 	/*
 	 * wait 1ms inorder for the write to complete. Without this delay L3
