@@ -41,7 +41,6 @@
 #include <linux/fb.h>
 #include <linux/pm_qos.h>
 #include <linux/cpufreq.h>
-#include <linux/mdss_io_util.h>
 #include "gf_spi.h"
 
 #if defined(USE_SPI_BUS)
@@ -60,7 +59,6 @@
 #define PATCH_LEVEL 10
 
 #define WAKELOCK_HOLD_TIME 2000 /* in ms */
-#define FP_UNLOCK_REJECTION_TIMEOUT (WAKELOCK_HOLD_TIME - 500)
 
 #define GF_SPIDEV_NAME     "goodix,fingerprint"
 /*device name after register in charater*/
@@ -331,7 +329,6 @@ static irqreturn_t gf_irq(int irq, void *handle)
 	if ((gf_dev->wait_finger_down == true) && (gf_dev->device_available == 1) && (gf_dev->fb_black == 1)) {
 		printk("%s:shedule_work\n",__func__);
 		gf_dev->wait_finger_down = false;
-		schedule_work(&gf_dev->work);
 	}
 #elif defined(GF_FASYNC)
 	struct gf_dev *gf_dev = &gf;
@@ -542,13 +539,6 @@ static long gf_compat_ioctl(struct file *filp, unsigned int cmd, unsigned long a
 	return gf_ioctl(filp, cmd, (unsigned long)compat_ptr(arg));
 }
 #endif /*CONFIG_COMPAT*/
-
- static void notification_work(struct work_struct *work)
-{
-	pr_debug("notification_work\n");
-	mdss_prim_panel_fb_unblank(FP_UNLOCK_REJECTION_TIMEOUT);
-	pr_debug("unblank\n");
-}
 
 static int gf_open(struct inode *inode, struct file *filp)
 {
@@ -770,7 +760,6 @@ static int gf_probe(struct platform_device *pdev)
 	gf_dev->device_available = 0;
 	gf_dev->fb_black = 0;
 	gf_dev->wait_finger_down = false;
-	INIT_WORK(&gf_dev->work, notification_work);
 
 #if defined CONFIG_MACH_XIAOMI_LAVENDER || defined CONFIG_MACH_XIAOMI_WAYNE
 	vreg = regulator_get(&gf_dev->spi->dev,"vcc_ana");
