@@ -31,6 +31,8 @@
 #include <linux/fcntl.h>
 #include <linux/uaccess.h>
 #include <linux/crc8.h>
+#include <linux/fs.h>
+#include <asm/segment.h>
 
 #include "tas2557.h"
 #include "tas2557-core.h"
@@ -2207,30 +2209,32 @@ void tas2557_clear_firmware(struct TFirmware *pFirmware)
 	memset(pFirmware, 0x00, sizeof(struct TFirmware));
 }
 
-static int tas2557_load_calibration(struct tas2557_priv *pTAS2557,	char *pFileName)
+static int tas2557_load_calibration(struct tas2557_priv *pTAS2557, char *pFileName)
 {
 	int nResult = 0;
 
-	int nFile;
+	struct file *nFile=NULL;
 	mm_segment_t fs;
 	unsigned char pBuffer[1000];
 	int nSize = 0;
+	loff_t pos = 0;
 
 	dev_dbg(pTAS2557->dev, "%s:\n", __func__);
 
 	fs = get_fs();
 	set_fs(KERNEL_DS);
-	nFile = sys_open(pFileName, O_RDONLY, 0);
+	nFile = filp_open(pFileName, O_RDONLY, 0);
 
-	dev_info(pTAS2557->dev, "TAS2557 calibration file = %s, handle = %d\n",
-		pFileName, nFile);
-
-	if (nFile >= 0) {
-		nSize = sys_read(nFile, pBuffer, 1000);
-		sys_close(nFile);
+	dev_info(pTAS2557->dev, "TAS2557 calibration file = %s\n", pFileName);
+	if (IS_ERR(nFile)) {
+		if (PTR_ERR(nFile) == -ENOENT)
+			dev_err(pTAS2557->dev, "TAS2557 calibration file %s is not exit\n", pFileName);
+		else
+			dev_err(pTAS2557->dev, "TAS2557 cannot open calibration file: %s errno:%d\n", pFileName, (int)PTR_ERR(nFile));
 	} else {
-		dev_err(pTAS2557->dev, "TAS2557 cannot open calibration file: %s\n",
-			pFileName);
+		pos = nFile->f_pos;
+		nSize = vfs_read(nFile, pBuffer, 1000, &pos);
+		filp_close(nFile,NULL);
 	}
 
 	set_fs(fs);
@@ -2245,11 +2249,8 @@ static int tas2557_load_calibration(struct tas2557_priv *pTAS2557,	char *pFileNa
 	if (nResult)
 		dev_err(pTAS2557->dev, "TAS2557 calibration file is corrupt\n");
 	else
-		dev_info(pTAS2557->dev, "TAS2557 calibration: %d calibrations\n",
-			pTAS2557->mpCalFirmware->mnCalibrations);
-
+		dev_info(pTAS2557->dev, "TAS2557 calibration: %d calibrations\n", pTAS2557->mpCalFirmware->mnCalibrations);
 end:
-
 	return nResult;
 }
 
