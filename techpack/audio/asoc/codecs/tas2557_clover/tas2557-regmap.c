@@ -438,6 +438,7 @@ static int tas2557_dev_bulk_read(
 	int nResult = 0;
 	unsigned char reg = 0;
 	unsigned char Addr = 0;
+	int i;
 
 	mutex_lock(&pTAS2557->dev_lock);
 	if (pTAS2557->mbTILoadActive) {
@@ -467,9 +468,36 @@ static int tas2557_dev_bulk_read(
 		nResult = -1;
 	}
 
-	if (nResult >= 0)
-		nResult = tas2557_i2c_bulkread_device(
-			pTAS2557, Addr, reg, pData, nLength);
+	if (nResult >= 0) {
+		#define STRIDE 4
+		/* Read chunk bytes defined by STRIDE */
+		for (i = 0; i < (nLength / STRIDE); i++) {
+			nResult = regmap_bulk_read(pTAS2557->mpRegmap,
+						TAS2557_PAGE_REG((nRegister + i*STRIDE)),
+						&pData[i*STRIDE], STRIDE);
+			if (nResult < 0) {
+				dev_err(pTAS2557->dev, "%s, %d, I2C error %d\n",
+						__func__, __LINE__, nResult);
+				pTAS2557->mnErrCode |= ERROR_DEVA_I2C_COMM;
+			} else {
+				pTAS2557->mnErrCode &= ~ERROR_DEVA_I2C_COMM;
+			}
+		}
+
+		/* Read remaining bytes */
+		if ((nLength % STRIDE) != 0) {
+			nResult = regmap_bulk_read(pTAS2557->mpRegmap,
+						TAS2557_PAGE_REG(nRegister + i*STRIDE),
+						&pData[i*STRIDE], (nLength % STRIDE));
+			if (nResult < 0) {
+				dev_err(pTAS2557->dev, "%s, %d, I2C error %d\n",
+					__func__, __LINE__, nResult);
+				pTAS2557->mnErrCode |= ERROR_DEVA_I2C_COMM;
+			} else {
+				pTAS2557->mnErrCode &= ~ERROR_DEVA_I2C_COMM;
+			}
+		}
+	}
 
 end:
 	mutex_unlock(&pTAS2557->dev_lock);
