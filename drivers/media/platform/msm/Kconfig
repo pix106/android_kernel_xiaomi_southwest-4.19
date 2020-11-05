@@ -51,7 +51,12 @@ config MSMB_CAMERA_DEBUG
        Enable printk() debug for msm camera 2.0.
 
 if MSMB_CAMERA
-       source "drivers/media/platform/msm/camera_v2/Kconfig"
+if !XIAOMI_WHYRED
+source "drivers/media/platform/msm/camera_v2/Kconfig"
+endif # !XIAOMI_WHYRED
+if XIAOMI_WHYRED
+source "drivers/media/platform/msm/camera_v2-whyred/Kconfig"
+endif # XIAOMI_WHYRED
 endif # MSMB_CAMERA
 
 source "drivers/media/platform/msm/cvp/Kconfig"
