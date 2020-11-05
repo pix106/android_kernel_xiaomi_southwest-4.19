@@ -16,13 +16,12 @@
 #include <linux/pm_qos.h>
 #include <linux/clk.h>
 #include <linux/io.h>
-#include <linux/clk/msm-clk.h>
+#include <linux/clk/qcom.h>
 #include <linux/msm-bus.h>
 #include <linux/msm-bus-board.h>
 #include <linux/iommu.h>
 #include <asm/dma-iommu.h>
 #include <linux/dma-direction.h>
-#include <linux/dma-attrs.h>
 #include <linux/dma-buf.h>
 
 #include "msm_camera_io_util.h"
