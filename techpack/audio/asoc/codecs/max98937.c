@@ -22,6 +22,7 @@
 #include <sound/tlv.h>
 #include <linux/debugfs.h>
 #include "max98937.h"
+#include <linux/miscdevice.h>
 
 /* #define snd_soc_kcontrol_codec snd_kcontrol_chip */
 /* #define snd_soc_dapm_to_codec(w->dapm)  w->codec */
