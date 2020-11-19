@@ -16,6 +16,13 @@ qcom,zql6019_battery_8600mah {
 	qcom,max-voltage-uv = <4400000>;
 	qcom,nom-batt-capacity-mah = <8620>;
 	qcom,fastchg-current-ma = <2000>;
+	qcom,jeita-fcc-ranges = <0   50   600000
+				 51  150  900000
+				 151 450  2000000
+				 451 600  1000000>;
+	qcom,jeita-fv-ranges = <0   100  4400000
+				101 450  4400000
+				451 600  4100000>;
 	qcom,batt-id-kohm = <200>;
 	qcom,battery-beta = <3435>;
 	qcom,fg-cc-cv-threshold-mv = <4390>;
