@@ -37,6 +37,7 @@
 #ifdef CONFIG_TOUCHSCREEN_COMMON
 #include <linux/input/tp_common.h>
 #endif
+#include <uapi/linux/sched/types.h>
 
 /* add check F7A LCM by wanghan start */
 extern char g_lcd_id[128];
