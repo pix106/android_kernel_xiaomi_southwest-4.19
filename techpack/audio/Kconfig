@@ -16,6 +16,8 @@ config MSM_ADSP_LOADER
 	tristate "MSM_ADSP_LOADER"
 config MSM_AVTIMER
 	tristate "MSM_AVTIMER"
+config AVTIMER_LEGACY
+	tristate "AVTIMER_LEGACY"
 config MSM_CDC_PINCTRL
 	tristate "MSM_CDC_PINCTRL"
 config MSM_GLINK_SPI_XPRT
