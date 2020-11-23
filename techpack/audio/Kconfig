@@ -188,5 +188,8 @@ config SOUND_CONTROL
 	bool "Sound Control for msm89xx"
 config SND_SOC_USB_HEADSET
 	tristate "Xiaomi USB analog headset driver"
+config SND_SOC_TFA9894
+	tristate "NXP Semiconductors TFA9894 amplifier"
+	depends on I2C
 
 endmenu
