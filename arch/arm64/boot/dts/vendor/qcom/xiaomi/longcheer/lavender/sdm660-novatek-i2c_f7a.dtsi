@@ -36,6 +36,7 @@
     status = "ok";
     novatek@62 {
         compatible = "novatek,NVT-ts";
+		com,i2c-touch-active = "novatek, NVT-ts";
         reg = <0x62>;
         interrupt-parent = <&tlmm>;
         interrupts = <67 0x2008>;
