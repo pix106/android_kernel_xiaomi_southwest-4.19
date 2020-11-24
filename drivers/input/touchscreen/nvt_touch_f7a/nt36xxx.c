@@ -714,7 +714,7 @@ static int32_t nvt_flash_proc_init(void)
 /* function page definition */
 #define FUNCPAGE_GESTURE         1
 
-static struct wakeup_source gesture_wakeup;
+static struct wakeup_source *gesture_wakeup;
 
 /*******************************************************
 Description:
@@ -1166,7 +1166,7 @@ static irqreturn_t nvt_ts_irq_handler(int32_t irq, void *dev_id)
 
 #if WAKEUP_GESTURE
 	if (bTouchIsAwake == 0) {
-		__pm_wakeup_event(&gesture_wakeup, msecs_to_jiffies(5000));
+		__pm_wakeup_event(gesture_wakeup, msecs_to_jiffies(5000));
 	}
 #endif
 
@@ -1461,7 +1461,7 @@ static int32_t nvt_ts_probe(struct i2c_client *client, const struct i2c_device_i
 	for (retry = 0; retry < (sizeof(gesture_key_array) / sizeof(gesture_key_array[0])); retry++) {
 		input_set_capability(ts->input_dev, EV_KEY, gesture_key_array[retry]);
 	}
-	wakeup_source_init(&gesture_wakeup, "poll-wake-lock");
+	gesture_wakeup = wakeup_source_register(NULL, "poll-wake-lock");
 #ifdef CONFIG_TOUCHSCREEN_COMMON
     ret = tp_common_set_double_tap_ops(&double_tap_ops);
     if (ret < 0) {
