@@ -106,3 +106,9 @@
 &qcom_seecom {
 	qcom,qsee-reentrancy-support = <0>;
 };
+
+&soc {
+	qcom,sps {
+		status = "ok";
+	};
+};
