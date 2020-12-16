@@ -32,6 +32,7 @@
 
 &i2c_1 {
 	status = "ok";
+	qcom,disable-dma;
 	synaptics_tcm@20 {
 		compatible = "synaptics,tcm-i2c";
 		com,i2c-touch-active = "synaptics,tcm-i2c";
