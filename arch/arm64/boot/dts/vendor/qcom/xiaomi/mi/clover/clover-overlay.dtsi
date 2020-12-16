@@ -659,6 +659,7 @@
 };
 &i2c_3 {
 	status = "ok";
+	qcom,disable-dma;
 	focaltech@38 {
 		compatible = "focaltech,fts";
 		reg = <0x38>;
