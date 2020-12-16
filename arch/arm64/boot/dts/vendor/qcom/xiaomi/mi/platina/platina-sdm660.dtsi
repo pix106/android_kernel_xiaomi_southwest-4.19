@@ -374,6 +374,9 @@
 		pinctrl-1 = <&spk_id_pull_up>;
 		pinctrl-2 = <&spk_id_no_pull>;
 	};
+	qcom,sps {
+		status = "ok";
+	};
 };
 
 &pm660_gpios {
