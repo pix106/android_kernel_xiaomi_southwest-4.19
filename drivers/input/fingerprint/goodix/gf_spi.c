@@ -78,6 +78,8 @@ static LIST_HEAD(device_list);
 static DEFINE_MUTEX(device_list_lock);
 static struct gf_dev gf;
 
+extern int fpsensor;
+
 static struct gf_key_map maps[] = {
 	{ EV_KEY, GF_KEY_INPUT_HOME },
 	{ EV_KEY, GF_KEY_INPUT_MENU },
@@ -935,6 +937,11 @@ static struct platform_driver gf_driver = {
 static int __init gf_init(void)
 {
 	int status;
+
+	if (fpsensor != 2) {
+		pr_err("Macle gf_init failed as fpsensor = %d(2=goodix)\n", fpsensor);
+		return -1;
+	}
 
 	/* Claim our 256 reserved device numbers.  Then register a class
 	 * that will key udev/mdev to add/remove /dev nodes.  Last, register
