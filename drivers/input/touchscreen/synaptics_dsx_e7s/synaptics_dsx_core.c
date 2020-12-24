@@ -907,7 +907,7 @@ static ssize_t synaptics_rmi4_wake_gesture_store(struct device *dev,
 	unsigned int input;
 	struct synaptics_rmi4_data *rmi4_data = dev_get_drvdata(dev);
 
-	if (kstrtouint(buf, 10, &input) != 1)
+	if (sscanf(buf, "%u", &input) != 1)
 		return -EINVAL;
 
 	input = input > 0 ? 1 : 0;
