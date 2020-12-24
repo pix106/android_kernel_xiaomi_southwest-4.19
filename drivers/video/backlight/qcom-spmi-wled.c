@@ -1410,7 +1410,7 @@ static const struct wled_var_cfg wled5_boost_i_limit_cfg = {
 };
 
 static const u32 wled_fs_current_values[] = {
-	0, 2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000,
+	0, 2500, 5000, 7500, 10000, 12500, 15000, 17500, 18000, 20000,
 	22500, 25000, 27500, 30000,
 };
 
