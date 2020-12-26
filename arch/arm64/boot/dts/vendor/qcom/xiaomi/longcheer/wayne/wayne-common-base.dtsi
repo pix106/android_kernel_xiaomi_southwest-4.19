@@ -123,3 +123,24 @@
 &dsi_nt36672_tianma_fhd_video {
 	qcom,mdss-brightness-max-level = <4095>;
 };
+
+&thermal_zones {
+	ibat-high {
+		status = "disabled";
+	};
+	ibat-vhigh {
+		status = "disabled";
+	};
+	vbat_adc {
+		status = "disabled";
+	};
+	vbat_low {
+		status = "disabled";
+	};
+	vbat_too_low {
+		status = "disabled";
+        };
+        soc  {
+                status = "disabled";
+	};
+};
