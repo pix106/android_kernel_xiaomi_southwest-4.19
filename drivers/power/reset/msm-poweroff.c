@@ -35,10 +35,18 @@
 #define SCM_IO_DISABLE_PMIC_ARBITER	1
 #define SCM_IO_DEASSERT_PS_HOLD		2
 #define SCM_WDOG_DEBUG_BOOT_PART	0x9
+#ifdef CONFIG_MACH_XIAOMI_JASON
+#define SCM_DLOAD_FULLDUMP		0X18
+#else
 #define SCM_DLOAD_FULLDUMP		0X10
+#endif
 #define SCM_EDLOAD_MODE			0X01
 #define SCM_DLOAD_CMD			0x10
+#ifdef CONFIG_MACH_XIAOMI_JASON
+#define SCM_DLOAD_MINIDUMP		0X28
+#else
 #define SCM_DLOAD_MINIDUMP		0X20
+#endif
 #define SCM_DLOAD_BOTHDUMPS	(SCM_DLOAD_MINIDUMP | SCM_DLOAD_FULLDUMP)
 
 #define DL_MODE_PROP "qcom,msm-imem-download_mode"
@@ -62,11 +70,12 @@ static void scm_disable_sdi(void);
  * There is no API from TZ to re-enable the registers.
  * So the SDI cannot be re-enabled when it already by-passed.
  */
-#ifdef CONFIG_MACH_LONGCHEER
+#if defined(CONFIG_MACH_LONGCHEER) || defined(CONFIG_MACH_XIAOMI_CLOVER) || defined(CONFIG_MACH_XIAOMI_JASON)
 int download_mode = 0;
 #else
 int download_mode = 1;
 #endif
+
 static struct kobject dload_kobj;
 
 static int in_panic;
@@ -499,13 +508,14 @@ static void msm_restart_prepare(const char *cmd)
 	else
 		qpnp_pon_system_pwr_off(PON_POWER_OFF_HARD_RESET);
 
+#if defined(CONFIG_MACH_LONGCHEER) || defined(CONFIG_MACH_XIAOMI_CLOVER) || defined(CONFIG_MACH_XIAOMI_JASON)
 	if (in_panic) {
 		qpnp_pon_set_restart_reason(PON_RESTART_REASON_PANIC);
 		qpnp_pon_system_pwr_off(PON_POWER_OFF_WARM_RESET);
-#ifdef CONFIG_MACH_XIAOMI_CLOVER
-                __raw_writel(0x77665508, restart_reason);
+		__raw_writel(0x77665508, restart_reason);
+	} else
 #endif
-	} else if (cmd != NULL) {
+	if (cmd != NULL) {
 		if (!strncmp(cmd, "bootloader", 10)) {
 			qpnp_pon_set_restart_reason(
 				PON_RESTART_REASON_BOOTLOADER);
@@ -546,18 +556,29 @@ static void msm_restart_prepare(const char *cmd)
                                 PON_RESTART_REASON_OTHER);
                         __raw_writel(0x77665501, restart_reason);
 #endif
-                } else if (!strncmp(cmd, "edl", 3)) {
+		} else if (!strncmp(cmd, "edl", 3)) {
+#if defined(CONFIG_MACH_LONGCHEER) || defined(CONFIG_MACH_XIAOMI_JASON)
 			if (0)
 				enable_emergency_dload_mode();
 			else
 				pr_notice("This command already been disabled\n");
+#else
+			enable_emergency_dload_mode();
+#endif
 		} else {
+#if defined(CONFIG_MACH_LONGCHEER) || defined(CONFIG_MACH_XIAOMI_CLOVER) || defined(CONFIG_MACH_XIAOMI_JASON)
 			qpnp_pon_set_restart_reason(PON_RESTART_REASON_NORMAL);
+#endif
 			__raw_writel(0x77665501, restart_reason);
 		}
+#if defined(CONFIG_MACH_LONGCHEER) || defined(CONFIG_MACH_XIAOMI_CLOVER)
+	} else if (in_panic) {
+		qpnp_pon_set_restart_reason(PON_RESTART_REASON_PANIC);
+		qpnp_pon_system_pwr_off(PON_POWER_OFF_WARM_RESET);
 	} else {
 		qpnp_pon_set_restart_reason(PON_RESTART_REASON_NORMAL);
 		__raw_writel(0x77665501, restart_reason);
+#endif
 	}
 
 	flush_cache_all();
