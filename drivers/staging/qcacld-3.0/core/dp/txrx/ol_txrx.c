@@ -1549,7 +1549,9 @@ static void ol_txrx_pdev_detach(struct cdp_pdev *ppdev, int force)
 {
 	struct ol_txrx_pdev_t *pdev = (struct ol_txrx_pdev_t *)ppdev;
 	struct ol_txrx_stats_req_internal *req, *temp_req;
+#ifdef WLAN_DEBUG
 	int i = 0;
+#endif
 
 	/*checking to ensure txrx pdev structure is not NULL */
 	if (!pdev) {
@@ -1566,6 +1568,7 @@ static void ol_txrx_pdev_detach(struct cdp_pdev *ppdev, int force)
 	TAILQ_FOREACH_SAFE(req, &pdev->req_list, req_list_elem, temp_req) {
 		TAILQ_REMOVE(&pdev->req_list, req, req_list_elem);
 		pdev->req_list_depth--;
+#ifdef WLAN_DEBUG
 		ol_txrx_err(
 			"%d: %pK,verbose(%d), concise(%d), up_m(0x%x), reset_m(0x%x)\n",
 			i++,
@@ -1575,6 +1578,7 @@ static void ol_txrx_pdev_detach(struct cdp_pdev *ppdev, int force)
 			req->base.stats_type_upload_mask,
 			req->base.stats_type_reset_mask
 			);
+#endif
 		qdf_mem_free(req);
 	}
 	qdf_spin_unlock_bh(&pdev->req_list_spinlock);
@@ -3819,10 +3823,12 @@ ol_txrx_fw_stats_handler(ol_txrx_pdev_handle pdev,
 
 			if (status == HTT_DBG_STATS_STATUS_PARTIAL)
 				more = 1;
+#ifdef WLAN_DEBUG
 			if (req->base.print.verbose || req->base.print.concise)
 				/* provide the header along with the data */
 				htt_t2h_stats_print(stats_info_list,
 						    req->base.print.concise);
+#endif
 
 			switch (type) {
 			case HTT_DBG_STATS_WAL_PDEV_TXRX:
@@ -4201,6 +4207,7 @@ static void ol_txrx_disp_peer_stats(ol_txrx_pdev_handle pdev)
 void ol_txrx_stats_display(ol_txrx_pdev_handle pdev,
 			   enum qdf_stats_verbosity_level level)
 {
+#ifdef WLAN_DEBUG
 	u64 tx_dropped =
 		pdev->stats.pub.tx.dropped.download_fail.pkts
 		  + pdev->stats.pub.tx.dropped.target_discard.pkts
@@ -4314,6 +4321,7 @@ void ol_txrx_stats_display(ol_txrx_pdev_handle pdev,
 		       pdev->stats.pub.rx.rx_ind_histogram.pkts_41_50,
 		       pdev->stats.pub.rx.rx_ind_histogram.pkts_51_60,
 		       pdev->stats.pub.rx.rx_ind_histogram.pkts_61_plus);
+#endif
 
 	ol_txrx_disp_peer_stats(pdev);
 }
