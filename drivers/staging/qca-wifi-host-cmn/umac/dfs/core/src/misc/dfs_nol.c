@@ -264,7 +264,9 @@ static os_timer_func(dfs_remove_from_nol)
 void dfs_print_nol(struct wlan_dfs *dfs)
 {
 	struct dfs_nolelem *nol;
+#ifdef WLAN_DEBUG
 	int i = 0;
+#endif
 	uint32_t diff_ms, remaining_sec;
 
 	if (!dfs) {
@@ -279,12 +281,14 @@ void dfs_print_nol(struct wlan_dfs *dfs)
 				     nol->nol_start_us, 1000);
 		diff_ms = (nol->nol_timeout_ms - diff_ms);
 		remaining_sec = diff_ms / 1000; /* Convert to seconds */
+#ifdef WLAN_DEBUG
 		dfs_info(NULL, WLAN_DEBUG_DFS_ALWAYS,
 			"nol:%d channel=%d MHz width=%d MHz time left=%u seconds nol start_us=%llu",
 			i++, nol->nol_freq,
 			nol->nol_chwidth,
 			remaining_sec,
 			nol->nol_start_us);
+#endif
 		nol = nol->nol_next;
 	}
 }
