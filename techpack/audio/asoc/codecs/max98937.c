@@ -24,9 +24,9 @@
 #include "max98937.h"
 #include <linux/miscdevice.h>
 
-/* #define snd_soc_kcontrol_codec snd_kcontrol_chip */
-/* #define snd_soc_dapm_to_codec(w->dapm)  w->codec */
-/* #define snd_soc_codec_get_dapm(codec) &codec->dapm */
+/* #define snd_soc_kcontrol_component snd_kcontrol_chip */
+/* #define snd_soc_dapm_to_component(w->dapm)  w->component */
+/* #define snd_soc_component_get_dapm(component) &component->dapm */
  /* component_driver */
 
 #define USE_DSM_MISC_DEV 1
@@ -1152,8 +1152,8 @@ void max98927_wrap_update_bits(struct max989xx_priv *max98927,
 static int max98927_reg_get_w(struct snd_kcontrol *kcontrol,
 			      struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component= snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	struct soc_mixer_control *mc =
 		(struct soc_mixer_control *)kcontrol->private_value;
 	int reg = mc->reg;
@@ -1178,8 +1178,8 @@ static int max98927_reg_get_w(struct snd_kcontrol *kcontrol,
 static int max98927_reg_put_w(struct snd_kcontrol *kcontrol,
 			      struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	struct soc_mixer_control *mc =
 		(struct soc_mixer_control *)kcontrol->private_value;
 	int reg = mc->reg;
@@ -1204,8 +1204,8 @@ static int max98927_reg_get(struct snd_kcontrol *kcontrol,
 			    struct snd_ctl_elem_value *ucontrol, unsigned int reg,
 			    unsigned int mask, unsigned int shift)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	int data;
 
 	max98927_wrapper_read(max98927, 0, reg, &data);
@@ -1218,8 +1218,8 @@ static int max98927_reg_put(struct snd_kcontrol *kcontrol,
 			    struct snd_ctl_elem_value *ucontrol, unsigned int reg,
 			    unsigned int mask, unsigned int shift)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int sel = ucontrol->value.integer.value[0];
 
 	max98927_wrap_update_bits(max98927, reg, mask, sel << shift);
@@ -1229,11 +1229,11 @@ static int max98927_reg_put(struct snd_kcontrol *kcontrol,
 }
 #endif
 
-static int max98927_dai_set_fmt(struct snd_soc_dai *codec_dai,
+static int max98927_dai_set_fmt(struct snd_soc_dai *component_dai,
 	unsigned int fmt)
 {
-	struct snd_soc_codec *codec = codec_dai->codec;
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = component_dai->component;
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int pcm_master_mode = MAX98927_PCM_Master_Mode;
 	unsigned int pcm_mode_config = MAX98927_PCM_Mode_Config;
     int i;
@@ -1305,7 +1305,7 @@ static int max98927_dai_set_fmt(struct snd_soc_dai *codec_dai,
 	return 0;
 }
 
-/* codec MCLK rate in master mode */
+/* component MCLK rate in master mode */
 static const int rate_table[] = {
 	5644800, 6000000, 6144000, 6500000,
 	9600000, 11289600, 12000000, 12288000,
@@ -1334,7 +1334,7 @@ static int max98927_set_clock(struct max989xx_priv *max98927,
 						break;
 				}
 				if (i == ARRAY_SIZE(rate_table)) {
-					pr_err("%s couldn't get the MCLK to match codec\n", __func__);
+					pr_err("%s couldn't get the MCLK to match component\n", __func__);
 					return -EINVAL;
 				}
 				regmap_update_bits(max98927->regmap[j], pcm_master_mode,
@@ -1368,8 +1368,8 @@ static int max98927_dai_hw_params(struct snd_pcm_substream *substream,
 				  struct snd_pcm_hw_params *params,
 				  struct snd_soc_dai *dai)
 {
-	struct snd_soc_codec *codec = dai->codec;
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = dai->component;
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int pcm_mode_config = MAX98927_PCM_Mode_Config;
 	unsigned int pcm_sample_rate_setup_1 = MAX98927_PCM_Sample_rate_setup_1;
 	unsigned int pcm_sample_rate_setup_2 = MAX98927_PCM_Sample_rate_setup_2;
@@ -1494,8 +1494,8 @@ err:
 static int max98927_dai_set_sysclk(struct snd_soc_dai *dai,
 				   int clk_id, unsigned int freq, int dir)
 {
-	struct snd_soc_codec *codec = dai->codec;
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = dai->component;
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 
 	pr_info("%s: clk_id %d, freq %d, dir %d\n", __func__, clk_id, freq, dir);
 
@@ -1503,10 +1503,10 @@ static int max98927_dai_set_sysclk(struct snd_soc_dai *dai,
 	return 0;
 }
 
-static int max98927_stream_mute(struct snd_soc_dai *codec_dai, int mute, int stream)
+static int max98927_stream_mute(struct snd_soc_dai *component_dai, int mute, int stream)
 {
-	struct snd_soc_codec *codec = codec_dai->codec;
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = component_dai->component;
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	uint32_t* payload = (uint32_t *)&gParam[PKG_HEADER];
 	uint32_t impedance = 0;
 	unsigned int global_enable = MAX98927_Global_Enable;
@@ -1630,8 +1630,8 @@ static int max98927_feedforward_event(struct snd_soc_dapm_widget *w,
 {
 	u32  ret = 0;
 
-    struct snd_soc_codec *codec = snd_soc_dapm_to_codec(w->dapm);
-	struct max989xx_priv  *max98927 = snd_soc_codec_get_drvdata(codec);
+    struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
+	struct max989xx_priv  *max98927 = snd_soc_component_get_drvdata(component);
 
 	if(!max98927){
 		pr_err("%s------priv data null pointer\n", __func__);
@@ -1659,8 +1659,8 @@ static int max98927_feedback_event(struct snd_soc_dapm_widget *w,
 {
 	u32  ret = 0;
 
-    struct snd_soc_codec *codec = snd_soc_dapm_to_codec(w->dapm);
-	struct max989xx_priv  *max98927 = snd_soc_codec_get_drvdata(codec);
+    struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
+	struct max989xx_priv  *max98927 = snd_soc_component_get_drvdata(component);
 
 	if(!max98927){
 		pr_err("%s------priv data null pointer\n", __func__);
@@ -1697,8 +1697,8 @@ static DECLARE_TLV_DB_SCALE(max98927_digital_tlv, -1600, 25, 0);
 static int max98927_spk_gain_get(struct snd_kcontrol *kcontrol,
 				 struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 
 	ucontrol->value.integer.value[0] = max98927->spk_gain;
 	pr_info("max98927_spk_gain_get: spk_gain setting returned %d\n",
@@ -1710,8 +1710,8 @@ static int max98927_spk_gain_get(struct snd_kcontrol *kcontrol,
 static int max98927_spk_gain_get_l(struct snd_kcontrol *kcontrol,
 				 struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 
 	ucontrol->value.integer.value[0] = max98927->spk_gain_l;
 	pr_info("max98927_spk_gain_get_l: spk_gain_l setting returned %d\n",
@@ -1723,8 +1723,8 @@ static int max98927_spk_gain_get_l(struct snd_kcontrol *kcontrol,
 static int max98927_spk_gain_get_r(struct snd_kcontrol *kcontrol,
 				 struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 
 	ucontrol->value.integer.value[0] = max98927->spk_gain_r;
 	pr_info("max98927_spk_gain_get_r: spk_gain_r setting returned %d\n",
@@ -1736,8 +1736,8 @@ static int max98927_spk_gain_get_r(struct snd_kcontrol *kcontrol,
 static int max98927_spk_gain_put(struct snd_kcontrol *kcontrol,
 				 struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int sel = ucontrol->value.integer.value[0];
 	int i;
 	pr_info("max98927_spk_gain_put: %d\n", sel);
@@ -1761,8 +1761,8 @@ static int max98927_spk_gain_put(struct snd_kcontrol *kcontrol,
 static int max98927_spk_gain_put_l(struct snd_kcontrol *kcontrol,
 				 struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int sel = ucontrol->value.integer.value[0];
 	pr_info("max98927_spk_gain_put_l: %d\n", sel);
 
@@ -1784,8 +1784,8 @@ static int max98927_spk_gain_put_l(struct snd_kcontrol *kcontrol,
 static int max98927_spk_gain_put_r(struct snd_kcontrol *kcontrol,
 				 struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int sel = ucontrol->value.integer.value[0];
 	pr_info("max98927_spk_gain_put_r: %d\n", sel);
 
@@ -1807,8 +1807,8 @@ static int max98927_spk_gain_put_r(struct snd_kcontrol *kcontrol,
 static int max98927_digital_gain_get(struct snd_kcontrol *kcontrol,
 				     struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 
 	ucontrol->value.integer.value[0] = max98927->digital_gain;
 	pr_info("%s: digital_gain setting returned %d\n", __func__,
@@ -1819,8 +1819,8 @@ static int max98927_digital_gain_get(struct snd_kcontrol *kcontrol,
 static int max98927_digital_gain_get_l(struct snd_kcontrol *kcontrol,
 				     struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 
 	ucontrol->value.integer.value[0] = max98927->digital_gain_l;
 	pr_info("%s: digital_gain_l setting returned %d\n", __func__,
@@ -1831,8 +1831,8 @@ static int max98927_digital_gain_get_l(struct snd_kcontrol *kcontrol,
 static int max98927_digital_gain_get_r(struct snd_kcontrol *kcontrol,
 				     struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 
 	ucontrol->value.integer.value[0] = max98927->digital_gain_r;
 	pr_info("%s: digital_gain_r setting returned %d\n", __func__,
@@ -1844,8 +1844,8 @@ static int max98927_digital_gain_get_r(struct snd_kcontrol *kcontrol,
 static int max98927_digital_gain_put(struct snd_kcontrol *kcontrol,
 				     struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int sel = ucontrol->value.integer.value[0];
 
 	pr_info("max98927_digital_gain_put: %d\n", sel);
@@ -1861,8 +1861,8 @@ static int max98927_digital_gain_put(struct snd_kcontrol *kcontrol,
 static int max98927_digital_gain_put_l(struct snd_kcontrol *kcontrol,
 				     struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int sel = ucontrol->value.integer.value[0];
 
 	pr_info("max98927_digital_gain_put_l: %d\n", sel);
@@ -1880,8 +1880,8 @@ static int max98927_digital_gain_put_l(struct snd_kcontrol *kcontrol,
 static int max98927_digital_gain_put_r(struct snd_kcontrol *kcontrol,
 				     struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int sel = ucontrol->value.integer.value[0];
 
 	pr_info("max98927_digital_gain_put_r: %d\n", sel);
@@ -1900,8 +1900,8 @@ static int max98927_digital_gain_put_r(struct snd_kcontrol *kcontrol,
 static int max98927_boost_voltage_get(struct snd_kcontrol *kcontrol,
 				      struct snd_ctl_elem_value *ucontrol)
 {
-    struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+    struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	if (!max98927->bIsMax98937[MAX98927L])
 		return max98927_reg_get(kcontrol, ucontrol, MAX98927_Boost_Control_0,
 			MAX98927_Boost_Control_0_BST_VOUT_Mask, 0);
@@ -1913,8 +1913,8 @@ static int max98927_boost_voltage_get(struct snd_kcontrol *kcontrol,
 static int max98927_boost_voltage_put(struct snd_kcontrol *kcontrol,
 				      struct snd_ctl_elem_value *ucontrol)
 {
-    struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+    struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int sel = ucontrol->value.integer.value[0];
 	int i;
 	for(i = 0; i < MAX_CHANNEL_NUM; i++){
@@ -1933,8 +1933,8 @@ static int max98927_boost_voltage_put(struct snd_kcontrol *kcontrol,
 static int max98927_boost_input_limit_get(struct snd_kcontrol *kcontrol,
 					  struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	if (!max98927->bIsMax98937[MAX98927L])
 		return max98927_reg_get(kcontrol, ucontrol, MAX98927_Boost_Control_1,
 			MAX98927_Boost_Control_1_BST_ILIM_Mask, MAX98927_BST_ILIM_SHIFT);
@@ -1946,8 +1946,8 @@ static int max98927_boost_input_limit_get(struct snd_kcontrol *kcontrol,
 static int max98927_boost_input_limit_put(struct snd_kcontrol *kcontrol,
 					  struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int sel = ucontrol->value.integer.value[0];
  	int i;
 	for(i = 0; i < MAX_CHANNEL_NUM; i++){
@@ -1966,8 +1966,8 @@ static int max98927_boost_input_limit_put(struct snd_kcontrol *kcontrol,
 static int max98927_spk_src_get(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	if (!max98927->bIsMax98937[MAX98927L])
 		return max98927_reg_get(kcontrol, ucontrol, MAX98927_Speaker_source_select,
 			MAX98927_Speaker_source_select_SPK_SOURCE_Mask, 0);
@@ -1979,8 +1979,8 @@ static int max98927_spk_src_get(struct snd_kcontrol *kcontrol,
 static int max98927_spk_src_put(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
  	unsigned int sel = ucontrol->value.integer.value[0];
  	int i;
 	for(i = 0; i < MAX_CHANNEL_NUM; i++){
@@ -1999,8 +1999,8 @@ static int max98927_spk_src_put(struct snd_kcontrol *kcontrol,
 static int max98927_mono_out_get(struct snd_kcontrol *kcontrol,
 				 struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	if (!max98927->bIsMax98937[MAX98927L])
 		return max98927_reg_get(kcontrol, ucontrol, MAX98927_PCM_to_speaker_monomix_A,
 			MAX98927_PCM_to_speaker_monomix_A_DMONOMIX_CH0_SOURCE_Mask, 0);
@@ -2012,8 +2012,8 @@ static int max98927_mono_out_get(struct snd_kcontrol *kcontrol,
 static int max98927_mono_out_put(struct snd_kcontrol *kcontrol,
 				 struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
   	unsigned int sel = ucontrol->value.integer.value[0];
  	int i;
 	for(i = 0; i < MAX_CHANNEL_NUM; i++){
@@ -2032,8 +2032,8 @@ static int max98927_mono_out_put(struct snd_kcontrol *kcontrol,
 static int max98927_mono_out_get_l(struct snd_kcontrol *kcontrol,
 				   struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	int data = 0;
 
 	if(i2c_states & MAX98927_CH0){
@@ -2055,8 +2055,8 @@ static int max98927_mono_out_get_l(struct snd_kcontrol *kcontrol,
 static int max98927_mono_out_put_l(struct snd_kcontrol *kcontrol,
 				   struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int sel = ucontrol->value.integer.value[0];
 
 	if(i2c_states & MAX98927_CH0){
@@ -2081,8 +2081,8 @@ static int max98927_mono_out_put_l(struct snd_kcontrol *kcontrol,
 static int max98927_mono_out_get_r(struct snd_kcontrol *kcontrol,
 				   struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	int data = 0;
 
 	if(i2c_states & MAX98927_CH1){
@@ -2103,8 +2103,8 @@ static int max98927_mono_out_get_r(struct snd_kcontrol *kcontrol,
 static int max98927_mono_out_put_r(struct snd_kcontrol *kcontrol,
 				   struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int sel = ucontrol->value.integer.value[0];
 
 	if(i2c_states & MAX98927_CH1){
@@ -2130,8 +2130,8 @@ static int max98927_mono_out_put_r(struct snd_kcontrol *kcontrol,
 static int max98927_feedback_en_get_l(struct snd_kcontrol *kcontrol,
 				      struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	int data = 0;
 
 	if(i2c_states & MAX98927_CH0){
@@ -2150,8 +2150,8 @@ static int max98927_feedback_en_get_l(struct snd_kcontrol *kcontrol,
 static int max98927_feedback_en_put_l(struct snd_kcontrol *kcontrol,
 				      struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int sel = ucontrol->value.integer.value[0];
 
 	if(i2c_states & MAX98927_CH0){
@@ -2171,8 +2171,8 @@ static int max98927_feedback_en_put_l(struct snd_kcontrol *kcontrol,
 static int max98927_feedback_en_get_r(struct snd_kcontrol *kcontrol,
 				      struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	int data = 0;
 
 	if(i2c_states & MAX98927_CH1){
@@ -2190,8 +2190,8 @@ static int max98927_feedback_en_get_r(struct snd_kcontrol *kcontrol,
 static int max98927_feedback_en_put_r(struct snd_kcontrol *kcontrol,
 				      struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int sel = ucontrol->value.integer.value[0];
 
 	if(i2c_states & MAX98927_CH1){
@@ -2213,8 +2213,8 @@ static int max98927_feedback_en_put_r(struct snd_kcontrol *kcontrol,
 static int max98927_left_channel_enable_get(struct snd_kcontrol *kcontrol,
 					    struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	int data_global = 0;
 	int data_amp = 0;
 
@@ -2240,8 +2240,8 @@ static int max98927_left_channel_enable_get(struct snd_kcontrol *kcontrol,
 static int max98927_left_channel_enable_set(struct snd_kcontrol *kcontrol,
 					    struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int sel = ucontrol->value.integer.value[0];
 
 	max98927->spk_mode &= ~0x1;
@@ -2268,8 +2268,8 @@ static int max98927_left_channel_enable_set(struct snd_kcontrol *kcontrol,
 static int max98927_right_channel_enable_get(struct snd_kcontrol *kcontrol,
 					     struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	int data_global = 0;
 	int data_amp = 0;
 
@@ -2294,8 +2294,8 @@ static int max98927_right_channel_enable_get(struct snd_kcontrol *kcontrol,
 static int max98927_right_channel_enable_set(struct snd_kcontrol *kcontrol,
 					     struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int sel = ucontrol->value.integer.value[0];
 
 	max98927->spk_mode &= ~0x2;
@@ -2321,8 +2321,8 @@ static int max98927_right_channel_enable_set(struct snd_kcontrol *kcontrol,
 static int max98927_speaker_force_close_get(struct snd_kcontrol *kcontrol,
 					     struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	int data_global = 0;
 	int data_amp = 0;
 	int value;
@@ -2351,8 +2351,8 @@ static int max98927_speaker_force_close_get(struct snd_kcontrol *kcontrol,
 static int max98927_speaker_force_close_set(struct snd_kcontrol *kcontrol,
 					     struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int disable = !ucontrol->value.integer.value[0];
 
 	if(i2c_states & MAX98927_CH1){
@@ -2387,8 +2387,8 @@ static int max98927_speaker_force_close_set(struct snd_kcontrol *kcontrol,
 static int max98927_receiver_mix_mode_get(struct snd_kcontrol *kcontrol,
 				      struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 
 	ucontrol->value.integer.value[0] = !!max98927->rcv_mix_mode;
 	return 0;
@@ -2397,8 +2397,8 @@ static int max98927_receiver_mix_mode_get(struct snd_kcontrol *kcontrol,
 static int max98927_receiver_mix_mode_put(struct snd_kcontrol *kcontrol,
 				      struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int mix = !!ucontrol->value.integer.value[0];
 	int i;
 
@@ -2443,8 +2443,8 @@ static int max98927_receiver_mix_mode_put(struct snd_kcontrol *kcontrol,
 static int max98927_factory_test_set(struct snd_kcontrol *kcontrol,
 	struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	int factory_test = ucontrol->value.integer.value[0];
 
 	max98927->factory_test = !!factory_test;
@@ -2456,8 +2456,8 @@ static int max98927_factory_test_set(struct snd_kcontrol *kcontrol,
 static int max98927_factory_test_get(struct snd_kcontrol *kcontrol,
 	struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	int factory_test = max98927->factory_test;
 
 	ucontrol->value.integer.value[0] = !!factory_test;
@@ -2467,8 +2467,8 @@ static int max98927_factory_test_get(struct snd_kcontrol *kcontrol,
 static int max98927_adsp_mode_get(struct snd_kcontrol *kcontrol,
 		struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 
     ucontrol->value.integer.value[0] = max98927->adsp_mode;
 	pr_info("%s: value:%d", __func__, (int)ucontrol->value.integer.value[0]);
@@ -2478,8 +2478,8 @@ static int max98927_adsp_mode_get(struct snd_kcontrol *kcontrol,
 static int max98927_adsp_mode_put(struct snd_kcontrol *kcontrol,
 		struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
 	unsigned int sel = ucontrol->value.integer.value[0];
 	uint32_t* payload = (uint32_t *)&gParam[PKG_HEADER];
 
@@ -2676,15 +2676,15 @@ static struct snd_soc_dai_driver max98927_dai[] = {
 	}
 };
 
-static int max98927_probe(struct snd_soc_codec *codec)
+static int max98927_probe(struct snd_soc_component *component)
 {
-	struct max989xx_priv *max98927 = snd_soc_codec_get_drvdata(codec);
-	 /* struct snd_soc_dapm_context *dapm = &codec->dapm;  */
-	struct snd_soc_dapm_context *dapm = snd_soc_codec_get_dapm(codec);
+	struct max989xx_priv *max98927 = snd_soc_component_get_drvdata(component);
+	 /* struct snd_soc_dapm_context *dapm = &component->dapm;  */
+	struct snd_soc_dapm_context *dapm = snd_soc_component_get_dapm(component);
 
 	pr_info("%s: enter\n", __func__);
 
-	max98927->codec = codec;
+	max98927->component = component;
 	snd_soc_dapm_ignore_suspend(dapm, "MAX98927_OUT");
 	snd_soc_dapm_ignore_suspend(dapm, "MAX98927_IN");
 	snd_soc_dapm_ignore_suspend(dapm, "HiFi Playback");
@@ -2695,16 +2695,14 @@ static int max98927_probe(struct snd_soc_codec *codec)
 	return 0;
 }
 
-static const struct snd_soc_codec_driver soc_codec_dev_max98927 = {
-	.probe			  = max98927_probe,
-    .component_driver	  = {
+static const struct snd_soc_component_driver soc_component_dev_max98927 = {
+	        .probe		  = max98927_probe,
 		.dapm_routes	  = max98927_audio_map,
 		.num_dapm_routes  = ARRAY_SIZE(max98927_audio_map),
 		.dapm_widgets     = max98927_dapm_widgets,
 		.num_dapm_widgets = ARRAY_SIZE(max98927_dapm_widgets),
 		.controls         = max98927_snd_controls,
 		.num_controls     = ARRAY_SIZE(max98927_snd_controls),
-    },
 };
 
 static const struct regmap_config max989xx_initial_regmap = {
@@ -2973,15 +2971,15 @@ static int max98927_i2c_probe(struct i2c_client *i2c,
 		i2c_states |= presence;
 		if(max98927->dev == NULL){
 			dev_set_name(&i2c->dev, "%s", "max98927");
-			ret = snd_soc_register_codec(&i2c->dev, &soc_codec_dev_max98927,
+			ret = snd_soc_register_component(&i2c->dev, &soc_component_dev_max98927,
 					max98927_dai, ARRAY_SIZE(max98927_dai));
 			if (ret < 0) {
-				pr_err("max98927 Failed to register codec: %d\n", ret);
+				pr_err("max98927 Failed to register component: %d\n", ret);
 				i2c_states = 0;
 				return ret;
 			}
 			max98927->dev = &i2c->dev;
-			pr_info("max98927 register codec ok.\n");
+			pr_info("max98927 register component ok.\n");
 #ifdef USE_DSM_MISC_DEV
 			ret = misc_register(&dsm_ctrl_miscdev);
 			if (ret != 0)
@@ -3004,7 +3002,7 @@ static int max98927_i2c_remove(struct i2c_client *client)
 	struct max989xx_priv *max98927 = i2c_get_clientdata(client);
 	if(max98927) {
 		if(max98927->dev == &client->dev) {
-			snd_soc_unregister_codec(&client->dev);
+			snd_soc_unregister_component(&client->dev);
 			i2c_set_clientdata(client, NULL);
 
 #ifdef USE_DSM_MISC_DEV
