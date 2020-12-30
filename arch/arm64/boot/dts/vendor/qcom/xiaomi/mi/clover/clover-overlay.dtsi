@@ -901,6 +901,7 @@
 	};
 };
 &i2c_6 {
+	qcom,disable-dma;
 	tas2557s@4c {
 		compatible = "ti,tas2557s";
 		reg = <0x4c>;
