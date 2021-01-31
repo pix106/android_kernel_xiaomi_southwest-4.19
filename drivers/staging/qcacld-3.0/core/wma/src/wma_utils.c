@@ -3993,42 +3993,12 @@ WLAN_PHY_MODE wma_peer_phymode(tSirNwType nw_type, uint8_t sta_type,
 			phymode = MODE_11G;
 			break;
 		}
-		if (CH_WIDTH_40MHZ < ch_width)
-			WMA_LOGE("80/160 MHz BW sent in 11G, configured 40MHz");
-		if (ch_width)
-			phymode = (is_he) ? MODE_11AX_HE40_2G : (is_vht) ?
-					MODE_11AC_VHT40_2G : MODE_11NG_HT40;
-		else
-			phymode = (is_he) ? MODE_11AX_HE20_2G : (is_vht) ?
-					MODE_11AC_VHT20_2G : MODE_11NG_HT20;
 		break;
 	case eSIR_11A_NW_TYPE:
 		if (!(is_ht || is_vht || is_he)) {
 			phymode = MODE_11A;
 			break;
 		}
-		if (is_he) {
-			if (ch_width == CH_WIDTH_160MHZ)
-				phymode = MODE_11AX_HE160;
-			else if (ch_width == CH_WIDTH_80P80MHZ)
-				phymode = MODE_11AX_HE80_80;
-			else if (ch_width == CH_WIDTH_80MHZ)
-				phymode = MODE_11AX_HE80;
-			else
-				phymode = (ch_width) ?
-					  MODE_11AX_HE40 : MODE_11AX_HE20;
-		} else if (is_vht) {
-			if (ch_width == CH_WIDTH_160MHZ)
-				phymode = MODE_11AC_VHT160;
-			else if (ch_width == CH_WIDTH_80P80MHZ)
-				phymode = MODE_11AC_VHT80_80;
-			else if (ch_width == CH_WIDTH_80MHZ)
-				phymode = MODE_11AC_VHT80;
-			else
-				phymode = (ch_width) ?
-					  MODE_11AC_VHT40 : MODE_11AC_VHT20;
-		} else
-			phymode = (ch_width) ? MODE_11NA_HT40 : MODE_11NA_HT20;
 		break;
 	default:
 		WMA_LOGE("%s: Invalid nw type %d", __func__, nw_type);
