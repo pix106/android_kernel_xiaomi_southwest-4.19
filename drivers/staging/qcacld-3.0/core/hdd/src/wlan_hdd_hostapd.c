@@ -1435,10 +1435,6 @@ static int hdd_convert_dot11mode_from_phymode(int phymode)
 	case MODE_11AC_VHT20_2G:
 	case MODE_11AC_VHT40_2G:
 	case MODE_11AC_VHT80_2G:
-#ifdef CONFIG_160MHZ_SUPPORT
-	case MODE_11AC_VHT80_80:
-	case MODE_11AC_VHT160:
-#endif
 		return QCA_WLAN_802_11_MODE_11AC;
 
 	default:

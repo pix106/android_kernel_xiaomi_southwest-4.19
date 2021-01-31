@@ -404,18 +404,11 @@ ifneq ($(TARGET_BUILD_VARIANT),user)
 endif
 
 #Enable WLAN/Power debugfs feature only if debug_fs is enabled
-ifeq ($(CONFIG_DEBUG_FS), y)
-       # Flag to enable debugfs. Depends on CONFIG_DEBUG_FS in kernel
-       # configuration.
-       CONFIG_WLAN_DEBUGFS := y
-
-       CONFIG_WLAN_MWS_INFO_DEBUGFS := y
-endif
 
 # Feature flags which are not (currently) configurable via Kconfig
 
 #Whether to build debug version
-BUILD_DEBUG_VERSION := y
+BUILD_DEBUG_VERSION := n
 
 #Enable this flag to build driver in diag version
 BUILD_DIAG_VERSION := y
@@ -746,7 +739,7 @@ CONFIG_WMI_INTERFACE_EVENT_LOGGING := y
 CONFIG_WLAN_FEATURE_LINK_LAYER_STATS := y
 CONFIG_FEATURE_WLAN_EXTSCAN := y
 CONFIG_WMI_BCN_OFFLOAD := y
-CONFIG_160MHZ_SUPPORT := y
+CONFIG_160MHZ_SUPPORT := n
 CONFIG_MCL := y
 CONFIG_REG_CLIENT := y
 CONFIG_LEGACY_CHAN_ENUM := y
@@ -754,7 +747,7 @@ CONFIG_WLAN_PMO_ENABLE := y
 CONFIG_CONVERGED_P2P_ENABLE := y
 CONFIG_WLAN_POLICY_MGR_ENABLE := y
 CONFIG_FEATURE_BLACKLIST_MGR := y
-CONFIG_SUPPORT_11AX := y
+CONFIG_SUPPORT_11AX := n
 CONFIG_HDD_INIT_WITH_RTNL_LOCK := y
 CONFIG_WLAN_CONV_SPECTRAL_ENABLE := y
 CONFIG_WLAN_SPECTRAL_ENABLE := y
@@ -862,8 +855,8 @@ CONFIG_WLAN_LOGGING_SOCK_SVC := y
 endif
 
 ifneq ($(TARGET_BUILD_VARIANT),user)
-CONFIG_DESC_DUP_DETECT_DEBUG := y
-CONFIG_DEBUG_RX_RING_BUFFER := y
+CONFIG_DESC_DUP_DETECT_DEBUG := n
+CONFIG_DEBUG_RX_RING_BUFFER := n
 endif
 
 ifeq (y,$(findstring y,$(CONFIG_CNSS) $(CONFIG_CNSS_MODULE)))
