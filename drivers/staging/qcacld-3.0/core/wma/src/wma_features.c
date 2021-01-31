@@ -685,13 +685,6 @@ WLAN_PHY_MODE wma_chan_phy_mode(uint8_t chan, enum phy_ch_width chan_width,
 				else if (bw_val == 40)
 					phymode = MODE_11AC_VHT40_2G;
 				break;
-			case MLME_DOT11_MODE_11AX:
-			case MLME_DOT11_MODE_11AX_ONLY:
-				if (20 == bw_val)
-					phymode = MODE_11AX_HE20_2G;
-				else if (40 == bw_val)
-					phymode = MODE_11AX_HE40_2G;
-				break;
 			default:
 				break;
 			}
@@ -729,23 +722,6 @@ WLAN_PHY_MODE wma_chan_phy_mode(uint8_t chan, enum phy_ch_width chan_width,
 					phymode = MODE_11AC_VHT40;
 				else if (bw_val == 80)
 					phymode = MODE_11AC_VHT80;
-				else if (chan_width == CH_WIDTH_160MHZ)
-					phymode = MODE_11AC_VHT160;
-				else if (chan_width == CH_WIDTH_80P80MHZ)
-					phymode = MODE_11AC_VHT80_80;
-				break;
-			case MLME_DOT11_MODE_11AX:
-			case MLME_DOT11_MODE_11AX_ONLY:
-				if (20 == bw_val)
-					phymode = MODE_11AX_HE20;
-				else if (40 == bw_val)
-					phymode = MODE_11AX_HE40;
-				else if (80 == bw_val)
-					phymode = MODE_11AX_HE80;
-				else if (CH_WIDTH_160MHZ == chan_width)
-					phymode = MODE_11AX_HE160;
-				else if (CH_WIDTH_80P80MHZ == chan_width)
-					phymode = MODE_11AX_HE80_80;
 				break;
 			default:
 				break;
