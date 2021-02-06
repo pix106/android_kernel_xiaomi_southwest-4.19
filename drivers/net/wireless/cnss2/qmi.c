@@ -850,7 +850,7 @@ static int cnss_wlfw_wlan_mac_req_send_sync(struct cnss_plat_data *plat_priv,
 	}
 
 	if (resp->resp.result != QMI_RESULT_SUCCESS_V01) {
-		cnss_pr_err("WLAN mac req failed, result: %d, err: %d\n",
+		cnss_pr_err("WLAN mac req failed, result: %d\n",
 			    resp->resp.result);
 
 		ret = -EIO;
