@@ -85,6 +85,7 @@
 #define VNMC_INF_YUV8_BT601	(1 << 16)
 #define VNMC_INF_YUV10_BT656	(2 << 16)
 #define VNMC_INF_YUV10_BT601	(3 << 16)
+#define VNMC_INF_RAW8		(4 << 16)
 #define VNMC_INF_YUV16		(5 << 16)
 #define VNMC_INF_RGB888		(6 << 16)
 #define VNMC_VUP		(1 << 10)
@@ -599,6 +600,8 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
 
 	if (vin->format.pixelformat == V4L2_PIX_FMT_NV16)
 		rvin_write(vin, ALIGN(vin->format.width, 0x20), VNIS_REG);
+	else if (vin->format.pixelformat == V4L2_PIX_FMT_SRGGB8)
+		rvin_write(vin, ALIGN(vin->format.width / 2, 0x10), VNIS_REG);
 	else
 		rvin_write(vin, ALIGN(vin->format.width, 0x10), VNIS_REG);
 }
@@ -677,6 +680,9 @@ static int rvin_setup(struct rvin_dev *vin)
 
 		input_is_yuv = true;
 		break;
+	case MEDIA_BUS_FMT_SRGGB8_1X8:
+		vnmc |= VNMC_INF_RAW8;
+		break;
 	default:
 		break;
 	}
@@ -729,6 +735,9 @@ static int rvin_setup(struct rvin_dev *vin)
 	case V4L2_PIX_FMT_XBGR32:
 		/* Note: not supported on M1 */
 		dmr = VNDMR_EXRGB;
+		break;
+	case V4L2_PIX_FMT_SRGGB8:
+		dmr = 0;
 		break;
 	default:
 		vin_err(vin, "Invalid pixelformat (0x%x)\n",
