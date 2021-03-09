@@ -11,6 +11,7 @@ Mandatory properties
    - "renesas,r8a774a1-csi2" for the R8A774A1 device.
    - "renesas,r8a774b1-csi2" for the R8A774B1 device.
    - "renesas,r8a774c0-csi2" for the R8A774C0 device.
+   - "renesas,r8a774e1-csi2" for the R8A774E1 device.
    - "renesas,r8a7795-csi2" for the R8A7795 device.
    - "renesas,r8a7796-csi2" for the R8A7796 device.
    - "renesas,r8a77965-csi2" for the R8A77965 device.
