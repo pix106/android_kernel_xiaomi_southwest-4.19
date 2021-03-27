@@ -33,8 +33,11 @@
 #define BLOCK_64KB_NUM 4
 
 const struct firmware *fw_entry = NULL;
+#ifndef CONFIG_MACH_XIAOMI_CLOVER
 extern bool tianma_jdi_flag;
-
+#else
+bool tianma_jdi_flag;
+#endif
 
 /*******************************************************
 Description:
