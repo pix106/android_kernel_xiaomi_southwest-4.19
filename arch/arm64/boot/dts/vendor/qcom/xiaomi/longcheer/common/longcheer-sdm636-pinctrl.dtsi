@@ -258,32 +258,6 @@
 	};
 };
 
-&wcd_usbc_analog_en2n_idle {
-	mux {
-		pins = "gpio75";
-	};
-
-	config {
-		/delete-property/ output-high;
-		pins = "gpio75";
-		output-low;
-	};
-};
-
-&wcd_usbc_analog_en2n_active {
-	mux {
-		pins = "gpio75";
-	};
-
-	config {
-		/delete-property/ bias-pull-down;
-		/delete-property/ output-low;
-		pins = "gpio75";
-		bias-disable;
-		output-high;
-	};
-};
-
 &cam_sensor_mclk0_active {
 	config {
 		drive-strength = <4>;
