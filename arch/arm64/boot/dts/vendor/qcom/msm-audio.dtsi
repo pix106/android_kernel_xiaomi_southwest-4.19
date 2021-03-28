@@ -838,12 +838,4 @@
 		qcom,node_has_rpm_clock;
 		#clock-cells = <1>;
 	};
-
-	wcd_rst_gpio: msm_cdc_pinctrl@64 {
-		compatible = "qcom,msm-cdc-pinctrl";
-		pinctrl-names = "aud_active", "aud_sleep";
-		pinctrl-0 = <&lpi_cdc_reset_active>;
-		pinctrl-1 = <&lpi_cdc_reset_sleep>;
-		qcom,lpi-gpios;
-	};
 };
