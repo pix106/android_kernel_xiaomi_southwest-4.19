@@ -1,9 +1,46 @@
 #include "sdm660-wsa881x.dtsi"
-#include "sdm660-lpi.dtsi"
 
 &audio_apr {
 	q6core: qcom,q6core-audio {
 		compatible = "qcom,q6core-audio";
+	};
+};
+
+#include "sdm660-lpi.dtsi"
+
+&q6core {
+	cdc_pdm_gpios: cdc_pdm_pinctrl {
+		compatible = "qcom,msm-cdc-pinctrl";
+		pinctrl-names = "aud_active", "aud_sleep";
+		pinctrl-0 = <&cdc_pdm_gpios_active &cdc_pdm_2_gpios_active>;
+		pinctrl-1 = <&cdc_pdm_gpios_sleep &cdc_pdm_2_gpios_sleep>;
+		qcom,lpi-gpios;
+	};
+
+	cdc_comp_gpios: cdc_comp_pinctrl {
+		compatible = "qcom,msm-cdc-pinctrl";
+		pinctrl-names = "aud_active", "aud_sleep";
+		pinctrl-0 = <&cdc_comp_gpios_active>;
+		pinctrl-1 = <&cdc_comp_gpios_sleep>;
+		qcom,lpi-gpios;
+	};
+
+	cdc_dmic_gpios: cdc_dmic_pinctrl {
+		compatible = "qcom,msm-cdc-pinctrl";
+		pinctrl-names = "aud_active", "aud_sleep";
+		pinctrl-0 = <&cdc_dmic12_gpios_active
+				&cdc_dmic34_gpios_active>;
+		pinctrl-1 = <&cdc_dmic12_gpios_sleep
+				&cdc_dmic34_gpios_sleep>;
+		qcom,lpi-gpios;
+	};
+
+	wcd_rst_gpio: msm_cdc_pinctrl@64 {
+		compatible = "qcom,msm-cdc-pinctrl";
+		pinctrl-names = "aud_active", "aud_sleep";
+		pinctrl-0 = <&lpi_cdc_reset_active>;
+		pinctrl-1 = <&lpi_cdc_reset_sleep>;
+		qcom,lpi-gpios;
 	};
 };
 
@@ -403,32 +440,6 @@
 };
 
 &soc {
-	cdc_pdm_gpios: cdc_pdm_pinctrl {
-		compatible = "qcom,msm-cdc-pinctrl";
-		pinctrl-names = "aud_active", "aud_sleep";
-		pinctrl-0 = <&cdc_pdm_gpios_active &cdc_pdm_2_gpios_active>;
-		pinctrl-1 = <&cdc_pdm_gpios_sleep &cdc_pdm_2_gpios_sleep>;
-		qcom,lpi-gpios;
-	};
-
-	cdc_comp_gpios: cdc_comp_pinctrl {
-		compatible = "qcom,msm-cdc-pinctrl";
-		pinctrl-names = "aud_active", "aud_sleep";
-		pinctrl-0 = <&cdc_comp_gpios_active>;
-		pinctrl-1 = <&cdc_comp_gpios_sleep>;
-		qcom,lpi-gpios;
-	};
-
-	cdc_dmic_gpios: cdc_dmic_pinctrl {
-		compatible = "qcom,msm-cdc-pinctrl";
-		pinctrl-names = "aud_active", "aud_sleep";
-		pinctrl-0 = <&cdc_dmic12_gpios_active
-				&cdc_dmic34_gpios_active>;
-		pinctrl-1 = <&cdc_dmic12_gpios_sleep
-				&cdc_dmic34_gpios_sleep>;
-		qcom,lpi-gpios;
-	};
-
 	cdc_sdw_gpios: sdw_clk_data_pinctrl {
 	      compatible = "qcom,msm-cdc-pinctrl";
 	      pinctrl-names = "aud_active", "aud_sleep";
