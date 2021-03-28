@@ -16,17 +16,6 @@
 	qcom,msm-mi2s-tx-lines = <2>;
 };
 
-&hostless {
-	audio_test_mod {
-		compatible = "qcom,audio-test-mod";
-	};
-};
-
-&tavil_snd {
-	/delete-property/ qcom,usbc-analog-en1_gpio;
-	/delete-property/ qcom,usbc-analog-en2_n_gpio;
-};
-
 &int_codec {
 	/delete-property/ qcom,us-euro-gpios;
 	qcom,msm-micbias1-ext-cap;
@@ -42,44 +31,18 @@
 		pinctrl-1 = <&pri_mi2s_sck_sleep &pri_mi2s_ws_sleep
 				&pri_mi2s_sd0_sleep &pri_mi2s_sd1_sleep>;
 	};
-
-	wcd_usbc_analog_en1_gpio: msm_cdc_pinctrl_usbc_audio_en1 {
-		compatible = "qcom,msm-cdc-pinctrl";
-		pinctrl-names = "aud_active", "aud_sleep";
-		pinctrl-0 = <&wcd_usbc_analog_en1_active>;
-		pinctrl-1 = <&wcd_usbc_analog_en1_idle>;
-	};
-
-	wcd_usbc_analog_en2n_gpio: msm_cdc_pinctrl_usbc_audio_en2 {
-		compatible = "qcom,msm-cdc-pinctrl";
-		pinctrl-names = "aud_active", "aud_sleep";
-		pinctrl-0 = <&wcd_usbc_analog_en2n_active>;
-		pinctrl-1 = <&wcd_usbc_analog_en2n_idle>;
-	};
-};
-
-/* diff with sdm660-audio.dtsi */
-&wcd934x_cdc {
-	/delete-node/ msm_cdc_pinctrl_usbc_audio_en1;
-	/delete-node/ msm_cdc_pinctrl_usbc_audio_en2;
 };
 
 &cdc_sdw_gpios {
-	/delete-property/ pinctrl-names;
-	/delete-property/ pinctrl-0;
-	/delete-property/ pinctrl-1;
+	status = "disabled";
 };
 
 &wsa_spkr_en1 {
-	/delete-property/ pinctrl-names;
-	/delete-property/ pinctrl-0;
-	/delete-property/ pinctrl-1;
+	status = "disabled";
 };
 
 &wsa_spkr_en2 {
-	/delete-property/ pinctrl-names;
-	/delete-property/ pinctrl-0;
-	/delete-property/ pinctrl-1;
+	status = "disabled";
 };
 
 &msm_sdw_codec {
