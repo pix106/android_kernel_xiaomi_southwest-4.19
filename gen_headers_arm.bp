@@ -201,6 +201,7 @@ gen_headers_out_arm = [
     "linux/dm-ioctl.h",
     "linux/dm-log-userspace.h",
     "linux/dma-buf.h",
+    "linux/dm-user.h",
     "linux/dn.h",
     "linux/dqblk_xfs.h",
     "linux/edd.h",
