@@ -940,7 +940,7 @@ static int fg_get_batt_profile(struct fg_dev *fg)
 
 #ifdef CONFIG_MACH_LONGCHEER
 	if (hwc_check_global)
-		fg->bp.fastchg_curr_ma = 2300;
+		fg->bp.fastchg_curr_ma = 3300;
 #ifdef CONFIG_MACH_XIAOMI_TULIP
 	else
 		if (is_poweroff_charge) {
