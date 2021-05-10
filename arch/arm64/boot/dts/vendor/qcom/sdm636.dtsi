@@ -69,6 +69,14 @@
 		/delete-node/ qcom,msm_fastrpc_compute_cb12;
 		/delete-node/ qcom,msm_fastrpc_compute_cb13;
 	};
+
+	qmi-tmd-devices {
+		/delete-node/ cdsp;
+	};
+};
+
+&thermal_zones {
+	/delete-node/ cdsp-usr;
 };
 
 /* GPU overrides */
