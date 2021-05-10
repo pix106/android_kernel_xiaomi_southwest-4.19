@@ -73,6 +73,33 @@
 	qmi-tmd-devices {
 		/delete-node/ cdsp;
 	};
+
+	rpm-glink {
+		qcom,rpm_glink_ssr {
+			qcom,notify-edges = <&glink_modem>,
+						<&glink_adsp>;
+		};
+	};
+
+	qcom,glink {
+		modem {
+			qcom,modem_glink_ssr {
+				qcom,notify-edges = <&glink_adsp>;
+			};
+		};
+
+		adsp {
+			qcom,adsp_glink_ssr {
+				qcom,notify-edges = <&glink_modem>;
+			};
+		};
+
+		/delete-node/ cdsp;
+	};
+
+	/delete-node/ qcom,smp2p-cdsp;
+	/delete-node/ qcom,smp2p_interrupt_rdbg_5_in;
+	/delete-node/ qcom,smp2p_interrupt_rdbg_5_out;
 };
 
 &thermal_zones {
