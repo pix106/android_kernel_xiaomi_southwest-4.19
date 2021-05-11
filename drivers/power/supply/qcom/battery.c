@@ -3,7 +3,11 @@
  * Copyright (c) 2017-2020 The Linux Foundation. All rights reserved.
  */
 
+#ifdef CONFIG_MACH_LONGCHEER
+#define pr_fmt(fmt) "lct QCOM-BATT: %s: " fmt, __func__
+#else
 #define pr_fmt(fmt) "QCOM-BATT: %s: " fmt, __func__
+#endif
 
 #include <linux/debugfs.h>
 #include <linux/device.h>
