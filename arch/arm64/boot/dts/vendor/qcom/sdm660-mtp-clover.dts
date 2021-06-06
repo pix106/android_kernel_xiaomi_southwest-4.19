@@ -68,6 +68,10 @@
 	    interrupt-names = "hall_irq";
 	    hall,irq-gpio = <&tlmm 75 0x0>;
 	};
+
+	qcom,msm_fastrpc {
+		/delete-property/ qcom,fastrpc-adsp-sensors-pdr;
+	};
 };
 
 #include "xiaomi/clover.dtsi"
