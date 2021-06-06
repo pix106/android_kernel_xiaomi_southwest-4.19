@@ -186,6 +186,10 @@
 	snd-dbmdx-mach-drv {
 		compatible = "dspg,snd-dbmdx-mach-drv";
 	};
+
+	qcom,msm_fastrpc {
+		/delete-property/ qcom,fastrpc-adsp-sensors-pdr;
+	};
 };
 
 #include "xiaomi/jasmine.dtsi"
