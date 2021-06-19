@@ -937,6 +937,7 @@ int fg_get_msoc(struct fg_dev *fg, int *msoc)
 	return 0;
 }
 
+/*
 #define DEFAULT_BATT_TYPE	"Unknown Battery"
 #define MISSING_BATT_TYPE	"Missing Battery"
 #define LOADING_BATT_TYPE	"Loading Battery"
@@ -966,6 +967,7 @@ const char *fg_get_battery_type(struct fg_dev *fg)
 
 	return DEFAULT_BATT_TYPE;
 }
+*/
 
 int fg_get_battery_resistance(struct fg_dev *fg, int *val)
 {
