@@ -105,9 +105,3 @@
 &thermal_zones {
 	/delete-node/ cdsp-usr;
 };
-
-/* GPU overrides */
-&msm_gpu {
-	/* Update GPU chip ID*/
-	qcom,chipid = <0x05000900>;
-};
