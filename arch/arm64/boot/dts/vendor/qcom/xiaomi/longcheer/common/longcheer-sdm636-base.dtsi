@@ -58,7 +58,6 @@
 
 &i2c_6 { /* SmartPA TI */
 	status = "okay";
-	qcom,disable-dma;
 	tas2557@4c {
 		compatible = "ti,tas2557";
 		reg = <0x4c>;
@@ -109,8 +108,4 @@
 
 &pm660l_l3 {
 	regulator-always-on;
-};
-
-&i2c_1 {
-	qcom,disable-dma;
 };
