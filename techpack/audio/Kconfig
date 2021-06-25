@@ -172,5 +172,7 @@ config SND_SOC_MAX98937
 	tristate "maxim Instruments 98937 SmartAmp(R)"
 config ELLIPTICLABS
 	tristate "Elliptic Labs fake proximity sensor support"
+config SOUND_CONTROL
+	bool "Sound Control for msm89xx"
 
 endmenu
