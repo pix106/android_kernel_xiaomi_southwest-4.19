@@ -626,7 +626,7 @@ static int handle_jeita(struct step_chg_info *chip)
 
 #ifdef CONFIG_MACH_XIAOMI_WAYNE
 	if (hwc_check_india) {
-		pr_err("lct video LctIsInVideo=%d, lct_therm_lvl_reserved=%d\n",
+		pr_debug("lct video LctIsInVideo=%d, lct_therm_lvl_reserved=%d\n",
 				LctIsInVideo, lct_therm_lvl_reserved.intval);
 		if (LctIsInVideo)
 			rc = power_supply_set_property(chip->batt_psy,
