@@ -1580,6 +1580,7 @@ static struct platform_driver disp_cc_kona_driver = {
 	.driver = {
 		.name = "disp_cc-kona",
 		.of_match_table = disp_cc_kona_match_table,
+		.probe_type = PROBE_FORCE_SYNCHRONOUS,
 	},
 };
 

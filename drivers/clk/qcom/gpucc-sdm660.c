@@ -485,6 +485,7 @@ static struct platform_driver gpucc_660_driver = {
 	.driver		= {
 		.name	= "gpucc-sdm660",
 		.of_match_table = gpucc_660_match_table,
+		.probe_type = PROBE_FORCE_SYNCHRONOUS,
 	},
 };
 
