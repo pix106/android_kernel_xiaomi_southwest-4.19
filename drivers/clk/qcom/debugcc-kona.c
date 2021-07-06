@@ -1090,6 +1090,7 @@ static struct platform_driver clk_debug_driver = {
 		.name = "debugcc-kona",
 		.of_match_table = clk_debug_match_table,
 		.owner = THIS_MODULE,
+		.probe_type = PROBE_FORCE_SYNCHRONOUS,
 	},
 };
 

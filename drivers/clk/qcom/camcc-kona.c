@@ -2812,6 +2812,7 @@ static struct platform_driver cam_cc_kona_driver = {
 	.driver = {
 		.name = "cam_cc-kona",
 		.of_match_table = cam_cc_kona_match_table,
+		.probe_type = PROBE_FORCE_SYNCHRONOUS,
 	},
 };
 
