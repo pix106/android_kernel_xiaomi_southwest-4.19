@@ -1295,6 +1295,7 @@ static struct platform_driver npu_cc_kona_driver = {
 	.driver = {
 		.name = "npu_cc-kona",
 		.of_match_table = npu_cc_kona_match_table,
+		.probe_type = PROBE_FORCE_SYNCHRONOUS,
 	},
 };
 

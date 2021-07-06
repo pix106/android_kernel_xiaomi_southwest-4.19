@@ -2383,6 +2383,7 @@ static struct platform_driver qpnp_lcdb_regulator_driver = {
 	.driver		= {
 		.name		= QPNP_LCDB_REGULATOR_DRIVER_NAME,
 		.of_match_table	= lcdb_match_table,
+		.probe_type	= PROBE_FORCE_SYNCHRONOUS,
 	},
 	.probe		= qpnp_lcdb_regulator_probe,
 	.remove		= qpnp_lcdb_regulator_remove,
