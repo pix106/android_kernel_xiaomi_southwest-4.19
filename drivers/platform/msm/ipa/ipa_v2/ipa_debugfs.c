@@ -193,7 +193,7 @@ static ssize_t ipa_write_ep_holb(struct file *file,
 	unsigned long missing;
 	char *sptr, *token;
 
-	if (sizeof(dbg_buff) < count + 1)
+	if (count >= sizeof(dbg_buff))
 		return -EFAULT;
 
 	missing = copy_from_user(dbg_buff, buf, count);
@@ -233,19 +233,12 @@ static ssize_t ipa_write_ep_holb(struct file *file,
 static ssize_t ipa_write_ep_reg(struct file *file, const char __user *buf,
 		size_t count, loff_t *ppos)
 {
-	unsigned long missing;
-	s8 option = 0;
+	s8 option;
+	int ret;
 
-	if (sizeof(dbg_buff) < count + 1)
-		return -EFAULT;
-
-	missing = copy_from_user(dbg_buff, buf, count);
-	if (missing)
-		return -EFAULT;
-
-	dbg_buff[count] = '\0';
-	if (kstrtos8(dbg_buff, 0, &option))
-		return -EFAULT;
+	ret = kstrtos8_from_user(buf, count, 0, &option);
+	if (ret)
+		return ret;
 
 	if (option >= ipa_ctx->ipa_num_pipes) {
 		IPAERR("bad pipe specified %u\n", option);
@@ -373,19 +366,12 @@ static ssize_t ipa_read_ep_reg(struct file *file, char __user *ubuf,
 static ssize_t ipa_write_keep_awake(struct file *file, const char __user *buf,
 	size_t count, loff_t *ppos)
 {
-	unsigned long missing;
 	s8 option = 0;
+	int ret;
 
-	if (sizeof(dbg_buff) < count + 1)
-		return -EFAULT;
-
-	missing = copy_from_user(dbg_buff, buf, count);
-	if (missing)
-		return -EFAULT;
-
-	dbg_buff[count] = '\0';
-	if (kstrtos8(dbg_buff, 0, &option))
-		return -EFAULT;
+	ret = kstrtos8_from_user(buf, count, 0, &option);
+	if (ret)
+		return ret;
 
 	if (option == 1)
 		IPA_ACTIVE_CLIENTS_INC_SIMPLE();
@@ -1441,19 +1427,12 @@ void _ipa_write_dbg_cnt_v2_0(int option)
 static ssize_t ipa_write_dbg_cnt(struct file *file, const char __user *buf,
 		size_t count, loff_t *ppos)
 {
-	unsigned long missing;
 	u32 option = 0;
+	int ret;
 
-	if (sizeof(dbg_buff) < count + 1)
-		return -EFAULT;
-
-	missing = copy_from_user(dbg_buff, buf, count);
-	if (missing)
-		return -EFAULT;
-
-	dbg_buff[count] = '\0';
-	if (kstrtou32(dbg_buff, 0, &option))
-		return -EFAULT;
+	ret = kstrtou32_from_user(buf, count, 0, &option);
+	if (ret)
+		return ret;
 
 	IPA_ACTIVE_CLIENTS_INC_SIMPLE();
 	ipa_ctx->ctrl->ipa_write_dbg_cnt(option);
@@ -1828,20 +1807,6 @@ static ssize_t ipa2_print_active_clients_log(struct file *file,
 static ssize_t ipa2_clear_active_clients_log(struct file *file,
 		const char __user *ubuf, size_t count, loff_t *ppos)
 {
-	unsigned long missing;
-	s8 option = 0;
-
-	if (sizeof(dbg_buff) < count + 1)
-		return -EFAULT;
-
-	missing = copy_from_user(dbg_buff, ubuf, count);
-	if (missing)
-		return -EFAULT;
-
-	dbg_buff[count] = '\0';
-	if (kstrtos8(dbg_buff, 0, &option))
-		return -EFAULT;
-
 	ipa2_active_clients_log_clear();
 
 	return count;
@@ -1877,17 +1842,6 @@ static ssize_t ipa_write_rx_polling_timeout(struct file *file,
 {
 	s8 polltime = 0;
 
-	if (sizeof(dbg_buff) < count + 1)
-		return -EFAULT;
-
-	if (copy_from_user(dbg_buff, ubuf, count))
-		return -EFAULT;
-
-	dbg_buff[count] = '\0';
-
-	if (kstrtos8(dbg_buff, 0, &polltime))
-		return -EFAULT;
-
 	ipa_rx_timeout_min_max_calc(&ipa_ctx->ipa_rx_min_timeout_usec,
 		&ipa_ctx->ipa_rx_max_timeout_usec, polltime);
 	return count;
@@ -1918,7 +1872,7 @@ static ssize_t ipa_write_polling_iteration(struct file *file,
 {
 	s8 iteration_cnt = 0;
 
-	if (sizeof(dbg_buff) < count + 1)
+	if (count >= sizeof(dbg_buff))
 		return -EFAULT;
 
 	if (copy_from_user(dbg_buff, ubuf, count))
@@ -1941,19 +1895,12 @@ static ssize_t ipa_write_polling_iteration(struct file *file,
 static ssize_t ipa_enable_ipc_low(struct file *file,
 	const char __user *ubuf, size_t count, loff_t *ppos)
 {
-	unsigned long missing;
 	s8 option = 0;
+	int ret;
 
-	if (sizeof(dbg_buff) < count + 1)
-		return -EFAULT;
-
-	missing = copy_from_user(dbg_buff, ubuf, count);
-	if (missing)
-		return -EFAULT;
-
-	dbg_buff[count] = '\0';
-	if (kstrtos8(dbg_buff, 0, &option))
-		return -EFAULT;
+	ret = kstrtos8_from_user(ubuf, count, 0, &option);
+	if (ret)
+		return ret;
 
 	mutex_lock(&ipa_ctx->lock);
 	if (option) {
