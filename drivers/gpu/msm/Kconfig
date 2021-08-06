@@ -29,3 +29,11 @@ config QCOM_KGSL_IOMMU
 
 config QCOM_KGSL_RECLAIM
 	bool "CAF Retardness"
+
+config QCOM_KGSL_CORESIGHT
+	bool "Enable coresight support for the Adreno GPU"
+	depends on QCOM_KGSL && CORESIGHT
+	help
+	  When enabled, the Adreno GPU is available as a source for Coresight
+	  data. On a6xx targets there are two sources available for the GX and
+	  CX domains respectively. Debug kernels should say 'Y' here.
