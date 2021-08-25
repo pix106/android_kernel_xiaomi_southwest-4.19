@@ -3,7 +3,6 @@
  * Copyright (C) 2015-2019 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
  */
 
-#ifndef _WG_COMPAT_H
 #define _WG_COMPAT_H
 
 #include <linux/kconfig.h>
@@ -413,17 +412,6 @@ static inline u64 __compat_jiffies64_to_nsecs(u64 j)
 #endif
 }
 #define jiffies64_to_nsecs __compat_jiffies64_to_nsecs
-#endif
-static inline u64 ktime_get_coarse_boottime_ns(void)
-{
-#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 17, 0)
-	return ktime_to_ns(ktime_get_boottime());
-#elif (LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 12) && LINUX_VERSION_CODE >= KERNEL_VERSION(4, 20, 0)) || LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 53)
-	return ktime_to_ns(ktime_mono_to_any(ns_to_ktime(jiffies64_to_nsecs(get_jiffies_64())), TK_OFFS_BOOT));
-#else
-	return ktime_to_ns(ktime_get_coarse_boottime());
-#endif
-}
 #endif
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3, 14, 0)
@@ -848,12 +836,6 @@ static inline void skb_mark_not_on_list(struct sk_buff *skb)
 }
 #endif
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 20, 0) && !defined(ISRHEL8)
-#include <net/netlink.h>
-#ifndef NLA_POLICY_EXACT_LEN
-#define NLA_POLICY_EXACT_LEN(_len) { .type = NLA_UNSPEC, .len = _len }
-#endif
-#endif
 #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 2, 0) && !defined(ISRHEL8)
 #include <net/netlink.h>
 #ifndef NLA_POLICY_MIN_LEN
@@ -1080,18 +1062,6 @@ static inline void skb_reset_redirect(struct sk_buff *skb)
 #include <linux/skbuff.h>
 #include <linux/ip.h>
 #include <linux/ipv6.h>
-static inline __be16 ip_tunnel_parse_protocol(const struct sk_buff *skb)
-{
-	if (skb_network_header(skb) >= skb->head &&
-	    (skb_network_header(skb) + sizeof(struct iphdr)) <= skb_tail_pointer(skb) &&
-	    ip_hdr(skb)->version == 4)
-		return htons(ETH_P_IP);
-	if (skb_network_header(skb) >= skb->head &&
-	    (skb_network_header(skb) + sizeof(struct ipv6hdr)) <= skb_tail_pointer(skb) &&
-	    ipv6_hdr(skb)->version == 6)
-		return htons(ETH_P_IPV6);
-	return 0;
-}
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0) || defined(ISRHEL8)
 static const struct header_ops ip_tunnel_header_ops = { .parse_protocol = ip_tunnel_parse_protocol };
 #else
