@@ -491,7 +491,6 @@ static void irq_work_routine(struct work_struct *work)
 
 		goto program;
 	} else {
-		dev_dbg(pTAS2557->dev, "IRQ Status: 0x%x, 0x%x\n", nDevInt1Status, nDevInt2Status);
 		nCounter = 2;
 		while (nCounter > 0) {
 			nResult = tas2557_dev_read(pTAS2557, TAS2557_POWER_UP_FLAG_REG, &nDevPowerUpFlag);
@@ -519,8 +518,6 @@ static void irq_work_routine(struct work_struct *work)
 		}
 		pTAS2557->mnErrCode &= ~ERROR_CLASSD_PWR;
 
-		dev_dbg(pTAS2557->dev, "%s: INT1=0x%x, INT2=0x%x; PowerUpFlag=0x%x\n",
-			__func__, nDevInt1Status, nDevInt2Status, nDevPowerUpFlag);
 		goto end;
 	}
 
