@@ -13,34 +13,6 @@
  */
 
 &soc {
-	led_flash0: qcom,camera-flash@0 {
-		cell-index = <0>;
-		compatible = "qcom,camera-flash";
-		qcom,flash-source = <&pm660l_flash0 &pm660l_flash1>;
-		qcom,torch-source = <&pm660l_torch0 &pm660l_torch1>;
-		qcom,switch-source = <&pm660l_switch0>;
-		status = "ok";
-	};
-
-	led_flash1: qcom,camera-flash@1 {
-		cell-index = <1>;
-		compatible = "qcom,camera-flash";
-		qcom,flash-source = <&pm660l_flash2>;
-		qcom,torch-source = <&pm660l_torch2>;
-		qcom,switch-source = <&pm660l_switch1>;
-		status = "ok";
-	};
-
-	cam_avdd_gpio_regulator: cam_avdd_fixed_regulator {
-		compatible = "regulator-fixed";
-		regulator-name = "cam_avdd_gpio_regulator";
-		regulator-min-microvolt = <3600000>;
-		regulator-max-microvolt = <3600000>;
-		enable-active-high;
-		gpio = <&tlmm 49 0>;
-		vin-supply = <&pm660l_bob>;
-	};
-
 	cam_rear_avdd_gpio_regulator: cam_rear_avdd_fixed_regulator {
 		compatible = "regulator-fixed";
 		regulator-name = "cam_rear_avdd_gpio_regulator";
@@ -50,44 +22,9 @@
 		gpio = <&tlmm 51 0>;
 		vin-supply = <&pm660l_bob>;
 	};
-
-	cam_actuator_regulator: cam_actuator_fixed_regulator {
-		compatible = "regulator-fixed";
-		regulator-name = "cam_actuator_regulator";
-		regulator-min-microvolt = <3600000>;
-		regulator-max-microvolt = <3600000>;
-		enable-active-high;
-		gpio = <&tlmm 50 0>;
-		vin-supply = <&pm660l_bob>;
-	};
-
-	cam_dvdd_gpio_regulator: cam_dvdd_fixed_regulator {
-		compatible = "regulator-fixed";
-		regulator-name = "cam_dvdd_gpio_regulator";
-		regulator-min-microvolt = <1350000>;
-		regulator-max-microvolt = <1350000>;
-		enable-active-high;
-		gpio = <&pm660l_gpios 3 0>;
-		vin-supply = <&pm660_s5>;
-	};
-
-	cam_rear_dvdd_gpio_regulator: cam_rear_dvdd_fixed_regulator {
-		compatible = "regulator-fixed";
-		regulator-name = "cam_rear_dvdd_gpio_regulator";
-		regulator-min-microvolt = <1350000>;
-		regulator-max-microvolt = <1350000>;
-		enable-active-high;
-		gpio = <&pm660l_gpios 4 0>;
-		vin-supply = <&pm660_s5>;
-	};
 };
 
 &cci {
-	/delete-node/ qcom,actuator@0;
-	/delete-node/ qcom,actuator@1;
-	/delete-node/ qcom,actuator@2;
-	/delete-node/ qcom,ois@0;
-	/delete-node/ qcom,tof@29;
 	/delete-node/ qcom,eeprom@0;
 	/delete-node/ qcom,eeprom@1;
 	/delete-node/ qcom,eeprom@2;
@@ -95,74 +32,6 @@
 	/delete-node/ qcom,camera@1;
 	/delete-node/ qcom,camera@2;
 	/delete-node/ qcom,camera@3;
-
-	actuator0: qcom,actuator@0 {
-		cell-index = <0>;
-		reg = <0x0>;
-		compatible = "qcom,actuator";
-		qcom,cci-master = <0>;
-		cam_vaf-supply = <&cam_actuator_regulator>;
-		qcom,cam-vreg-name = "cam_vaf";
-		qcom,cam-vreg-min-voltage = <3600000>;
-		qcom,cam-vreg-max-voltage = <3600000>;
-		qcom,cam-vreg-op-mode = <0>;
-	};
-
-	actuator1: qcom,actuator@1 {
-		cell-index = <1>;
-		reg = <0x1>;
-		compatible = "qcom,actuator";
-		qcom,cci-master = <1>;
-		cam_vaf-supply = <&cam_actuator_regulator>;
-		qcom,cam-vreg-name = "cam_vaf";
-		qcom,cam-vreg-min-voltage = <3600000>;
-		qcom,cam-vreg-max-voltage = <3600000>;
-		qcom,cam-vreg-op-mode = <0>;
-	};
-
-	actuator2: qcom,actuator@2 {
-		cell-index = <2>;
-		reg = <0x2>;
-		compatible = "qcom,actuator";
-		qcom,cci-master = <1>;
-		cam_vaf-supply = <&cam_actuator_regulator>;
-		qcom,cam-vreg-name = "cam_vaf";
-		qcom,cam-vreg-min-voltage = <3600000>;
-		qcom,cam-vreg-max-voltage = <3600000>;
-		qcom,cam-vreg-op-mode = <0>;
-	};
-
-	ois0: qcom,ois@0 {
-		cell-index = <0>;
-		reg = <0x0>;
-		compatible = "qcom,ois";
-		qcom,cci-master = <0>;
-		cam_vaf-supply = <&cam_actuator_regulator>;
-		qcom,cam-vreg-name = "cam_vaf";
-		qcom,cam-vreg-min-voltage = <3600000>;
-		qcom,cam-vreg-max-voltage = <3600000>;
-		qcom,cam-vreg-op-mode = <0>;
-		status = "disabled";
-	};
-
-	tof0: qcom,tof@29{
-		cell-index = <0>;
-		reg = <0x29>;
-		compatible = "st,stmvl53l0";
-		qcom,cci-master = <0>;
-		cam_laser-supply = <&cam_actuator_regulator>;
-		qcom,cam-vreg-name =  "cam_laser";
-		qcom,cam-vreg-min-voltage = <3600000>;
-		qcom,cam-vreg-max-voltage = <3600000>;
-		pinctrl-names = "cam_default", "cam_suspend";
-		pinctrl-0 = <&cam_tof_active>;
-		pinctrl-1 = <&cam_tof_suspend>;
-		stm,irq-gpio = <&tlmm 45  0x2008>;
-		gpios = <&tlmm 42 0>;
-		qcom,gpio-req-tbl-num = <0>;
-		qcom,gpio-req-tbl-flags = <0>;
-		qcom,gpio-req-tbl-label = "RNG_EN";
-	};
 
 	eeprom0: qcom,eeprom@0 {
 		cell-index = <0>;
@@ -395,4 +264,8 @@
 		qcom,master-en = <1>;           /* Enable GPIO */
 		status = "ok";
 	};
+};
+
+&cam_avdd_gpio_regulator {
+	gpio = <&tlmm 49 0>;
 };
