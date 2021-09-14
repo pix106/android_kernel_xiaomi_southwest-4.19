@@ -48,8 +48,10 @@
 #include "icnss_qmi.h"
 
 #define MAX_PROP_SIZE			32
+#ifdef CONFIG_IPC_LOGGING
 #define NUM_LOG_PAGES			10
 #define NUM_LOG_LONG_PAGES		4
+#endif
 #define ICNSS_MAGIC			0x5abc5abc
 
 #define ICNSS_SERVICE_LOCATION_CLIENT_NAME			"ICNSS-WLAN"
