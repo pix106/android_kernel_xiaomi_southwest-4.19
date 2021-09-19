@@ -335,5 +335,19 @@
 		qcom,mdss-dsi-force-clock-lane-hs;
 		qcom,mdss-pan-physical-width-dimension = <107>;
 		qcom,mdss-pan-physical-height-dimension = <172>;
+
+		cm,mdss-livedisplay-command-state = "dsi_lp_mode";
+		cm,mdss-livedisplay-cabc-ui-cmd = [
+                        23 00 00 00 01 00 02 8F A5
+                        23 00 00 00 00 00 02 83 BB
+                        23 00 00 00 00 00 02 84 22
+                        23 00 00 00 00 00 02 90 40
+                        23 01 00 00 01 00 02 8F 00];
+                cm,mdss-livedisplay-cabc-cmd = [
+                        23 00 00 00 01 00 02 8F A5
+                        23 00 00 00 00 00 02 83 BB
+                        23 00 00 00 00 00 02 84 22
+                        23 00 00 00 00 00 02 90 C0
+                        23 01 00 00 01 00 02 8F 00];
 	};
 };
