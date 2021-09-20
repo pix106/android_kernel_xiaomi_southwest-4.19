@@ -54,6 +54,9 @@
 		reg = <0x784138 0x4>;
 		reg-names = "sn-base";
 	};
+	thermal_message: thermal-message {
+		board-sensor = "quiet_therm";
+	};
 	fpc1020 {
 		status = "ok";
 		compatible = "fpc,fpc1020";
