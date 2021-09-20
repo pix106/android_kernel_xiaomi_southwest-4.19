@@ -27,6 +27,10 @@
 			<0x78607C 0x4>;
 		reg-names = "sn-base","fuse-state";
 	};
+
+	thermal_message: thermal-message {
+		board-sensor = "quiet_therm";
+	};
 };
 
 &qcom_seecom {
