@@ -243,6 +243,10 @@
 	qcom,msm-ssc-sensors {
 		compatible = "qcom,msm-ssc-sensors";
 	};
+
+	thermal_message: thermal-message {
+		board-sensor = "quiet_therm";
+	};
 };
 
 &mem_client_3_size {
