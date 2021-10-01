@@ -31,7 +31,7 @@
 
 	chosen {
 		stdout-path = "serial0";
-		bootargs = "rcupdate.rcu_normal_after_boot=1 quiet noirqdebug nodebugmon nosoftlockup mce=ignore_ce";
+		bootargs = "rcupdate.rcu_normal_after_boot=1 quiet noirqdebug nodebugmon nosoftlockup mce=ignore_ce cgroup_disable=pressure";
 	};
 
 	psci {
