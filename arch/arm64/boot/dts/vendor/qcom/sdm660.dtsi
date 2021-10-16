@@ -1203,7 +1203,7 @@
 			qcom,core-dev-table =
 				< 902400 MHZ_TO_MBPS(200, 4) >,
 				< 1401600 MHZ_TO_MBPS(547, 4) >,
-				< 1881600 MHZ_TO_MBPS(1017, 4) >;
+				< 1843200 MHZ_TO_MBPS(1017, 4) >;
 		};
 
 		cpu0_computemon: qcom,cpu0-computemon {
@@ -1213,7 +1213,7 @@
 			qcom,core-dev-table =
 				< 633600 MHZ_TO_MBPS(200, 4) >,
 				< 1401600 MHZ_TO_MBPS(412, 4) >,
-				< 1881600 MHZ_TO_MBPS(768, 4) >;
+				< 1843200 MHZ_TO_MBPS(768, 4) >;
 		};
 	};
 
