@@ -19,6 +19,9 @@
 #include <linux/mutex.h>
 #include <linux/power_supply.h>
 #include <linux/thermal.h>
+#include <linux/slab.h>
+#include <asm/cacheflush.h>
+#include <soc/qcom/scm.h>
 
 #include "../thermal_core.h"
 
@@ -54,6 +57,13 @@
 #define VAL_CP_REG_BUF_OFFSET 2
 #define BCL_STD_VBAT_NR       9
 #define BCL_VBAT_NO_READING   127
+
+#define LMH_DCVSH               0x10
+#define LMH_NODE_DCVS           0x44435653 /* DCVS */
+#define LMH_SUB_FN_BCL          0x42434C00 /* BCL */
+#define LMH_CLUSTER_0           0x6370302D /* cpAG */
+#define LMH_CLUSTER_1           0x6370312D /* cpAU */
+#define LMH_ALGO_ENABLE         0x454E424C /* ENBL */
 
 enum bcl_dev_type {
 	BCL_HIGH_IBAT,
@@ -694,6 +704,42 @@ static void bcl_configure_lmh_peripheral(void)
 			bcl_perph->fg_lmh_addr, LMH_INT_VAL);
 }
 
+static void bcl_lmh_dcvs_enable(void)
+{
+	struct scm_desc desc_arg;
+	uint32_t *payload = NULL;
+
+	payload = kzalloc(sizeof(uint32_t) * 5,	GFP_KERNEL);
+	if (!payload)
+		return;
+
+	payload[0] = LMH_SUB_FN_BCL;
+	payload[1] = 0; /* unused sub-algorithm */
+	payload[2] = LMH_ALGO_ENABLE;
+	payload[3] = 1; /* number of values */
+	payload[4] = 1;
+
+	desc_arg.args[0] = SCM_BUFFER_PHYS(payload);
+	desc_arg.args[1] = sizeof(uint32_t) * 5;
+	desc_arg.args[2] = LMH_NODE_DCVS;
+	desc_arg.args[3] = LMH_CLUSTER_0;
+	desc_arg.args[4] = 0; /* version */
+	desc_arg.arginfo = SCM_ARGS(5, SCM_RO, SCM_VAL, SCM_VAL,
+				SCM_VAL, SCM_VAL);
+
+	dmac_flush_range(payload, (void *)payload + 5 * (sizeof(uint32_t)));
+	if (scm_call2(SCM_SIP_FNID(SCM_SVC_LMH, LMH_DCVSH),
+			&desc_arg))
+		pr_err("Error enabling LMH BCL monitoring for cluster0\n");
+
+	desc_arg.args[3] = LMH_CLUSTER_1;
+	if (scm_call2(SCM_SIP_FNID(SCM_SVC_LMH, LMH_DCVSH),
+			&desc_arg))
+		pr_err("Error enabling LMH BCL monitoring for cluster1\n");
+
+	kfree(payload);
+}
+
 static int bcl_remove(struct platform_device *pdev)
 {
 	int i = 0;
@@ -729,6 +775,7 @@ static int bcl_probe(struct platform_device *pdev)
 
 	bcl_get_devicetree_data(pdev);
 	bcl_configure_lmh_peripheral();
+	bcl_lmh_dcvs_enable();
 	bcl_probe_ibat(pdev);
 	bcl_probe_vbat(pdev);
 	bcl_probe_soc(pdev);
