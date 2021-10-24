@@ -9,7 +9,6 @@
 #include <linux/spmi.h>
 #include <linux/platform_device.h>
 #include <linux/irq.h>
-#include <linux/pm_qos.h>
 
 extern void wcd9xxx_spmi_enable_irq(int irq);
 extern void wcd9xxx_spmi_disable_irq(int irq);
