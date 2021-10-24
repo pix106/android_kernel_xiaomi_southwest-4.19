@@ -16,7 +16,6 @@
 #include <linux/of.h>
 #include <linux/of_device.h>
 #include <linux/interrupt.h>
-#include <linux/pm_qos.h>
 #include <soc/qcom/pm.h>
 #include <sound/soc.h>
 #include "msm-analog-cdc.h"
@@ -84,7 +83,6 @@ struct wcd9xxx_spmi_map {
 	struct mutex pm_lock;
 	/* pm_wq notifies change of pm_state */
 	wait_queue_head_t pm_wq;
-	struct pm_qos_request pm_qos_req;
 	int wlock_holders;
 };
 
@@ -235,10 +233,6 @@ int wcd9xxx_spmi_suspend(pm_message_t pmesg)
 	int ret = 0;
 
 	pr_debug("%s: enter\n", __func__);
-	/*
-	 * pm_qos_update_request() can be called after this suspend chain call
-	 * started. thus suspend can be called while lock is being held
-	 */
 	mutex_lock(&map.pm_lock);
 	if (map.pm_state == WCD9XXX_PM_SLEEPABLE) {
 		pr_debug("%s: suspending system, state %d, wlock %d\n",
@@ -317,8 +311,6 @@ bool wcd9xxx_spmi_lock_sleep(void)
 	mutex_lock(&map.pm_lock);
 	if (map.wlock_holders++ == 0) {
 		pr_debug("%s: holding wake lock\n", __func__);
-		pm_qos_update_request(&map.pm_qos_req,
-				      msm_cpuidle_get_deep_idle_latency());
 		pm_stay_awake(&map.spmi[0]->dev);
 	}
 	mutex_unlock(&map.pm_lock);
@@ -362,8 +354,6 @@ void wcd9xxx_spmi_unlock_sleep(void)
 		 */
 		if (likely(map.pm_state == WCD9XXX_PM_AWAKE))
 			map.pm_state = WCD9XXX_PM_SLEEPABLE;
-		pm_qos_update_request(&map.pm_qos_req,
-				PM_QOS_DEFAULT_VALUE);
 		pm_relax(&map.spmi[0]->dev);
 	}
 	mutex_unlock(&map.pm_lock);
@@ -395,16 +385,12 @@ int wcd9xxx_spmi_irq_init(void)
 	map.wlock_holders = 0;
 	map.pm_state = WCD9XXX_PM_SLEEPABLE;
 	init_waitqueue_head(&map.pm_wq);
-	pm_qos_add_request(&map.pm_qos_req,
-				PM_QOS_CPU_DMA_LATENCY,
-				PM_QOS_DEFAULT_VALUE);
 
 	return 0;
 }
 
 void wcd9xxx_spmi_irq_exit(void)
 {
-	pm_qos_remove_request(&map.pm_qos_req);
 	mutex_destroy(&map.pm_lock);
 }
 MODULE_DESCRIPTION("MSM8x16 SPMI IRQ driver");
