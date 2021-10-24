@@ -14,7 +14,6 @@
 #include <asoc/sdm660-external.h>
 #include <asoc/core.h>
 #include "codecs/wcd9335.h"
-#include <linux/pm_qos.h>
 
 #define DEV_NAME_STR_LEN            32
 #define __CHIPSET__ "SDM660 "
@@ -22,7 +21,6 @@
 
 #define WCN_CDC_SLIM_RX_CH_MAX 2
 #define WCN_CDC_SLIM_TX_CH_MAX 3
-#define MSM_LL_QOS_VALUE 300 /* time in us to ensure LPM doesn't go in C3/C4 */
 
 static struct snd_soc_card snd_soc_card_msm_card_tavil = {
 	.name = "sdm670-tavil-snd-card",
@@ -109,25 +107,6 @@ exit:
 
 static struct snd_soc_ops msm_wcn_ops = {
 	.hw_params = msm_wcn_hw_params,
-};
-
-static int msm_fe_qos_prepare(struct snd_pcm_substream *substream)
-{
-	if (pm_qos_request_active(&substream->latency_pm_qos_req))
-		pm_qos_remove_request(&substream->latency_pm_qos_req);
-
-	substream->latency_pm_qos_req.cpus_affine = BIT(1) | BIT(2);
-
-	substream->latency_pm_qos_req.type = PM_QOS_REQ_AFFINE_CORES;
-
-	pm_qos_add_request(&substream->latency_pm_qos_req,
-			  PM_QOS_CPU_DMA_LATENCY,
-			  MSM_LL_QOS_VALUE);
-	return 0;
-}
-
-static struct snd_soc_ops msm_fe_qos_ops = {
-	.prepare = msm_fe_qos_prepare,
 };
 
 static struct snd_soc_dai_link msm_ext_tasha_fe_dai[] = {
@@ -836,7 +815,6 @@ static struct snd_soc_dai_link msm_ext_common_fe_dai[] = {
 		/* this dai link has playback support */
 		.ignore_pmdown_time = 1,
 		.id = MSM_FRONTEND_DAI_MULTIMEDIA5,
-		.ops = &msm_fe_qos_ops,
 	},
 	/* LSM FE */
 	{/* hw:x,14 */
@@ -904,7 +882,6 @@ static struct snd_soc_dai_link msm_ext_common_fe_dai[] = {
 		.ignore_pmdown_time = 1,
 		 /* this dai link has playback support */
 		.id = MSM_FRONTEND_DAI_MULTIMEDIA8,
-		.ops = &msm_fe_qos_ops,
 	},
 	{/* hw:x,18 */
 		.name = "HDMI_RX_HOSTLESS",
