@@ -13,7 +13,6 @@
 #include "codecs/sdm660_cdc/msm-digital-cdc.h"
 #include "codecs/sdm660_cdc/msm-analog-cdc.h"
 #include "codecs/msm_sdw/msm_sdw.h"
-#include <linux/pm_qos.h>
 
 #define __CHIPSET__ "SDM660 "
 #define MSM_DAILINK_NAME(name) (__CHIPSET__#name)
@@ -25,7 +24,7 @@
 
 #define WSA8810_NAME_1 "wsa881x.20170211"
 #define WSA8810_NAME_2 "wsa881x.20170212"
-#define MSM_LL_QOS_VALUE 300 /* time in us to ensure LPM doesn't go in C3/C4 */
+
 enum {
 	INT0_MI2S = 0,
 	INT1_MI2S,
@@ -1505,26 +1504,6 @@ static struct snd_soc_ops msm_sdw_mi2s_be_ops = {
 	.shutdown = msm_sdw_mi2s_snd_shutdown,
 };
 
-static int msm_fe_qos_prepare(struct snd_pcm_substream *substream)
-{
-
-	if (pm_qos_request_active(&substream->latency_pm_qos_req))
-		pm_qos_remove_request(&substream->latency_pm_qos_req);
-
-	substream->latency_pm_qos_req.cpus_affine = BIT(1) | BIT(2);
-
-	substream->latency_pm_qos_req.type = PM_QOS_REQ_AFFINE_CORES;
-
-	pm_qos_add_request(&substream->latency_pm_qos_req,
-			  PM_QOS_CPU_DMA_LATENCY,
-			  MSM_LL_QOS_VALUE);
-	return 0;
-}
-
-static struct snd_soc_ops msm_fe_qos_ops = {
-	.prepare = msm_fe_qos_prepare,
-};
-
 struct snd_soc_dai_link_component dlc_rx1[] = {
 	{
 		.of_node = NULL,
@@ -1780,7 +1759,6 @@ static struct snd_soc_dai_link msm_int_dai[] = {
 		/* this dai link has playback support */
 		.ignore_pmdown_time = 1,
 		.id = MSM_FRONTEND_DAI_MULTIMEDIA5,
-		.ops = &msm_fe_qos_ops,
 	},
 	/* LSM FE */
 	{/* hw:x,14 */
@@ -1847,7 +1825,6 @@ static struct snd_soc_dai_link msm_int_dai[] = {
 		.ignore_pmdown_time = 1,
 		 /* this dai link has playback support */
 		.id = MSM_FRONTEND_DAI_MULTIMEDIA8,
-		.ops = &msm_fe_qos_ops,
 	},
 	{/* hw:x,18 */
 		.name = "HDMI_RX_HOSTLESS",
