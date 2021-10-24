@@ -10,7 +10,6 @@
 #include <linux/wait.h>
 #include <linux/debugfs.h>
 #include <linux/delay.h>
-#include <linux/pm_qos.h>
 #include <linux/dma-mapping.h>
 #include <sound/soc.h>
 #include <sound/info.h>
@@ -1006,13 +1005,6 @@ static void wcd_cpe_ssr_work(struct work_struct *work)
 		return;
 	}
 
-	/* Obtain pm request up in case of suspend mode */
-	pm_qos_add_request(&core->pm_qos_req,
-			   PM_QOS_CPU_DMA_LATENCY,
-			   PM_QOS_DEFAULT_VALUE);
-	pm_qos_update_request(&core->pm_qos_req,
-			msm_cpuidle_get_deep_idle_latency());
-
 	dev_dbg(core->dev,
 		"%s: CPE SSR with event %d\n",
 		__func__, core->ssr_type);
@@ -1047,7 +1039,6 @@ static void wcd_cpe_ssr_work(struct work_struct *work)
 			dev_err(core->dev,
 				"%s: wait for cpe offline timed out\n",
 				__func__);
-			goto err_ret;
 		}
 		if (core->ssr_type != WCD_CPE_BUS_DOWN_EVENT) {
 			wcd_cpe_get_sfr_dump(core);
@@ -1073,7 +1064,6 @@ static void wcd_cpe_ssr_work(struct work_struct *work)
 		dev_err(core->dev,
 			"%s: ready to online timed out, status = %u\n",
 			__func__, core->ready_status);
-		goto err_ret;
 	}
 
 	rc = wcd_cpe_boot_ssr(core);
@@ -1084,12 +1074,6 @@ static void wcd_cpe_ssr_work(struct work_struct *work)
 	if (CPE_ERR_IRQ_CB(core))
 		core->cpe_cdc_cb->cpe_err_irq_control(core->component,
 					CPE_ERR_IRQ_CLEAR, NULL);
-
-err_ret:
-	/* remove after default pm qos */
-	pm_qos_update_request(&core->pm_qos_req,
-			      PM_QOS_DEFAULT_VALUE);
-	pm_qos_remove_request(&core->pm_qos_req);
 }
 
 /*
