@@ -723,7 +723,7 @@ static void msm_anlg_cdc_mbhc_calc_impedance(struct wcd_mbhc *mbhc,
 					wcd_mbhc_meas_imped(component,
 							&impedance_l,
 							&impedance_r);
-					if (impedance_r == impedance_l)
+					if (impedance_r == impedance_l) {
 						dev_dbg(component->dev,
 							"%s: Mono Headset\n",
 							__func__);
@@ -731,6 +731,7 @@ static void msm_anlg_cdc_mbhc_calc_impedance(struct wcd_mbhc *mbhc,
 							WCD_MBHC_DET_NONE;
 						mbhc->hph_type =
 							WCD_MBHC_HPH_MONO;
+					}
 				} else {
 					dev_dbg(component->dev,
 						"%s: STEREO headset is found\n",
