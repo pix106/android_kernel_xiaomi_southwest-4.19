@@ -41,8 +41,8 @@
 };
 
 &pm660_haptics {
-	qcom,vmax-mv = <2204>;
-	qcom,play-rate-us = <4878>;
+	qcom,vmax-mv = <2404>;
+	qcom,play-rate-us = <5263>;
 	qcom,lra-auto-resonance-mode = "zxd";
 
 	/delete-node/ wf_0;
@@ -55,14 +55,18 @@
 	wf_0 {
 		/* CLICK */
 		qcom,effect-id = <0>;
+		qcom,wf-vmax-mv = <2734>;
 		qcom,wf-pattern = [78 78];
+		qcom,wf-play-rate-us = <5263>;
 		qcom,wf-brake-pattern = [02 00 00 00];
 		qcom,lra-auto-resonance-disable;
 	};
 	wf_1 {
 		/* DOUBLE CLICK */
 		qcom,effect-id = <1>;
+		qcom,wf-vmax-mv = <2734>;
 		qcom,wf-pattern = [70 02 02 02 02 02 02 02];
+		qcom,wf-play-rate-us = <5563>;
 		qcom,wf-repeat-count = <2>;
 		qcom,wf-s-repeat-count = <2>;
 		qcom,lra-auto-resonance-disable;
@@ -70,14 +74,35 @@
 	wf_2 {
 		/* TICK */
 		qcom,effect-id = <2>;
+		qcom,wf-vmax-mv = <2734>;
 		qcom,wf-pattern = [7e 7e];
+		qcom,wf-play-rate-us = <3307>;
 		qcom,wf-brake-pattern = [03 03 00 00];
+		qcom,lra-auto-resonance-disable;
+	};
+	wf_3 {
+		/* THUD */
+		qcom,effect-id = <3>;
+		qcom,wf-vmax-mv = <2734>;
+		qcom,wf-pattern = [7e 7e 7e];
+		qcom,wf-play-rate-us = <5263>;
+		qcom,lra-auto-resonance-disable;
+	};
+	wf_4 {
+		/* POP */
+		qcom,effect-id = <4>;
+		qcom,wf-vmax-mv = <2734>;
+		qcom,wf-pattern = [7e 7e];
+		qcom,wf-play-rate-us = <4407>;
 		qcom,lra-auto-resonance-disable;
 	};
 	wf_5 {
 		/* HEAVY CLICK */
 		qcom,effect-id = <5>;
+		qcom,wf-vmax-mv = <2734>;
 		qcom,wf-pattern = [7e 7e 7e 7e];
+		qcom,wf-play-rate-us = <5263>;
+		qcom,wf-brake-pattern = [03 00 00 00];
 		qcom,lra-auto-resonance-disable;
 	};
 };
