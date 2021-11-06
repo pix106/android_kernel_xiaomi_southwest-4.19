@@ -41,8 +41,45 @@
 };
 
 &pm660_haptics {
-	qcom,actuator-type = "erm";
-	qcom,vmax-mv = <3000>;
+	qcom,vmax-mv = <2204>;
+	qcom,play-rate-us = <4878>;
+	qcom,lra-auto-resonance-mode = "zxd";
+
+	/delete-node/ wf_0;
+	/delete-node/ wf_1;
+	/delete-node/ wf_2;
+	/delete-node/ wf_3;
+	/delete-node/ wf_4;
+	/delete-node/ wf_5;
+
+	wf_0 {
+		/* CLICK */
+		qcom,effect-id = <0>;
+		qcom,wf-pattern = [78 78];
+		qcom,wf-brake-pattern = [02 00 00 00];
+		qcom,lra-auto-resonance-disable;
+	};
+	wf_1 {
+		/* DOUBLE CLICK */
+		qcom,effect-id = <1>;
+		qcom,wf-pattern = [70 02 02 02 02 02 02 02];
+		qcom,wf-repeat-count = <2>;
+		qcom,wf-s-repeat-count = <2>;
+		qcom,lra-auto-resonance-disable;
+	};
+	wf_2 {
+		/* TICK */
+		qcom,effect-id = <2>;
+		qcom,wf-pattern = [7e 7e];
+		qcom,wf-brake-pattern = [03 03 00 00];
+		qcom,lra-auto-resonance-disable;
+	};
+	wf_5 {
+		/* HEAVY CLICK */
+		qcom,effect-id = <5>;
+		qcom,wf-pattern = [7e 7e 7e 7e];
+		qcom,lra-auto-resonance-disable;
+	};
 };
 
 /* msm-audio.dtsi wayne specific diff */
