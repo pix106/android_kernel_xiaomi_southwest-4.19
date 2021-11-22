@@ -380,7 +380,7 @@ static void config_irq(struct fpc1020_data *fpc1020, bool enabled)
 			enabled ?  "enable" : "disable");
 		irq_enabled = enabled;
 	} else {
-		dev_info(fpc1020->dev, "%s: dual config irq status: %s\n", __func__,
+		dev_dbg(fpc1020->dev, "%s: dual config irq status: %s\n", __func__,
 			enabled ?  "true" : "false");
 	}
 	mutex_unlock(&fpc1020->lock);
