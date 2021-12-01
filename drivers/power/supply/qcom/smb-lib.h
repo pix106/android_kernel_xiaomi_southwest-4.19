@@ -70,9 +70,6 @@ enum print_reason {
 #define FCC_STEPPER_VOTER		"FCC_STEPPER_VOTER"
 #define PD_NOT_SUPPORTED_VOTER		"PD_NOT_SUPPORTED_VOTER"
 
-#ifdef CONFIG_MACH_LONGCHEER
-#define THERMAL_CONFIG_FB	1
-#endif
 #define VCONN_MAX_ATTEMPTS	3
 #define OTG_MAX_ATTEMPTS	3
 #define BOOST_BACK_STORM_COUNT	3
@@ -365,10 +362,8 @@ struct smb_charger {
 	bool			fcc_stepper_enable;
 	bool			ufp_only_mode;
 #ifdef CONFIG_MACH_LONGCHEER
-#ifdef THERMAL_CONFIG_FB
-	struct notifier_block	notifier;
-	struct work_struct	fb_notify_work;
-#endif
+	struct notifier_block notifier;
+	struct work_struct fb_notify_work;
 #endif
 
 	/* workaround flag */
