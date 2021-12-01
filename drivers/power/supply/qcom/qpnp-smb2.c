@@ -379,9 +379,6 @@ static int smb2_parse_dt(struct smb2 *chip)
 	if (rc < 0)
 		chip->dt.wipower_max_uw = -EINVAL;
 
-#if defined(CONFIG_MACH_XIAOMI_WHYRED) || defined(CONFIG_MACH_XIAOMI_TULIP)
-	if (hwc_check_india) {
-#endif
 	if (of_find_property(node, "qcom,thermal-mitigation", &byte_len)) {
 		chg->thermal_mitigation = devm_kzalloc(chg->dev, byte_len,
 			GFP_KERNEL);
@@ -400,28 +397,6 @@ static int smb2_parse_dt(struct smb2 *chip)
 			return rc;
 		}
 	}
-#if defined(CONFIG_MACH_XIAOMI_WHYRED) || defined(CONFIG_MACH_XIAOMI_TULIP)
-	} else {
-		if (of_find_property(node, "qcom,thermal-mitigation-china", &byte_len)) {
-			chg->thermal_mitigation = devm_kzalloc(chg->dev, byte_len,
-				GFP_KERNEL);
-
-			if (chg->thermal_mitigation == NULL)
-				return -ENOMEM;
-
-			chg->thermal_levels = byte_len / sizeof(u32);
-				rc = of_property_read_u32_array(node,
-						"qcom,thermal-mitigation-china",
-						chg->thermal_mitigation,
-						chg->thermal_levels);
-			if (rc < 0) {
-				dev_err(chg->dev,
-					"Couldn't read threm limits rc = %d\n", rc);
-				return rc;
-			}
-		}
-	}
-#endif
 
 	of_property_read_u32(node, "qcom,float-option", &chip->dt.float_option);
 	if (chip->dt.float_option < 0 || chip->dt.float_option > 4) {
