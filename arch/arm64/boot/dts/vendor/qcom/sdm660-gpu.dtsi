@@ -57,7 +57,6 @@
 		qcom,initial-pwrlevel = <6>;
 
 		/* <HZ/12> */
-		qcom,idle-timeout = <64>;
 
 		qcom,highest-bank-bit = <14>;
 
