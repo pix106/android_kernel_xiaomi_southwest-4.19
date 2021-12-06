@@ -48,10 +48,10 @@
 			compatible = "arm,armv8";
 			reg = <0x0 0x0>;
 			enable-method = "psci";
-			capacity-dmips-mhz = <1024>;
+			efficiency = <636>;
+			capacity-dmips-mhz = <636>;
 			sched-energy-costs = <&CPU_COST_0 &CLUSTER_COST_0>;
 			qcom,lmh-dcvs = <&lmh_dcvs0>;
-			efficiency = <1024>;
 			next-level-cache = <&L2_0>;
 			#cooling-cells = <2>;
 			L2_0: l2-cache {
@@ -75,12 +75,12 @@
 			compatible = "arm,armv8";
 			reg = <0x0 0x1>;
 			enable-method = "psci";
-			capacity-dmips-mhz = <1024>;
+			efficiency = <636>;
+			capacity-dmips-mhz = <636>;
 			sched-energy-costs = <&CPU_COST_0 &CLUSTER_COST_0>;
 			qcom,lmh-dcvs = <&lmh_dcvs0>;
-			#cooling-cells = <2>;
-			efficiency = <1024>;
 			next-level-cache = <&L2_0>;
+			#cooling-cells = <2>;
 			L1_I_1: l1-icache {
 				compatible = "arm,arch-cache";
 			};
@@ -94,10 +94,10 @@
 			compatible = "arm,armv8";
 			reg = <0x0 0x2>;
 			enable-method = "psci";
-			capacity-dmips-mhz = <1024>;
+			efficiency = <636>;
+			capacity-dmips-mhz = <636>;
 			sched-energy-costs = <&CPU_COST_0 &CLUSTER_COST_0>;
 			qcom,lmh-dcvs = <&lmh_dcvs0>;
-			efficiency = <1024>;
 			next-level-cache = <&L2_0>;
 			#cooling-cells = <2>;
 			L1_I_2: l1-icache {
@@ -113,10 +113,10 @@
 			compatible = "arm,armv8";
 			reg = <0x0 0x3>;
 			enable-method = "psci";
-			capacity-dmips-mhz = <1024>;
+			efficiency = <636>;
+			capacity-dmips-mhz = <636>;
 			sched-energy-costs = <&CPU_COST_0 &CLUSTER_COST_0>;
 			qcom,lmh-dcvs = <&lmh_dcvs0>;
-			efficiency = <1024>;
 			next-level-cache = <&L2_0>;
 			#cooling-cells = <2>;
 			L1_I_3: l1-icache {
@@ -132,10 +132,10 @@
 			compatible = "arm,armv8";
 			reg = <0x0 0x100>;
 			enable-method = "psci";
-			capacity-dmips-mhz = <1638>;
+			efficiency = <1024>;
+			capacity-dmips-mhz = <1024>;
 			sched-energy-costs = <&CPU_COST_1 &CLUSTER_COST_1>;
 			qcom,lmh-dcvs = <&lmh_dcvs1>;
-			efficiency = <1638>;
 			next-level-cache = <&L2_1>;
 			#cooling-cells = <2>;
 			L2_1: l2-cache {
@@ -155,12 +155,12 @@
 			compatible = "arm,armv8";
 			reg = <0x0 0x101>;
 			enable-method = "psci";
-			capacity-dmips-mhz = <1638>;
+			efficiency = <1024>;
+			capacity-dmips-mhz = <1024>;
 			sched-energy-costs = <&CPU_COST_1 &CLUSTER_COST_1>;
 			qcom,lmh-dcvs = <&lmh_dcvs1>;
-			#cooling-cells = <2>;
-			efficiency = <1638>;
 			next-level-cache = <&L2_1>;
+			#cooling-cells = <2>;
 			L1_I_101: l1-icache {
 				compatible = "arm,arch-cache";
 			};
@@ -174,12 +174,12 @@
 			compatible = "arm,armv8";
 			reg = <0x0 0x102>;
 			enable-method = "psci";
-			capacity-dmips-mhz = <1638>;
+			efficiency = <1024>;
+			capacity-dmips-mhz = <1024>;
 			sched-energy-costs = <&CPU_COST_1 &CLUSTER_COST_1>;
 			qcom,lmh-dcvs = <&lmh_dcvs1>;
-			#cooling-cells = <2>;
-			efficiency = <1638>;
 			next-level-cache = <&L2_1>;
+			#cooling-cells = <2>;
 			L1_I_102: l1-icache {
 				compatible = "arm,arch-cache";
 			};
@@ -193,12 +193,12 @@
 			compatible = "arm,armv8";
 			reg = <0x0 0x103>;
 			enable-method = "psci";
-			capacity-dmips-mhz = <1638>;
+			efficiency = <1024>;
+			capacity-dmips-mhz = <1024>;
 			sched-energy-costs = <&CPU_COST_1 &CLUSTER_COST_1>;
 			qcom,lmh-dcvs = <&lmh_dcvs1>;
-			#cooling-cells = <2>;
-			efficiency = <1638>;
 			next-level-cache = <&L2_1>;
+			#cooling-cells = <2>;
 			L1_I_103: l1-icache {
 				compatible = "arm,arch-cache";
 			};
@@ -251,13 +251,13 @@
 
 		CPU_COST_0: core-cost0 {
 			busy-cost-data = <
-				633600	41
-				902400	70
-				1113600	83
-				1401600	146
-				1536000	158
-				1747200	228
-				1843200	285
+				 633600	 53
+				 902400	 68
+				1113600	 99
+				1401600	129
+				1536000	163
+				1747200	196
+				1843200	224
 			>;
 
 			idle-cost-data = <
@@ -267,14 +267,12 @@
 
 		CPU_COST_1: core-cost1 {
 			busy-cost-data = <
-				1113600	307
-				1401600	485
-				1747200	857
-				1804800	883
-				1958400	1222
-				2150400	1592
-				2208000	1632
-				2457600	2080
+				1113600	254
+				1401600	342
+				1747200	516
+				1958400	641
+				2150400	783
+				2208000	915
 			>;
 
 			idle-cost-data = <
@@ -1427,7 +1425,6 @@
 			< 1113600 >,
 			< 1401600 >,
 			< 1536000 >,
-			< 1612800 >,
 			< 1747200 >,
 			< 1843200 >;
 
@@ -1435,11 +1432,9 @@
 			< 1113600 >,
 			< 1401600 >,
 			< 1747200 >,
-			< 1804800 >,
 			< 1958400 >,
 			< 2150400 >,
-			< 2208000 >,
-			< 2457600 >;
+			< 2208000 >;
 	};
 
 	sdhc_1: sdhci@c0c4000 {
