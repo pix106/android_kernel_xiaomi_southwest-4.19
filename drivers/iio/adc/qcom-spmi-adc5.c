@@ -1266,7 +1266,9 @@ static int adc_probe(struct platform_device *pdev)
 	int ret, irq_eoc;
 	u32 reg;
 	bool skip_usb_wa = false;
+#ifdef CONFIG_IPC_LOGGING
 	char adc_name[40];
+#endif
 
 	regmap = dev_get_regmap(dev->parent, NULL);
 	if (!regmap)
@@ -1349,6 +1351,7 @@ static int adc_probe(struct platform_device *pdev)
 	indio_dev->channels = adc->iio_chans;
 	indio_dev->num_channels = adc->nchannels;
 
+#ifdef CONFIG_IPC_LOGGING
 	snprintf(adc_name, sizeof(adc_name), "vadc_%s_0",
 					node->parent->full_name);
 
@@ -1368,6 +1371,7 @@ static int adc_probe(struct platform_device *pdev)
 	if (!adc->ipc_log1)
 		pr_err("%s : unable to create IPC Logging 1 for %s ADC\n",
 					__func__, node->parent->full_name);
+#endif
 
 	return devm_iio_device_register(dev, indio_dev);
 }
