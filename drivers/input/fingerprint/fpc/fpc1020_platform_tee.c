@@ -1117,26 +1117,7 @@ static struct platform_driver fpc1020_driver = {
 	.remove	= fpc1020_remove,
 };
 
-static int __init fpc1020_init(void)
-{
-	int rc = platform_driver_register(&fpc1020_driver);
-
-	if (!rc)
-		pr_info("%s OK\n", __func__);
-	else
-		pr_err("%s %d\n", __func__, rc);
-
-	return rc;
-}
-
-static void __exit fpc1020_exit(void)
-{
-	pr_info("%s\n", __func__);
-	platform_driver_unregister(&fpc1020_driver);
-}
-
-module_init(fpc1020_init);
-module_exit(fpc1020_exit);
+module_platform_driver(fpc1020_driver);
 
 MODULE_LICENSE("GPL v2");
 MODULE_AUTHOR("Aleksej Makarov");
