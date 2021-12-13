@@ -13,6 +13,7 @@
 #include <linux/net.h>
 #include <linux/if_vlan.h>
 #include <linux/if_ether.h>
+#include <linux/skbuff.h>
 #include <linux/inetdevice.h>
 #include <net/udp_tunnel.h>
 #include <net/ipv6.h>
