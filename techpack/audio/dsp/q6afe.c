@@ -5251,7 +5251,6 @@ static int q6afe_send_enc_config(u16 port_id,
 		goto exit;
 	}
 
-#ifndef CONFIG_ARCH_SDM660
 	if (format == ASM_MEDIA_FMT_AAC_V2) {
 		uint32_t frame_size_ctl_value = enc_blk_param.enc_blk_config.
 				aac_config.frame_ctl.ctl_value;
@@ -5300,6 +5299,7 @@ static int q6afe_send_enc_config(u16 port_id,
 		}
 	}
 
+#ifndef CONFIG_ARCH_SDM660
 	if (format == ASM_MEDIA_FMT_APTX) {
 		pr_debug("%s: sending AFE_PARAM_ID_APTX_SYNC_MODE to DSP",
 			__func__);
