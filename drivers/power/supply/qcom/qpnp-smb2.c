@@ -2635,6 +2635,7 @@ static void smb2_create_debugfs(struct smb2 *chip)
 #endif
 
 #ifdef CONFIG_MACH_LONGCHEER
+#ifdef THERMAL_CONFIG_FB
 #ifdef CONFIG_MACH_XIAOMI_WAYNE
 static ssize_t lct_thermal_video_status_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
@@ -2774,6 +2775,7 @@ static int lct_unregister_powermanager(struct smb_charger *chg)
 }
 #endif
 #endif
+
 #ifdef CONFIG_MACH_XIAOMI_CLOVER
 struct smb_charger *chip_b;
 
