@@ -1,8 +1,27 @@
 # SPDX-License-Identifier: GPL-2.0-only
+
 config MDSS_PLL
 	bool "MDSS pll programming"
 	depends on COMMON_CLK_QCOM
 	help
-	It provides support for DSI, eDP and HDMI interface pll programming on MDSS
-	hardware. It also handles the pll specific resources and turn them on/off when
-	mdss pll client tries to enable/disable pll clocks.
+	  It provides support for DSI, eDP and HDMI interface pll programming on MDSS
+	  hardware. It also handles the pll specific resources and turn them on/off
+	  when mdss pll client tries to enable/disable pll clocks.
+
+config MDSS_PLL_12NM
+	bool "MDSS 12NM pll"
+	depends on MDSS_PLL
+	help
+	  It provides support for SoCs with 12nm node.
+
+config MDSS_PLL_14NM
+	bool "MDSS 14NM pll"
+	depends on MDSS_PLL
+	help
+	  It provides support for SoCs with 14nm node.
+
+config MDSS_PLL_28NM
+	bool "MDSS 28NM pll"
+	depends on MDSS_PLL
+	help
+	  It provides support for SoCs with 28nm node.
