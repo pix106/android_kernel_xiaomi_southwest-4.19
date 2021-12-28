@@ -497,11 +497,6 @@ static int qfq_change_class(struct Qdisc *sch, u32 classid, u32 parentid,
 
 	if (cl->qdisc != &noop_qdisc)
 		qdisc_hash_add(cl->qdisc, true);
-	sch_tree_lock(sch);
-	qdisc_class_hash_insert(&q->clhash, &cl->common);
-	sch_tree_unlock(sch);
-
-	qdisc_class_hash_grow(sch, &q->clhash);
 
 set_change_agg:
 	sch_tree_lock(sch);
@@ -519,14 +514,17 @@ set_change_agg:
 	}
 	if (existing)
 		qfq_deact_rm_from_agg(q, cl);
+	else
+		qdisc_class_hash_insert(&q->clhash, &cl->common);
 	qfq_add_to_agg(q, new_agg, cl);
 	sch_tree_unlock(sch);
+	qdisc_class_hash_grow(sch, &q->clhash);
 
 	*arg = (unsigned long)cl;
 	return 0;
 
 destroy_class:
-	qdisc_destroy(cl->qdisc);
+	qdisc_put(cl->qdisc);
 	kfree(cl);
 	return err;
 }
@@ -537,7 +535,7 @@ static void qfq_destroy_class(struct Qdisc *sch, struct qfq_class *cl)
 
 	qfq_rm_from_agg(q, cl);
 	gen_kill_estimator(&cl->rate_est);
-	qdisc_destroy(cl->qdisc);
+	qdisc_put(cl->qdisc);
 	kfree(cl);
 }
 
