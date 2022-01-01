@@ -584,30 +584,37 @@ reg_base_err:
 }
 
 static const struct of_device_id mpm_gic_chip_data_table[] = {
+#if defined(CONFIG_QCOM_MPM_BENGAL)
 	{
 		.compatible = "qcom,mpm-gic-bengal",
 		.data = mpm_bengal_gic_chip_data,
 	},
+#elif defined(CONFIG_QCOM_MPM_SCUBA)
 	{
 		.compatible = "qcom,mpm-gic-scuba",
 		.data = mpm_scuba_gic_chip_data,
 	},
+#elif defined(CONFIG_QCOM_MPM_SDM660)
 	{
 		.compatible = "qcom,mpm-gic-sdm660",
 		.data = mpm_sdm660_gic_chip_data,
 	},
+#elif defined(CONFIG_QCOM_MPM_MSM8937)
 	{
 		.compatible = "qcom,mpm-gic-msm8937",
 		.data = mpm_msm8937_gic_chip_data,
 	},
+#elif defined(CONFIG_QCOM_MPM_MSM8953)
 	{
 		.compatible = "qcom,mpm-gic-msm8953",
 		.data = mpm_msm8953_gic_chip_data,
 	},
+#elif defined(CONFIG_QCOM_MPM_KHAJE)
 	{
 		.compatible = "qcom,mpm-gic-khaje",
 		.data = mpm_khaje_gic_chip_data,
 	},
+#endif
 	{}
 };
 MODULE_DEVICE_TABLE(of, mpm_gic_chip_data_table);

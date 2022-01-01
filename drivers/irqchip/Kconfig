@@ -402,6 +402,58 @@ config QCOM_MPM
 	  Say yes here to enable the MSM Power Manager interrupt
 	  controller to use as a wakeup interrupt controller.
 
+choice
+	prompt "GIC chip data for MSM Power Manager Driver"
+	depends on QCOM_MPM
+	help
+	  This option sets the Generic Interrupt Controller
+	  data for MSM Power Manager Driver that will be used
+	  for the suitable ARCH platform.
+
+config QCOM_MPM_BENGAL
+	bool "QCOM BENGAL MPM"
+	depends on ARCH_BENGAL
+	help
+	  This adds Generic Interrupt Controller data for MSM Power
+	  Manager Driver for Bengal.
+
+config QCOM_MPM_SCUBA
+	bool "QCOM SCUBA MPM"
+	depends on ARCH_SCUBA
+	help
+	  This adds Generic Interrupt Controller data for MSM Power
+	  Manager Driver for Scuba.
+
+config QCOM_MPM_SDM660
+	bool "QCOM SDM660 MPM"
+	depends on ARCH_SDM660
+	help
+	  This adds Generic Interrupt Controller data for MSM Power
+	  Manager Driver for SDM660.
+
+config QCOM_MPM_MSM8937
+	bool "QCOM MSM8937 MPM"
+	depends on ARCH_MSM8937
+	help
+	  This adds Generic Interrupt Controller data for MSM Power
+	  Manager Driver for MSM8937.
+
+config QCOM_MPM_MSM8953
+	bool "QCOM MSM8953 MPM"
+	depends on ARCH_MSM8953
+	help
+	  This adds Generic Interrupt Controller data for MSM Power
+	  Manager Driver for MSM8953.
+
+config QCOM_MPM_KHAJE
+	bool "QCOM KHAJE MPM"
+	depends on ARCH_KHAJE
+	help
+	  This adds Generic Interrupt Controller data for MSM Power
+	  Manager Driver for KHAJE.
+
+endchoice
+
 config SIFIVE_PLIC
 	bool "SiFive Platform-Level Interrupt Controller"
 	depends on RISCV
