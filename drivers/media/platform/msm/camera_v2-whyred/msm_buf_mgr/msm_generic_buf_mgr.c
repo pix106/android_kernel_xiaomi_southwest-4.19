@@ -356,7 +356,7 @@ static int msm_buf_mngr_handle_cont_cmd(struct msm_buf_mngr_device *dev,
 {
 	int rc = 0, i = 0;
 	struct dma_buf *dmabuf = NULL;
-	struct msm_camera_user_buf_cont_t *iaddr, *temp_addr;
+	struct msm_camera_user_buf_cont_t *iaddr = NULL, *temp_addr;
 	struct msm_buf_mngr_user_buf_cont_info *new_entry, *bufs, *save;
 	size_t size;
 
