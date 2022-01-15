@@ -282,7 +282,7 @@ static void msm_csid_set_sof_freeze_debug_reg(
 static int msm_csid_reset(struct csid_device *csid_dev)
 {
 	int32_t rc = 0;
-	uint32_t irq = 0, irq_bitshift;
+	uint32_t irq = 0, irq_bitshift = 0;
 
 	CDBG("%s: id %d\n", __func__, csid_dev->pdev->id);
 
