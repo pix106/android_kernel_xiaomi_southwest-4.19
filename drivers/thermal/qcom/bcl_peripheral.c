@@ -512,7 +512,7 @@ static int bcl_read_soc(void *data, int *val)
 
 	*val = 100;
 	if (!batt_psy)
-		batt_psy = power_supply_get_by_name("bms");
+		batt_psy = power_supply_get_by_name("battery");
 	if (batt_psy) {
 		err = power_supply_get_property(batt_psy,
 				POWER_SUPPLY_PROP_CAPACITY, &ret);
