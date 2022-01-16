@@ -42,7 +42,6 @@
 #include <linux/wait.h>
 #include <linux/mutex.h>
 #include <asm/atomic.h>
-#include <asm/uaccess.h>
 #include <linux/errno.h>
 
 #include <elliptic/elliptic_data_io.h>
