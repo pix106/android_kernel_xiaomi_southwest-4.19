@@ -42,7 +42,7 @@
 #include <linux/hrtimer.h>
 #include <linux/platform_device.h>
 #include <linux/input/synaptics_dsx.h>
-#include <asm/uaccess.h>
+#include <linux/uaccess.h>
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
 #include "synaptics_dsx_core.h"
