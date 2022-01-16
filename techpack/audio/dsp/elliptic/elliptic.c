@@ -46,7 +46,6 @@
 #ifdef ELLIPTIC_LOAD_CALIBRATION_DATA_FROM_FILESYSTEM
 #include <linux/syscalls.h>
 #include <linux/fcntl.h>
-#include <asm/uaccess.h>
 #endif
 
 static struct elliptic_device *elliptic_devices;
