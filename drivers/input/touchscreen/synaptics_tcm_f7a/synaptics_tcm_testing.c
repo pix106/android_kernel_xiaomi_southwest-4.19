@@ -34,7 +34,7 @@
 #include "synaptics_tcm_core.h"
 #include "synaptics_tcm_testing.h"
 /* add syna tp selftest by wanghan 2018-8-21 start*/
-#include <asm/uaccess.h>
+#include <linux/uaccess.h>
 /* add syna tp selftest by wanghan 2018-8-21 end*/
 
 #define SYSFS_DIR_NAME "testing"
