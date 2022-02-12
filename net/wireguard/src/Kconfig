@@ -1,7 +1,8 @@
-config WIREGUARD
+config WIREGUARD_COMPAT
 	tristate "IP: WireGuard secure network tunnel"
 	depends on NET && INET
 	depends on IPV6 || !IPV6
+	depends on !WIREGUARD
 	select NET_UDP_TUNNEL
 	select DST_CACHE
 	select CRYPTO
@@ -10,7 +11,7 @@ config WIREGUARD
 	select VFPv3 if CPU_V7
 	select NEON if CPU_V7
 	select KERNEL_MODE_NEON if CPU_V7
-	default m
+	default y
 	help
 	  WireGuard is a secure, fast, and easy to use replacement for IPsec
 	  that uses modern cryptography and clever networking tricks. It's
@@ -21,9 +22,9 @@ config WIREGUARD
 	  It's safe to say Y or M here, as the driver is very lightweight and
 	  is only in use when an administrator chooses to add an interface.
 
-config WIREGUARD_DEBUG
+config WIREGUARD_COMPAT_DEBUG
 	bool "Debugging checks and verbose messages"
-	depends on WIREGUARD
+	depends on WIREGUARD_COMPAT
 	help
 	  This will write log messages for handshake and other events
 	  that occur for a WireGuard interface. It will also perform some
