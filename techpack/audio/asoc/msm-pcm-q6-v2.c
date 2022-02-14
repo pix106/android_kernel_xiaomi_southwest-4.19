@@ -225,7 +225,7 @@ static void event_handler(uint32_t opcode,
 				atomic_inc(&prtd->in_count);
 			}
 			if (atomic_read(&prtd->in_count) == prtd->periods) {
-				pr_info("%s: reclaimed all bufs\n", __func__);
+				pr_debug("%s: reclaimed all bufs\n", __func__);
 				if (atomic_read(&prtd->start))
 					snd_pcm_period_elapsed(substream);
 				wake_up(&the_locks.read_wait);
@@ -1343,7 +1343,7 @@ static int msm_pcm_adsp_stream_cmd_put(struct snd_kcontrol *kcontrol,
 		goto done;
 	}
 	if (substream->ref_count <= 0) {
-		pr_err_ratelimited("%s substream ref_count:%d invalid\n",
+		pr_debug("%s: substream ref_count:%d invalid\n",
 				__func__, substream->ref_count);
 		ret = -EINVAL;
 		goto done;
@@ -1842,7 +1842,7 @@ static int msm_pcm_chmap_ctl_put(struct snd_kcontrol *kcontrol,
 
 	mutex_lock(&pdata->lock);
 	if (substream->ref_count <= 0) {
-		pr_err_ratelimited("%s: substream ref_count:%d invalid\n",
+		pr_debug("%s: substream ref_count:%d invalid\n",
 				__func__, substream->ref_count);
 		mutex_unlock(&pdata->lock);
 		return -EINVAL;
@@ -1915,7 +1915,7 @@ static int msm_pcm_chmap_ctl_get(struct snd_kcontrol *kcontrol,
 
 	mutex_lock(&pdata->lock);
 	if (substream->ref_count <= 0) {
-		pr_err_ratelimited("%s: substream ref_count:%d invalid\n",
+		pr_debug("%s: substream ref_count:%d invalid\n",
 				__func__, substream->ref_count);
 		mutex_unlock(&pdata->lock);
 		return -EINVAL;
@@ -2203,7 +2203,7 @@ static int msm_pcm_channel_mixer_cfg_ctl_put(struct snd_kcontrol *kcontrol,
 
 	mutex_lock(&pdata->lock);
 	if (substream->ref_count <= 0) {
-		pr_err_ratelimited("%s: substream ref_count:%d invalid\n",
+		pr_debug("%s: substream ref_count:%d invalid\n",
 				__func__, substream->ref_count);
 		mutex_unlock(&pdata->lock);
 		return -EINVAL;
