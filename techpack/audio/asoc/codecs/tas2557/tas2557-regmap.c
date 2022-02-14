@@ -419,7 +419,7 @@ static void irq_work_routine(struct work_struct *work)
 	}
 
 	if (!pTAS2557->mbPowerUp) {
-		dev_info(pTAS2557->dev, "%s, device not powered\n", __func__);
+		dev_dbg(pTAS2557->dev, "%s, device not powered\n", __func__);
 		goto end;
 	}
 
