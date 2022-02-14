@@ -240,7 +240,7 @@ int tas2557_get_die_temperature(struct tas2557_priv *pTAS2557, int *pTemperature
 	}
 
 	if (!pTAS2557->mbPowerUp) {
-		dev_err(pTAS2557->dev, "%s, device not powered on\n", __func__);
+		dev_dbg(pTAS2557->dev, "%s, device not powered on\n", __func__);
 		goto end;
 	}
 
