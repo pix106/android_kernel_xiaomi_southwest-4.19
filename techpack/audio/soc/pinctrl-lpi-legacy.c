@@ -700,7 +700,7 @@ static int lpi_pinctrl_runtime_resume(struct device *dev)
 
 	ret = lpi_get_lpass_core_hw_clk(dev, state);
 	if (ret) {
-		dev_err(dev, "%s: unable to get core clk handle %d\n",
+		dev_dbg(dev, "%s: unable to get core clk handle %d\n",
 			__func__, ret);
 		return 0;
 	}
@@ -723,7 +723,7 @@ static int lpi_pinctrl_runtime_suspend(struct device *dev)
 
 	ret = lpi_get_lpass_core_hw_clk(dev, state);
 	if (ret) {
-		dev_err(dev, "%s: unable to get core clk handle %d\n",
+		dev_dbg(dev, "%s: unable to get core clk handle %d\n",
 			__func__, ret);
 		return 0;
 	}
