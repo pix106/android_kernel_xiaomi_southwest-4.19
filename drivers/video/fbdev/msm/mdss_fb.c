@@ -5663,63 +5663,6 @@ void mdss_fb_report_panel_dead(struct msm_fb_data_type *mfd)
 	pr_err("Panel has gone bad, sending uevent - %s\n", envp[0]);
 }
 
-#ifdef CONFIG_MACH_XIAOMI_CLOVER
-/*
- * mdss_prim_panel_fb_unblank() - Unblank primary panel FB
- * @timeout : >0 blank primary panel FB after timeout (ms)
- */
-int mdss_prim_panel_fb_unblank(int timeout)
-{
-	int ret = 0;
-	struct msm_fb_data_type *mfd = NULL;
-
-	if (prim_fbi) {
-		mfd = (struct msm_fb_data_type *)prim_fbi->par;
-		ret = wait_event_timeout(mfd->resume_wait_q,
-				!atomic_read(&mfd->resume_pending),
-				msecs_to_jiffies(WAIT_RESUME_TIMEOUT));
-		if (!ret) {
-			pr_info("Primary fb resume timeout\n");
-			return -ETIMEDOUT;
-		}
-#ifdef CONFIG_FRAMEBUFFER_CONSOLE
-		console_lock();
-#endif
-		if (!lock_fb_info(prim_fbi)) {
-#ifdef CONFIG_FRAMEBUFFER_CONSOLE
-			console_unlock();
-#endif
-			return -ENODEV;
-		}
-		if (prim_fbi->blank == FB_BLANK_UNBLANK) {
-			unlock_fb_info(prim_fbi);
-#ifdef CONFIG_FRAMEBUFFER_CONSOLE
-			console_unlock();
-#endif
-			return 0;
-		}
-                __pm_stay_awake(mfd->prim_panel_wakelock);
-		ret = fb_blank(prim_fbi, FB_BLANK_UNBLANK);
-		if (!ret) {
-			atomic_set(&prim_panel_is_on, true);
-			if (timeout > 0)
-				schedule_delayed_work(&mfd->prim_panel_work, msecs_to_jiffies(timeout));
-			else
-                                __pm_relax(mfd->prim_panel_wakelock);
-		} else
-                        __pm_relax(mfd->prim_panel_wakelock);
-		unlock_fb_info(prim_fbi);
-#ifdef CONFIG_FRAMEBUFFER_CONSOLE
-		console_unlock();
-#endif
-		return ret;
-	}
-
-	pr_err("primary panel is not existed\n");
-	return -EINVAL;
-}
-#endif
-
 /*
  * mdss_fb_calc_fps() - Calculates fps value.
  * @mfd   : frame buffer structure associated with fb device.
@@ -5763,7 +5706,7 @@ void mdss_fb_idle_pc(struct msm_fb_data_type *mfd)
 	}
 }
 
-#ifdef CONFIG_MACH_XIAOMI_SDM660
+#if defined(CONFIG_MACH_XIAOMI_SDM660) || defined(CONFIG_MACH_XIAOMI_CLOVER)
 /*
  * mdss_prim_panel_fb_unblank() - Unblank primary panel FB
  * @timeout : >0 blank primary panel FB after timeout (ms)
