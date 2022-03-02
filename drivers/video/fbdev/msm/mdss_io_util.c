@@ -288,7 +288,7 @@ int msm_dss_enable_vreg(struct dss_vreg *in_vreg, int num_vreg, int enable)
 				if( (strcmp(in_vreg[i].vreg_name,"lab")==0) ||
 						(strcmp(in_vreg[i].vreg_name,"ibb")==0) ||
 						(strcmp(in_vreg[i].vreg_name,"wqhd-vddio")==0) ) {
-					printk(KERN_ERR "[LCD][TP][Gesture][resume] '%s' power continus supply\n",in_vreg[i].vreg_name);
+					pr_debug(KERN_ERR "[LCD][TP][Gesture][resume] '%s' power continus supply\n",in_vreg[i].vreg_name);
 					continue;
 				}
 			}
@@ -327,9 +327,9 @@ int msm_dss_enable_vreg(struct dss_vreg *in_vreg, int num_vreg, int enable)
 		for (i = num_vreg-1; i >= 0; i--) {
 #ifdef CONFIG_MACH_LONGCHEER
 			if(ESD_TE_status){
-				printk(KERN_ERR "panel esd check recovery \n");
+				pr_debug(KERN_ERR "panel esd check recovery \n");
 				if((strcmp(in_vreg[i].vreg_name,"wqhd-vddio")==0) ) {
-						printk(KERN_ERR "panel '%s' power continus supply\n",in_vreg[i].vreg_name);
+						pr_debug(KERN_ERR "panel '%s' power continus supply\n",in_vreg[i].vreg_name);
 						continue;
 				}
 			}
@@ -347,7 +347,7 @@ int msm_dss_enable_vreg(struct dss_vreg *in_vreg, int num_vreg, int enable)
 				if( (strcmp(in_vreg[i].vreg_name,"lab")==0) ||
 						(strcmp(in_vreg[i].vreg_name,"ibb")==0) ||
 						(strcmp(in_vreg[i].vreg_name,"wqhd-vddio")==0) ) {
-					printk(KERN_ERR "[LCD][TP][Gesture][suspend] '%s' power continus supply\n",in_vreg[i].vreg_name);
+					pr_debug(KERN_ERR "[LCD][TP][Gesture][suspend] '%s' power continus supply\n",in_vreg[i].vreg_name);
 					continue;
 				}
 			}
