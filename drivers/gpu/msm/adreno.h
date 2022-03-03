@@ -1745,10 +1745,12 @@ static inline unsigned int counter_delta(struct kgsl_device *device,
 			 * Since KGSL got abnormal value from the counter,
 			 * We will drop the value from being accumulated.
 			 */
+			#if 0
 			dev_warn_once(device->dev,
 				"Abnormal value :0x%x (0x%x) from perf counter : 0x%x\n",
 				val, *counter, reg);
 			return 0;
+			#endif
 		}
 	}
 
