@@ -1463,26 +1463,26 @@ static void android_work(struct work_struct *data)
 	if (status[0]) {
 		kobject_uevent_env(&gi->dev->kobj,
 					KOBJ_CHANGE, connected);
-		pr_info("%s: sent uevent %s\n", __func__, connected[0]);
+		pr_debug("%s: sent uevent %s\n", __func__, connected[0]);
 		uevent_sent = true;
 	}
 
 	if (status[1]) {
 		kobject_uevent_env(&gi->dev->kobj,
 					KOBJ_CHANGE, configured);
-		pr_info("%s: sent uevent %s\n", __func__, configured[0]);
+		pr_debug("%s: sent uevent %s\n", __func__, configured[0]);
 		uevent_sent = true;
 	}
 
 	if (status[2]) {
 		kobject_uevent_env(&gi->dev->kobj,
 					KOBJ_CHANGE, disconnected);
-		pr_info("%s: sent uevent %s\n", __func__, disconnected[0]);
+		pr_debug("%s: sent uevent %s\n", __func__, disconnected[0]);
 		uevent_sent = true;
 	}
 
 	if (!uevent_sent) {
-		pr_info("%s: did not send uevent (%d %d %pK)\n", __func__,
+		pr_debug("%s: did not send uevent (%d %d %pK)\n", __func__,
 			gi->connected, gi->sw_connected, cdev->config);
 	}
 }
