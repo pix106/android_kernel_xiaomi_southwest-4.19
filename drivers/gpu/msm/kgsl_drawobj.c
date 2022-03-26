@@ -1366,8 +1366,7 @@ int kgsl_drawobj_cmd_add_memlist(struct kgsl_device *device,
 	return 0;
 }
 
-struct kgsl_drawobj_sync *
-kgsl_drawobj_create_timestamp_syncobj(struct kgsl_device *device,
+struct kgsl_drawobj_sync *kgsl_drawobj_create_timestamp_syncobj(struct kgsl_device *device,
 		struct kgsl_context *context, unsigned int timestamp)
 {
 	struct kgsl_drawobj_sync *syncobj;
