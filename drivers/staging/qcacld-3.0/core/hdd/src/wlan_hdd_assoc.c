@@ -2057,7 +2057,7 @@ QDF_STATUS hdd_roam_register_sta(struct hdd_adapter *adapter,
 {
 	QDF_STATUS qdf_status = QDF_STATUS_E_FAILURE;
 	struct ol_txrx_desc_type txrx_desc = { 0 };
-	struct hdd_station_ctx *sta_ctx __maybe_unused = WLAN_HDD_GET_STATION_CTX_PTR(adapter);
+	struct hdd_station_ctx *sta_ctx = WLAN_HDD_GET_STATION_CTX_PTR(adapter);
 	struct ol_txrx_ops txrx_ops;
 	void *soc = cds_get_context(QDF_MODULE_ID_SOC);
 	void *pdev = cds_get_context(QDF_MODULE_ID_TXRX);
@@ -2142,10 +2142,8 @@ QDF_STATUS hdd_roam_register_sta(struct hdd_adapter *adapter,
 		hdd_conn_set_authenticated(adapter, true);
 		hdd_objmgr_set_peer_mlme_auth_state(adapter->vdev, true);
 	} else {
-#ifdef WLAN_DEBUG
 		hdd_debug("ULA auth StaId= %d. Changing TL state to CONNECTED at Join time",
 			 sta_ctx->conn_info.sta_id[0]);
-#endif
 		qdf_status =
 			hdd_change_peer_state(adapter, txrx_desc.sta_id,
 						OL_TXRX_PEER_STATE_CONN,
