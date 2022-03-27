@@ -253,26 +253,6 @@ struct wmi_debug_log_info {
 	struct dentry *wmi_log_debugfs_dir;
 };
 
-#else
-
-#define wmi_alert(params...) ((void)0)
-#define wmi_err(params...) ((void)0)
-#define wmi_warn(params...) ((void)0)
-#define wmi_info(params...) ((void)0)
-#define wmi_debug(params...) ((void)0)
-
-#define wmi_nofl_alert(params...) ((void)0)
-#define wmi_nofl_err(params...) ((void)0)
-#define wmi_nofl_warn(params...) ((void)0)
-#define wmi_nofl_info(params...) ((void)0)
-#define wmi_nofl_debug(params...) ((void)0)
-
-#define wmi_alert_rl(params...) ((void)0)
-#define wmi_err_rl(params...) ((void)0)
-#define wmi_warn_rl(params...) ((void)0)
-#define wmi_info_rl(params...) ((void)0)
-#define wmi_debug_rl(params...) ((void)0)
-
 #endif /*WMI_INTERFACE_EVENT_LOGGING */
 
 #ifdef WLAN_OPEN_SOURCE
