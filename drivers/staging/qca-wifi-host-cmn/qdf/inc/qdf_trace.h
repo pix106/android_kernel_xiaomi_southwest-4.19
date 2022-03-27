@@ -1093,13 +1093,8 @@ qdf_tso_seg_dbg_zero(struct qdf_tso_seg_elem_t *tsoseg)
 
 #endif /* TSOSEG_DEBUG */
 
-#ifdef QDF_ENABLE_TRACING
 void qdf_trace_hex_dump(QDF_MODULE_ID module, QDF_TRACE_LEVEL level,
 			void *data, int buf_len);
-#else
-static inline void qdf_trace_hex_dump(QDF_MODULE_ID module, QDF_TRACE_LEVEL level,
-			void *data, int buf_len) {}
-#endif
 
 #define ERROR_CODE                      -1
 #define QDF_MAX_NAME_SIZE               32
