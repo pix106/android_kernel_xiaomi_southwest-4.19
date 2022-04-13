@@ -925,8 +925,7 @@ static inline int fpc1020_probe(struct platform_device *pdev)
 	if (!fpc1020) {
 		dev_err(dev,
 			"failed to allocate memory for struct fpc1020_data\n");
-		rc = -ENOMEM;
-		goto exit;
+		return -ENOMEM;
 	}
 
 #ifdef CONFIG_MACH_LONGCHEER
@@ -942,8 +941,7 @@ static inline int fpc1020_probe(struct platform_device *pdev)
 
 	if (!np) {
 		dev_err(dev, "no of node found\n");
-		rc = -EINVAL;
-		goto exit;
+		return -EINVAL;
 	}
 
 #ifndef CONFIG_MACH_XIAOMI_CLOVER
@@ -951,13 +949,11 @@ static inline int fpc1020_probe(struct platform_device *pdev)
 	if (IS_ERR(fpc1020->fingerprint_pinctrl)) {
 		if (PTR_ERR(fpc1020->fingerprint_pinctrl) == -EPROBE_DEFER) {
 			dev_info(dev, "pinctrl is not ready\n");
-			rc = -EPROBE_DEFER;
-			goto exit;
+			return -EPROBE_DEFER;
 		}
 		dev_err(dev, "Target does not use pinctrl\n");
 		fpc1020->fingerprint_pinctrl = NULL;
-		rc = -EINVAL;
-		goto exit;
+		return -EINVAL;
 	}
 
 	for (i = 0; i < ARRAY_SIZE(fpc1020->pinctrl_state); i++) {
@@ -966,8 +962,7 @@ static inline int fpc1020_probe(struct platform_device *pdev)
 			pinctrl_lookup_state(fpc1020->fingerprint_pinctrl, n);
 		if (IS_ERR(state)) {
 			dev_err(dev, "cannot find '%s'\n", n);
-			rc = -EINVAL;
-			goto exit;
+			return -EINVAL;
 		}
 		dev_info(dev, "found pin control %s\n", n);
 		fpc1020->pinctrl_state[i] = state;
