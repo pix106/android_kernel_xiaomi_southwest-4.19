@@ -1051,7 +1051,7 @@ static inline int fpc1020_remove(struct platform_device *pdev)
 	return 0;
 }
 
-static struct of_device_id fpc1020_of_match[] = {
+static const struct of_device_id fpc1020_of_match[] = {
 	{ .compatible = "fpc,fpc1020", },
 	{},
 };
