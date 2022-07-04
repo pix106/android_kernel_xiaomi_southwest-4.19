@@ -13,6 +13,7 @@
 #include "xiaomi-sdm660-common.dtsi"
 #include "longcheer/wayne/wayne-common-base.dtsi"
 
+/* sdm660.dtsi jasmine specific diff */
 &firmware {
 	android {
 		/delete-node/ vbmeta;
