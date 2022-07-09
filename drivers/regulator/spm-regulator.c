@@ -1325,7 +1325,7 @@ static struct platform_driver spm_regulator_driver = {
  *
  * Returns 0 on success or errno on failure.
  */
-int __init spm_regulator_init(void)
+int spm_regulator_init(void)
 {
 	static bool has_registered;
 
