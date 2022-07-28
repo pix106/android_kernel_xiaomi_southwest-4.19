@@ -30,7 +30,8 @@ sda660-mtp-external-codec-overlay.dtbo-base := sda660-pm660l.dtb
 sda660-cdp-external-codec-overlay.dtbo-base := sda660-pm660l.dtb
 
 sda660-rcm-external-codec-overlay.dtbo-base := sda660-pm660l.dtb
-else
+endif
+
 ifeq ($(CONFIG_MACH_XIAOMI_SDM660),y)
 ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)
 dtbo-$(CONFIG_MACH_XIAOMI_LAVENDER) += sdm660-mtp-lavender-overlay.dtbo
@@ -95,7 +96,6 @@ sdm660-internal-codec-cdp.dtb \
         sdm636-pm660a-rcm.dtb \
         sdm636-usbc-audio-mtp.dtb \
         sdm636-usbc-audio-rcm.dtb
-endif
 endif
 
 always		:= $(dtb-y)
