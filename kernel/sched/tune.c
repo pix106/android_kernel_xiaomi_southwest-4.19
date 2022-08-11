@@ -546,6 +546,10 @@ int schedtune_task_boost(struct task_struct *p)
 	rcu_read_lock();
 	st = task_schedtune(p);
 	task_boost = st->boost;
+#ifdef CONFIG_PERF_HUMANTASK
+	if (p->human_task)
+		task_boost = 40;
+#endif
 	rcu_read_unlock();
 
 	return task_boost;
