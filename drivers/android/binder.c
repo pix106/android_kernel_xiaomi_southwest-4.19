@@ -2518,6 +2518,9 @@ static int binder_proc_transaction(struct binder_transaction *t,
 	struct binder_priority node_prio;
 	bool oneway = !!(t->flags & TF_ONE_WAY);
 	bool pending_async = false;
+#ifdef CONFIG_PERF_HUMANTASK
+	int task_pri = 0;
+#endif
 
 	BUG_ON(!node);
 	binder_node_lock(node);
@@ -2549,6 +2552,17 @@ static int binder_proc_transaction(struct binder_transaction *t,
 		thread = binder_select_thread_ilocked(proc);
 
 	if (thread) {
+#ifdef CONFIG_PERF_HUMANTASK
+		if (t->from && t->from->task)
+			task_pri = t->from->task->human_task;
+
+		if (!oneway && task_pri && task_pri <= 4) {
+			if (thread->task && !t->from->task->inherit_task) {
+				thread->task->human_task++;
+				thread->task->inherit_task = 1;
+			}
+		}
+#endif
 		binder_transaction_priority(thread->task, t, node_prio,
 					    node->inherit_rt);
 		binder_enqueue_thread_work_ilocked(thread, &t->work);
@@ -3252,6 +3266,12 @@ static void binder_transaction(struct binder_proc *proc,
 		wake_up_interruptible_sync(&target_thread->wait);
 		binder_restore_priority(current, in_reply_to->saved_priority);
 		binder_free_transaction(in_reply_to);
+#ifdef CONFIG_PERF_HUMANTASK
+		if (thread->task && thread->task->inherit_task) {
+			thread->task->inherit_task = 0;
+			thread->task->human_task = 0;
+		}
+#endif
 	} else if (!(t->flags & TF_ONE_WAY)) {
 		BUG_ON(t->buffer->async_transaction != 0);
 		binder_inner_proc_lock(proc);
