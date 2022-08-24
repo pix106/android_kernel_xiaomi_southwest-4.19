@@ -1441,8 +1441,6 @@ config TOUCHSCREEN_SYNAPTICS_TCM_D2T
 	  Say Y here, if you have a Synaptics TCM touchscreen connected.
 	  If unsure, say N.
 
-source "drivers/input/touchscreen/focal_ft8719_d2t/Kconfig"
-
 source "drivers/input/touchscreen/synaptics_tcm_d2t/Kconfig"
 
 source "drivers/input/touchscreen/nvt_touch_e7s/Kconfig"
