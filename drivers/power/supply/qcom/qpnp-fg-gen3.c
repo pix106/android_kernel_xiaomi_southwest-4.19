@@ -840,24 +840,6 @@ static int fg_get_prop_capacity(struct fg_dev *fg, int *val)
 	return 0;
 }
 
-#define DEFAULT_BATT_TYPE	"Unknown Battery"
-#define MISSING_BATT_TYPE	"Missing Battery"
-#define LOADING_BATT_TYPE	"Loading Battery"
-const char *fg_get_battery_type(struct fg_dev *fg)
-{
-	if (fg->battery_missing)
-		return MISSING_BATT_TYPE;
-
-	if (fg->bp.batt_type_str) {
-		if (fg->profile_load_status)
-			return fg->bp.batt_type_str;
-		else if (fg->profile_available)
-			return LOADING_BATT_TYPE;
-	}
-
-	return DEFAULT_BATT_TYPE;
-}
-
 static int fg_get_prop_real_capacity(struct fg_dev *fg, int *val)
 {
 	return fg_get_msoc(fg, val);
