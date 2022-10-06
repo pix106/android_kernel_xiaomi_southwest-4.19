@@ -707,13 +707,6 @@ include/config/auto.conf:
 endif # may-sync-config
 endif # $(dot-config)
 
-ifeq ($(cc-name),gcc)
-KBUILD_CFLAGS	+= -mcpu=cortex-a73.cortex-a53
-endif
-ifeq ($(cc-name),clang)
-KBUILD_CFLAGS	+= -mcpu=cortex-a53
-endif
-
 ifdef CONFIG_LLVM_POLLY
 KBUILD_CFLAGS	+= -mllvm -polly \
 		   -mllvm -polly-run-dce \
