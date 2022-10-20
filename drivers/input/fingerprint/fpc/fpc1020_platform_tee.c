@@ -347,8 +347,8 @@ static ssize_t hw_reset_store(struct device *dev, struct device_attribute *attr,
 		mutex_unlock(&fpc1020->lock);
 		return count;
 	}
-		return -EINVAL;
 
+	return -EINVAL;
 }
 static DEVICE_ATTR_WO(hw_reset);
 
