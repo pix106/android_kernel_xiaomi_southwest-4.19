@@ -35,7 +35,6 @@
 #include <linux/uaccess.h>
 #include "tas2557.h"
 #include "tas2557-core.h"
-#include <linux/hardware_info.h>
 
 #ifdef CONFIG_TAS2557_CODEC_STEREO
 #include "tas2557-codec.h"
@@ -1113,22 +1112,7 @@ static const struct regmap_config tas2557_i2c_regmap = {
  * platform dependent
  * should implement hardware reset functionality
  */
-static int hw_id_check(struct i2c_client *pClient)
-{
-	char *strp;
-	strp = get_type_name();
-	dev_info(&pClient->dev, "%s: hw_id is is %s\n", __func__, strp);
-
-	if (strstr(strp, "D9P")) {
-		return 0;
-	} else {
-		dev_info(&pClient->dev, "It's not D9P\n");
-		return -EPERM;
-	}
-}
-
 atomic_t tas2557_ref_count;
-int is_d9p;
 static int tas2557_i2c_probe(struct i2c_client *pClient,
 	const struct i2c_device_id *pID)
 {
@@ -1314,18 +1298,8 @@ static int tas2557_i2c_probe(struct i2c_client *pClient,
 	pTAS2557->mtimer.function = temperature_timer_func;
 	INIT_WORK(&pTAS2557->mtimerwork, timer_work_routine);
 
-	if (!hw_id_check(pClient))
-		is_d9p = 1;
-	else
-		is_d9p = 0;
-	dev_info(pTAS2557->dev, "%s It's %sD9P\n", __func__, is_d9p?"":"not ");
-
-	if (is_d9p)
-		nResult = request_firmware_nowait(THIS_MODULE, 1, TAS2557_D9P_FW_NAME,
-		pTAS2557->dev, GFP_KERNEL, pTAS2557, tas2557_fw_ready);
-	else
-		nResult = request_firmware_nowait(THIS_MODULE, 1, TAS2557_FW_NAME,
-		pTAS2557->dev, GFP_KERNEL, pTAS2557, tas2557_fw_ready);
+	nResult = request_firmware_nowait(THIS_MODULE, 1, TAS2557_FW_NAME,
+	pTAS2557->dev, GFP_KERNEL, pTAS2557, tas2557_fw_ready);
 
 err:
 
