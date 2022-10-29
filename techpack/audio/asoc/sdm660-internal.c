@@ -2675,8 +2675,8 @@ static struct snd_soc_dai_link msm_mi2s_be_dai_links[] = {
 		.cpu_dai_name = "msm-dai-q6-mi2s.0",
 		.platform_name = "msm-pcm-routing",
 #ifdef CONFIG_SND_SOC_TAS2557
-		.codec_name = "msm-stub-codec.1",
-		.codec_dai_name = "msm-stub-tx",
+		.codec_name = "tas2557.6-004c",
+		.codec_dai_name = "tas2557 ASI1",
 #elif defined(CONFIG_SND_SOC_MAX98937)
 		.codec_name = "max98927",
 		.codec_dai_name = "max98927-aif1",
