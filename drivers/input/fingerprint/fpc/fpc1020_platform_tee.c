@@ -821,27 +821,6 @@ static struct notifier_block fpc_notif_block = {
 	.notifier_call = fpc_fb_notif_callback,
 };
 
-#ifdef CONFIG_MACH_LONGCHEER
-static int proc_show_ver(struct seq_file *file, void *v)
-{
-	seq_printf(file, "Fingerprint: FPC\n");
-	return 0;
-}
-
-static int proc_open(struct inode *inode, struct file *file)
-{
-	single_open(file, proc_show_ver, NULL);
-	return 0;
-}
-
-static const struct file_operations proc_file_fpc_ops = {
-	.owner = THIS_MODULE,
-	.open = proc_open,
-	.read = seq_read,
-	.release = single_release,
-};
-#endif
-
 #ifdef CONFIG_TOUCHSCREEN_COMMON
 static int input_connect(struct input_handler *handler, struct input_dev *dev,
 			 const struct input_device_id *id)
