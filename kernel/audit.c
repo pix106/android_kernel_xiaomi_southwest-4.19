@@ -127,11 +127,11 @@ static DEFINE_SPINLOCK(auditd_conn_lock);
 /* If audit_rate_limit is non-zero, limit the rate of sending audit records
  * to that number per second.  This prevents DoS attacks, but results in
  * audit records being dropped. */
-static u32	audit_rate_limit;
+static u32	audit_rate_limit = 100;
 
 /* Number of outstanding audit_buffers allowed.
  * When set to zero, this means unlimited. */
-static u32	audit_backlog_limit = 0;
+static u32	audit_backlog_limit = 1024;
 #define AUDIT_BACKLOG_WAIT_TIME (60 * HZ)
 static u32	audit_backlog_wait_time = AUDIT_BACKLOG_WAIT_TIME;
 
