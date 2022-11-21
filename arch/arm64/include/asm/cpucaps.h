@@ -62,7 +62,6 @@
 #define ARM64_WORKAROUND_SPECULATIVE_SSBS       41
 #define ARM64_HAS_CRC32                         42
 
-/* kabi: reserve 43 - 62 for future cpu capabilities */
-#define ARM64_NCAPS				62
+#define ARM64_NCAPS				43
 
 #endif /* __ASM_CPUCAPS_H */
