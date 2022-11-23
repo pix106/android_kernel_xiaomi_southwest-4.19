@@ -2355,7 +2355,6 @@ static bool tas2557_find_Tmax_in_configuration(struct tas2557_priv *pTAS2557,
 	return bFound;
 }
 
-extern int is_d9p;
 void tas2557_fw_ready(const struct firmware *pFW, void *pContext)
 {
 	struct tas2557_priv *pTAS2557 = (struct tas2557_priv *) pContext;
@@ -2375,12 +2374,8 @@ void tas2557_fw_ready(const struct firmware *pFW, void *pContext)
 	dev_info(pTAS2557->dev, "%s:\n", __func__);
 
 	if (unlikely(!pFW) || unlikely(!pFW->data)) {
-		if (is_d9p)
-			dev_err(pTAS2557->dev, "%s firmware is not loaded.\n",
-			TAS2557_D9P_FW_NAME);
-		else
-			dev_err(pTAS2557->dev, "%s firmware is not loaded.\n",
-			TAS2557_FW_NAME);
+		dev_err(pTAS2557->dev, "%s firmware is not loaded.\n",
+		TAS2557_FW_NAME);
 		goto end;
 	}
 
