@@ -290,7 +290,6 @@
 #define TAS2557_DSP_CLK_FROM_PLL		(0x1 << 5)
 
 #define TAS2557_FW_NAME     "tas2557s_uCDSP.bin"
-#define TAS2557_D9P_FW_NAME		"tas2557s_uCDSP_d9p.bin"
 
 #define TAS2557_BROADCAST_ADDR	0x4c
 
