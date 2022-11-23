@@ -306,7 +306,6 @@ static ssize_t tas2557_file_read(struct file *file, char *buf, size_t count, lof
 	return count;
 }
 
-extern int is_d9p;
 static ssize_t tas2557_file_write(struct file *file, const char *buf, size_t count, loff_t *ppos)
 {
 	struct tas2557_priv *pTAS2557 = (struct tas2557_priv *)file->private_data;
@@ -492,12 +491,8 @@ static ssize_t tas2557_file_write(struct file *file, const char *buf, size_t cou
 	case TIAUDIO_CMD_FW_RELOAD:
 	{
 		if (count == 1) {
-			if (is_d9p)
-				ret = request_firmware_nowait(THIS_MODULE, 1, TAS2557_D9P_FW_NAME,
-				pTAS2557->dev, GFP_KERNEL, pTAS2557, tas2557_fw_ready);
-			else
-				ret = request_firmware_nowait(THIS_MODULE, 1, TAS2557_FW_NAME,
-				pTAS2557->dev, GFP_KERNEL, pTAS2557, tas2557_fw_ready);
+			ret = request_firmware_nowait(THIS_MODULE, 1, TAS2557_FW_NAME,
+			pTAS2557->dev, GFP_KERNEL, pTAS2557, tas2557_fw_ready);
 
 			if (g_logEnable)
 				dev_info(pTAS2557->dev,
