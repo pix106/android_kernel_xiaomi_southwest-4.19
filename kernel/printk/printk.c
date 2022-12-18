@@ -828,8 +828,7 @@ static ssize_t devkmsg_write(struct kiocb *iocb, struct iov_iter *from)
 		}
 	}
 
-	if (strncmp("healthd", line, 7) == 0 ||
-            strncmp("init: DM_DEV_STATUS failed", line, 26) == 0) {
+	if (strncmp("healthd", line, 7) == 0) {
 		return len;
 	}
 
