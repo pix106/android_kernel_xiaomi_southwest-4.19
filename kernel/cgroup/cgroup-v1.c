@@ -548,9 +548,8 @@ static ssize_t __cgroup1_procs_write(struct kernfs_open_file *of,
 	/* This covers boosting for app launches and app transitions */
 	if (!ret && !threadgroup &&
 		!memcmp(of->kn->parent->name, "top-app", sizeof("top-app")) &&
-		is_zygote_pid(task->parent->pid)) {
-		devfreq_boost_kick_max(DEVFREQ_MSM_CPUBW, 500);
-	}
+		task_is_zygote(task->parent))
+		devfreq_boost_kick_max(DEVFREQ_MSM_CPU_DDR_BW, 500);
 
 out_finish:
 	cgroup_procs_write_finish(task);
