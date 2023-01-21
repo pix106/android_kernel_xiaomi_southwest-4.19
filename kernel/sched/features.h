@@ -56,7 +56,7 @@ SCHED_FEAT(TTWU_QUEUE, false)
  * When doing wakeups, attempt to limit superfluous scans of the LLC domain.
  */
 SCHED_FEAT(SIS_AVG_CPU, false)
-SCHED_FEAT(SIS_PROP, true)
+SCHED_FEAT(SIS_PROP, false)
 
 /*
  * Issue a WARN when we do multiple update_rq_clock() calls
