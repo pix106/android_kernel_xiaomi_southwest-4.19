@@ -222,8 +222,7 @@ static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
 		num_clusters += num_to_be_allocated;
 		*clu = new_clu.dir;
 
-		inode->i_blocks +=
-			num_to_be_allocated << sbi->sect_per_clus_bits;
+		inode->i_blocks += EXFAT_CLU_TO_B(num_to_be_allocated, sbi) >> 9;
 
 		/*
 		 * Move *clu pointer along FAT chains (hole care) because the
@@ -361,10 +360,12 @@ static int exfat_readpages(struct file *file, struct address_space *mapping,
 }
 #endif
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 2, 0)
 static int exfat_writepage(struct page *page, struct writeback_control *wbc)
 {
 	return block_write_full_page(page, exfat_get_block, wbc);
 }
+#endif
 
 static int exfat_writepages(struct address_space *mapping,
 		struct writeback_control *wbc)
@@ -532,12 +533,19 @@ static const struct address_space_operations exfat_aops = {
 #else
 	.readpages	= exfat_readpages,
 #endif
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 2, 0)
 	.writepage	= exfat_writepage,
+#endif
 	.writepages	= exfat_writepages,
 	.write_begin	= exfat_write_begin,
 	.write_end	= exfat_write_end,
 	.direct_IO	= exfat_direct_IO,
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 2, 0)
 	.bmap		= exfat_aop_bmap
+#else
+	.bmap		= exfat_aop_bmap,
+	.migrate_folio	= buffer_migrate_folio,
+#endif
 };
 
 static inline unsigned long exfat_hash(loff_t i_pos)
@@ -649,8 +657,7 @@ static int exfat_fill_inode(struct inode *inode, struct exfat_dir_entry *info)
 
 	exfat_save_attr(inode, info->attr);
 
-	inode->i_blocks = round_up(i_size_read(inode), sbi->cluster_size) >>
-				inode->i_blkbits;
+	inode->i_blocks = round_up(i_size_read(inode), sbi->cluster_size) >> 9;
 	inode->i_mtime = info->mtime;
 	inode->i_ctime = info->mtime;
 	ei->i_crtime = info->crtime;
