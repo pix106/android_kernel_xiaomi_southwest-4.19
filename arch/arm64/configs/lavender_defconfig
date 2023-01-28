@@ -5155,7 +5155,7 @@ CONFIG_ARM_PMU=y
 CONFIG_QCOM_L2_COUNTERS=y
 # CONFIG_QCOM_LLCC_PMU is not set
 # CONFIG_ARM_SPE_PMU is not set
-CONFIG_RAS=y
+# CONFIG_RAS is not set
 
 #
 # Android
