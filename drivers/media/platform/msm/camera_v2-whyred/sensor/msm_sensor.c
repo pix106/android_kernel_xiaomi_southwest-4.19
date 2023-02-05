@@ -153,7 +153,6 @@ int msm_sensor_power_up(struct msm_sensor_ctrl_t *s_ctrl)
 	struct msm_camera_slave_info *slave_info;
 	const char *sensor_name;
 	uint32_t retry = 0;
-	uint32_t check_id_retry = 0;
 
 	if (!s_ctrl) {
 		pr_err("%s:%d failed: %pK\n",
@@ -205,12 +204,6 @@ int msm_sensor_power_up(struct msm_sensor_ctrl_t *s_ctrl)
 			sensor_i2c_client);
 		if (rc < 0)
 			return rc;
-
-		for (check_id_retry = 0; check_id_retry < 3; check_id_retry++) {
-			rc = msm_sensor_check_id(s_ctrl);
-			if (!rc) break;
-			msleep(20);
-		}
 
 		if (!s_ctrl->is_probe_succeed) {
 			rc = msm_sensor_match_vendor_id(s_ctrl);
