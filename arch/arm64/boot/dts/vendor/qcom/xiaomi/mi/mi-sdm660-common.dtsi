@@ -122,7 +122,7 @@
 	/delete-property/ qcom,auto-calibration;
 	qcom,en-cabc;
 	qcom,fs-current-limit = <20000>;
-	qcom,string-cfg = <6>;
+	qcom,string-cfg = <3>;
 };
 
 &dsi_dual_nt35597_truly_video {
