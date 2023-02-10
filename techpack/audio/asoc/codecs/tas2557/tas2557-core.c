@@ -423,6 +423,8 @@ prog_coefficient:
 		nResult = tas2557_dev_load_data(pTAS2557, p_tas2557_startup_data);
 		if (nResult < 0)
 			goto end;
+
+		pProgram = &(pTAS2557->mpFirmware->mpPrograms[pTAS2557->mnCurrentProgram]);
 		if (pProgram->mnAppMode == TAS2557_APP_TUNINGMODE) {
 			nResult = tas2557_checkPLL(pTAS2557);
 			if (nResult < 0) {
