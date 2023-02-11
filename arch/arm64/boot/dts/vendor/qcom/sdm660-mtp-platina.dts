@@ -24,4 +24,10 @@
 			<0x0001001b 0x0201011a 0x0 0x0>;
 };
 
+&soc {
+        qcom,msm_fastrpc {
+                /delete-property/ qcom,fastrpc-adsp-sensors-pdr;
+        };
+};
+
 #include "xiaomi/platina.dtsi"
