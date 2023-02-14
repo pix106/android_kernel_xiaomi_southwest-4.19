@@ -782,13 +782,10 @@ static int __always_inline fpc_fb_notif_callback(struct notifier_block *nb,
 	struct fb_event *evdata = data;
 	unsigned int blank;
 
-	if (!fpc1020)
-		return 0;
-
 #ifdef CONFIG_MACH_XIAOMI_SDM660
-	if (val != FB_EVENT_BLANK || fpc1020->prepared == false)
+	if (!fpc1020 || val != FB_EVENT_BLANK || fpc1020->prepared == false)
 #else
-	if (val != FB_EVENT_BLANK)
+	if (!fpc1020 || val != FB_EVENT_BLANK)
 #endif
 		return 0;
 
@@ -814,6 +811,7 @@ static int __always_inline fpc_fb_notif_callback(struct notifier_block *nb,
 			break;
 		}
 	}
+
 	return NOTIFY_OK;
 }
 
