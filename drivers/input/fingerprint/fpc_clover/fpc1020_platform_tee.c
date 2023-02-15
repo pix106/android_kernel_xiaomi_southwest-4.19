@@ -40,7 +40,7 @@
 #include <linux/notifier.h>
 #include <linux/fb.h>
 
-#define FPC_TTW_HOLD_TIME 2000
+#define FPC_TTW_HOLD_TIME 400
 
 #define RESET_LOW_SLEEP_MIN_US 5000
 #define RESET_LOW_SLEEP_MAX_US (RESET_LOW_SLEEP_MIN_US + 100)
