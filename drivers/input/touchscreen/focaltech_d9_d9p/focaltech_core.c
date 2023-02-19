@@ -648,7 +648,6 @@ static inline int fts_input_report_b(struct fts_ts_data *data)
 	}
 
 	input_sync(data->input_dev);
-
 	return 0;
 }
 
