@@ -913,11 +913,6 @@ config QCOM_CX_IPEAK
 	  If all clients are going to cross their thresholds then Cx ipeak
 	  hw module will raise an interrupt to cDSP block to throttle cDSP fmax.
 
-config SERIAL_NUM
-        bool "Enable Serial Number Proc Interface"
-        help
-          Provide a interface for reading CPU serial number
-
 config QTI_CRYPTO_COMMON
 	tristate "Enable common crypto functionality used for FBE"
 	depends on BLK_INLINE_ENCRYPTION
