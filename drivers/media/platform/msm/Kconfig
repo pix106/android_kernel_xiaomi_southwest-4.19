@@ -40,6 +40,12 @@ menuconfig MSMB_CAMERA
        adds support for the camera driver stack including sensor, isp
        and postprocessing drivers.
 
+config MSMB_CAMERA_OSS
+     bool "QTI MSM camera and video capture 2.0 (oss version)"
+     depends on MSMB_CAMERA
+     help
+       Say Y here to use OSS Qualcomm msm camera and video capture 2.0.
+
 config MSMB_CAMERA_DEBUG
      bool "QTI MSM camera 2.0 debugging with printk"
      depends on MSMB_CAMERA
@@ -51,12 +57,15 @@ config MSMB_CAMERA_DEBUG
        Enable printk() debug for msm camera 2.0.
 
 if MSMB_CAMERA
-if !MACH_XIAOMI_WHYRED
-source "drivers/media/platform/msm/camera_v2/Kconfig"
-endif # !MACH_XIAOMI_WHYRED
 if MACH_XIAOMI_WHYRED
 source "drivers/media/platform/msm/camera_v2-whyred/Kconfig"
-endif # MACH_XIAOMI_WHYRED
+endif
+if !MACH_XIAOMI_WHYRED || !MSM_CAMERA_OSS
+source "drivers/media/platform/msm/camera_v2/Kconfig"
+endif
+if MSM_CAMERA_OSS
+source "drivers/media/platform/msm/camera_v2-oss/Kconfig"
+endif
 endif # MSMB_CAMERA
 
 source "drivers/media/platform/msm/cvp/Kconfig"
