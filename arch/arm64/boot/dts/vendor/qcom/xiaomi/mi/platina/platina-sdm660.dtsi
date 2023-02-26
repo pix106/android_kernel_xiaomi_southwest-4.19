@@ -306,8 +306,8 @@
 
 &q6core {
 	sound {
-		qcom,msm-mi2s-master = <0>, <1>, <0>, <0>;
-		qcom,msm-mi2s-ext-mclk = <1>,<0>,<0>,<0>;
+		qcom,msm-mi2s-master = <0>, <1>, <0>, <0>, <0>;
+		qcom,msm-mi2s-ext-mclk = <1>,<0>,<0>,<0>,<0>;
 		qcom,wsa-max-devs = <0>;
 		qcom,msm-micbias1-ext-cap;
 		qcom,msm-micbias2-ext-cap;
