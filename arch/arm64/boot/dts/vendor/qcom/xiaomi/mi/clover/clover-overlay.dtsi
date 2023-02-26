@@ -781,10 +781,10 @@
                 "RX_I2S_CLK", "INT_MCLK0",
                 "TX_I2S_CLK", "INT_MCLK0",
                 "MIC BIAS External", "Handset Mic",
-                "MIC BIAS External2", "Headset Mic",
+                "MIC BIAS Internal2", "Headset Mic",
                 "MIC BIAS External", "Secondary Mic",
                 "AMIC1", "MIC BIAS External",
-                "AMIC2", "MIC BIAS External2",
+                "AMIC2", "MIC BIAS Internal2",
                 "AMIC3", "MIC BIAS External",
                 "DMIC1", "MIC BIAS External",
                 "MIC BIAS External", "Digital Mic1",
@@ -811,6 +811,9 @@
 };
 &pmic_analog_codec {
 	status = "okay";
+};
+&cdc_dmic_gpios {
+	status = "disabled";
 };
 &cdc_pdm_gpios {
 	status = "okay";
