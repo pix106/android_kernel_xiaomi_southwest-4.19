@@ -1798,9 +1798,6 @@ struct f2fs_sb_info {
 	struct kobject s_stat_kobj;		/* /sys/fs/f2fs/<devname>/stat */
 	struct completion s_stat_kobj_unregister;
 
-	struct kobject s_feature_list_kobj;		/* /sys/fs/f2fs/<devname>/feature_list */
-	struct completion s_feature_list_kobj_unregister;
-
 	/* For shrinker support */
 	struct list_head s_list;
 	struct mutex umount_mutex;
