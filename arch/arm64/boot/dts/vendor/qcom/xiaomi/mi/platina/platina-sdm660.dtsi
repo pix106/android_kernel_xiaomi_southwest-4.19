@@ -107,18 +107,19 @@
 				   752500 525000>;
 };
 
-&vendor {
+/{
+	/delete-node/ qcom,battery-data;
+
 	mtp_batterydata: qcom,battery-data {
 		qcom,batt-id-range-pct = <15>;
 		#include "battery/batterydata-D2T-coslight-3350mAh.dtsi"
 		#include "battery/batterydata-D2T-desay-3350mAh.dtsi"
 		#include "battery/fg-gen3-batterydata-itech-3000mah.dtsi"
-		/delete-node/ qcom,itech_3000mah;
-		/delete-node/ qcom,ascent_3450mah;
 	};
 };
 
 &pm660_fg {
+	qcom,battery-data = <&mtp_batterydata>;
 	qcom,fg-force-load-profile;
 	qcom,fg-sys-term-current = <(-300)>;
 	qcom,fg-chg-term-current = <200>;
