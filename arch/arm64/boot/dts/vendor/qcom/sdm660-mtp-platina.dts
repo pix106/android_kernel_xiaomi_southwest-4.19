@@ -15,7 +15,6 @@
 
 #include "sdm660.dtsi"
 #include "sdm660-internal-codec.dtsi"
-#include "sdm660-mtp.dtsi"
 
 / {
 	model = "Qualcomm Technologies, Inc. SDM 660 PM660 + PM660L MTP,Int Codec,Platina";
