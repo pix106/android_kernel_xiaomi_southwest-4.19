@@ -54,22 +54,6 @@ enum msm_vidc_debugfs_event {
 	MSM_VIDC_DEBUGFS_EVENT_FBD,
 };
 
-extern int msm_vidc_debug;
-extern int msm_vidc_debug_out;
-extern int msm_vidc_fw_debug;
-extern int msm_vidc_fw_debug_mode;
-extern int msm_vidc_fw_low_power_mode;
-extern int msm_vidc_hw_rsp_timeout;
-extern bool msm_vidc_fw_coverage;
-extern int msm_vidc_vpe_csc_601_to_709;
-extern bool msm_vidc_dec_dcvs_mode;
-extern bool msm_vidc_enc_dcvs_mode;
-extern bool msm_vidc_sys_idle_indicator;
-extern int msm_vidc_firmware_unload_delay;
-extern bool msm_vidc_thermal_mitigation_disabled;
-extern bool msm_vidc_bitrate_clock_scaling;
-extern bool msm_vidc_debug_timeout;
-
 static inline char *VIDC_MSG_PRIO2STRING(int __level)
 {
 	char *__str;
@@ -103,6 +87,22 @@ static inline char *VIDC_MSG_PRIO2STRING(int __level)
 	return __str;
 }
 
+static int msm_vidc_fw_low_power_mode = 1;
+static int msm_vidc_hw_rsp_timeout = 1000;
+static bool msm_vidc_fw_coverage = true;
+static bool msm_vidc_dec_dcvs_mode = true;
+static bool msm_vidc_enc_dcvs_mode = true;
+static bool msm_vidc_sys_idle_indicator = true;
+static bool msm_vidc_thermal_mitigation_disabled = true;
+static bool msm_vidc_bitrate_clock_scaling = true;
+#ifdef CONFIG_DEBUG_FS
+static int msm_vidc_debug = VIDC_ERR | VIDC_WARN;
+static int msm_vidc_debug_out = VIDC_OUT_PRINTK;
+static int msm_vidc_fw_debug = 0x18;
+static int msm_vidc_fw_debug_mode = 1;
+static int msm_vidc_firmware_unload_delay = 15000;
+static bool msm_vidc_debug_timeout = true;
+
 #define dprintk(__level, __fmt, arg...)	\
 	do { \
 		if (msm_vidc_debug & __level) { \
@@ -122,6 +122,32 @@ struct dentry *msm_vidc_debugfs_init_inst(struct msm_vidc_inst *inst,
 void msm_vidc_debugfs_deinit_inst(struct msm_vidc_inst *inst);
 void msm_vidc_debugfs_update(struct msm_vidc_inst *inst,
 		enum msm_vidc_debugfs_event e);
+#else
+static int msm_vidc_debug = 0;
+static int msm_vidc_fw_debug = 0;
+static int msm_vidc_fw_debug_mode = 0;
+static bool msm_vidc_debug_timeout = false;
+
+#define dprintk(__level, __fmt, arg...) ((void)0)
+
+static inline struct dentry *msm_vidc_debugfs_init_drv(void)
+{
+	return NULL;
+}
+static inline struct dentry *msm_vidc_debugfs_init_core(struct msm_vidc_core *core,
+							struct dentry *parent)
+{
+	return NULL;
+}
+static inline struct dentry *msm_vidc_debugfs_init_inst(struct msm_vidc_inst *inst,
+							struct dentry *parent)
+{
+	return NULL;
+}
+static inline void msm_vidc_debugfs_deinit_inst(struct msm_vidc_inst *inst) {}
+static inline void msm_vidc_debugfs_update(struct msm_vidc_inst *inst,
+					   enum msm_vidc_debugfs_event e) {}
+#endif
 
 static inline void tic(struct msm_vidc_inst *i, enum profiling_points p,
 				 char *b)
