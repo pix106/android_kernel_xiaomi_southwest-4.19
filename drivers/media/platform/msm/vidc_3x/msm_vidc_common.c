@@ -27,6 +27,10 @@
 #include "msm_vidc_debug.h"
 #include "msm_vidc_dcvs.h"
 
+#ifdef CONFIG_TRACEPOINTS
+#define CREATE_TRACE_POINTS
+#endif
+
 #define IS_ALREADY_IN_STATE(__p, __d) ({\
 	int __rc = (__p >= __d);\
 	__rc; \
