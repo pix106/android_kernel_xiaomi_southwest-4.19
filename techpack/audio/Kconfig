@@ -154,6 +154,8 @@ config WCD9XXX_CODEC_CORE
 	tristate "WCD9XXX_CODEC_CORE"
 config WCD_DSP_GLINK
 	tristate "WCD_DSP_GLINK"
+config WCD_SPI_DMA_MASKING
+	tristate "WCD_SPI_DMA_MASKING"
 config WSA_MACRO
 	tristate "WSA_MACRO"
 config SND_SOC_TAS2557
