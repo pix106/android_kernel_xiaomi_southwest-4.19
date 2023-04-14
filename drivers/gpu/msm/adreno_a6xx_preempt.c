@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
  * Copyright (c) 2017-2020, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2022-2023, Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
 #include "adreno.h"
@@ -749,6 +750,8 @@ void a6xx_preemption_close(struct adreno_device *adreno_dev)
 
 int a6xx_preemption_init(struct adreno_device *adreno_dev)
 {
+	u32 flags = ADRENO_FEATURE(adreno_dev, ADRENO_APRIV) ?
+			KGSL_MEMDESC_PRIVILEGED : 0;
 	struct kgsl_device *device = KGSL_DEVICE(adreno_dev);
 	struct adreno_preemption *preempt = &adreno_dev->preempt;
 	struct adreno_ringbuffer *rb;
@@ -763,8 +766,8 @@ int a6xx_preemption_init(struct adreno_device *adreno_dev)
 
 	timer_setup(&preempt->timer, _a6xx_preemption_timer, 0);
 
-	ret = kgsl_allocate_global(device, &preempt->scratch, PAGE_SIZE, 0, 0,
-			"preemption_scratch");
+	ret = kgsl_allocate_global(device, &preempt->scratch, PAGE_SIZE, 0,
+			flags, "preemption_scratch");
 
 	/* Allocate mem for storing preemption switch record */
 	FOR_EACH_RINGBUFFER(adreno_dev, rb, i) {
