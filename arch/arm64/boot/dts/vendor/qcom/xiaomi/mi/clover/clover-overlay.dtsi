@@ -147,6 +147,7 @@
 	};
 };
 &pm660_charger {
+	qcom,battery-data = <&clover_batterydata>;
 	qcom,usb-icl-ua = <2000000>;
 	qcom,dc-icl-ua = <1000000>;
 	qcom,fcc-max-ua = <2000000>;
@@ -156,11 +157,20 @@
 	qcom,step-charging-enable;
 	qcom,sw-jeita-enable;
 	qcom,fv-max-uv = <4400000>;
+	qcom,auto-recharge-soc;
 	qcom,thermal-mitigation = <2000000 2000000 2000000 1500000 1000000 500000>;
 };
 &pm660_fg {
+	qcom,battery-data = <&clover_batterydata>;
 	qcom,max-voltage-uv = <4400000>;
 	qcom,fg-cutoff-voltage = <3400>;
+	qcom,fg-auto-recharge-soc;
+	qcom,fg-recharge-soc-thr = <99>;
+	qcom,hold-soc-while-full;
+	// should set here but already in drivers/power/supply/qcom/qpnp-fg-gen3.c
+	/*qcom,fg-empty-voltage = <3400>;
+	qcom,fg-chg-term-current = <200>;
+	qcom,fg-sys-term-current = <(-225)>;*/
 	qcom,fg-force-load-profile;
 	qcom,fg-jeita-thresholds = <(-30) (-20) 70 75>;
 	qcom,battery-thermal-coefficients = [9d 50 ff];
