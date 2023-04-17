@@ -147,7 +147,14 @@
 	};
 };
 &pm660_charger {
-	qcom,float-voltage-mv-ntc = <4100000>;
+	qcom,usb-icl-ua = <2000000>;
+	qcom,dc-icl-ua = <1000000>;
+	qcom,fcc-max-ua = <2000000>;
+	qcom,cool-fcc-ua = <1000000>;
+	qcom,critical-low-fcc-ua = <325000>;
+	qcom,warm-fcc-ua = <1700000>;
+	qcom,step-charging-enable;
+	qcom,sw-jeita-enable;
 	qcom,fv-max-uv = <4400000>;
 	qcom,thermal-mitigation = <2000000 2000000 2000000 1500000 1000000 500000>;
 };
