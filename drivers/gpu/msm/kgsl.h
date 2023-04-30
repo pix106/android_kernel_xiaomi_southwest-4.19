@@ -70,11 +70,6 @@
 #define SCRATCH_RPTR_GPU_ADDR(dev, id) \
 	((dev)->scratch.gpuaddr + SCRATCH_RPTR_OFFSET(id))
 
-/* OFFSET to KMD postamble packets in scratch buffer */
-#define SCRATCH_POSTAMBLE_OFFSET (100 * sizeof(u64))
-#define SCRATCH_POSTAMBLE_ADDR(dev) \
-	((dev)->scratch.gpuaddr + SCRATCH_POSTAMBLE_OFFSET)
-
 /* Timestamp window used to detect rollovers (half of integer range) */
 #define KGSL_TIMESTAMP_WINDOW 0x80000000
 
