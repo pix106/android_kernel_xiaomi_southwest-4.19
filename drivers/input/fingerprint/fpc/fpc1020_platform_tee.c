@@ -538,18 +538,29 @@ static inline ssize_t wakeup_enable_store(struct device *dev,
 static DEVICE_ATTR_WO(wakeup_enable);
 
 /*
- * sysf node to check the interrupt status of the sensor, the interrupt
+ * sysfs node to check the interrupt status of the sensor, the interrupt
  * handler should perform sysf_notify to allow userland to poll the node.
  */
-static inline ssize_t irq_show(struct device *dev, struct device_attribute *attr,
-			       char *buf)
+static inline ssize_t irq_get(struct device *dev, struct device_attribute *attr,
+			      char *buf)
 {
 	struct fpc1020_data *fpc1020 = dev_get_drvdata(dev);
 	int irq = gpio_get_value(fpc1020->irq_gpio);
 
 	return scnprintf(buf, PAGE_SIZE, "%i\n", irq);
 }
-static DEVICE_ATTR_RO(irq);
+
+/*
+ * writing to the irq node will just drop a printk message
+ * and return success, used for latency measurement.
+ */
+static inline ssize_t irq_ack(struct device *dev,
+			      struct device_attribute *attr,
+			      const char *buf, size_t count)
+{
+	return count;
+}
+static DEVICE_ATTR(irq, 0600, irq_get, irq_ack);
 
 #ifdef CONFIG_MACH_XIAOMI_SDM660
 static inline ssize_t irq_enable_store(struct device *dev,
