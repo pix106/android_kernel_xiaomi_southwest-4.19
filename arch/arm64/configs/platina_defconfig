@@ -3164,7 +3164,7 @@ CONFIG_VIDEOBUF2_V4L2=y
 #
 # Media ancillary drivers (tuners, sensors, i2c, spi, frontends)
 #
-CONFIG_MEDIA_SUBDRV_AUTOSELECT=y
+# CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
 
 #
 # Audio decoders, processors and mixers
