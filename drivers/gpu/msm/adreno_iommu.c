@@ -7,6 +7,7 @@
 #include <linux/slab.h>
 
 #include "a3xx_reg.h"
+#include "a6xx_reg.h"
 #include "adreno.h"
 #include "adreno_iommu.h"
 #include "adreno_pm4types.h"
@@ -262,6 +263,12 @@ static unsigned int _adreno_iommu_set_pt_v2_a6xx(struct kgsl_device *device,
 	cmds += _adreno_iommu_add_idle_cmds(adreno_dev, cmds);
 	cmds += cp_wait_for_me(adreno_dev, cmds);
 
+	/* Clear performance counters during contect switches */
+	if (!adreno_dev->perfcounter) {
+		*cmds++ = cp_type4_packet(A6XX_RBBM_PERFCTR_SRAM_INIT_CMD, 1);
+		*cmds++ = 0x1;
+	}
+
 	/* CP switches the pagetable and flushes the Caches */
 	*cmds++ = cp_packet(adreno_dev, CP_SMMU_TABLE_UPDATE, 4);
 	*cmds++ = lower_32_bits(ttbr0);
@@ -280,6 +287,17 @@ static unsigned int _adreno_iommu_set_pt_v2_a6xx(struct kgsl_device *device,
 	cmds += cp_wait_for_me(adreno_dev, cmds);
 
 	cmds += _adreno_iommu_add_idle_cmds(adreno_dev, cmds);
+
+	/* Wait for performance counter clear to finish */
+	if (!adreno_dev->perfcounter) {
+		*cmds++ = cp_type7_packet(CP_WAIT_REG_MEM, 6);
+		*cmds++ = 0x3;
+		*cmds++ = A6XX_RBBM_PERFCTR_SRAM_INIT_STATUS;
+		*cmds++ = 0x0;
+		*cmds++ = 0x1;
+		*cmds++ = 0x1;
+		*cmds++ = 0x0;
+	}
 
 	return cmds - cmds_orig;
 }
