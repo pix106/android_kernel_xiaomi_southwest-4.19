@@ -124,7 +124,7 @@ static const struct snd_soc_dapm_widget tas2557_dapm_widgets[] = {
 	SND_SOC_DAPM_SUPPLY("NDivider", SND_SOC_NOPM, 0, 0, NULL, 0),
 
 	SND_SOC_DAPM_OUTPUT("OUT"),
-	ND_SOC_DAPM_INPUT("IN")
+	SND_SOC_DAPM_INPUT("IN")
 };
 
 static const struct snd_soc_dapm_route tas2557_audio_map[] = {
