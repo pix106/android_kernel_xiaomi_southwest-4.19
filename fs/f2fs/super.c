@@ -1371,7 +1371,9 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
 	spin_lock_init(&fi->i_size_lock);
 	INIT_LIST_HEAD(&fi->dirty_list);
 	INIT_LIST_HEAD(&fi->gdirty_list);
+#ifdef CONFIG_F2FS_CP_OPT
 	INIT_LIST_HEAD(&fi->xattr_dirty_list);
+#endif
 	init_f2fs_rwsem(&fi->i_gc_rwsem[READ]);
 	init_f2fs_rwsem(&fi->i_gc_rwsem[WRITE]);
 	init_f2fs_rwsem(&fi->i_mmap_sem);
@@ -4137,8 +4139,10 @@ try_onemore:
 	}
 	mutex_init(&sbi->flush_lock);
 
+#ifdef CONFIG_F2FS_CP_OPT
 	INIT_LIST_HEAD(&sbi->xattr_set_dir_ilist);
 	spin_lock_init(&sbi->xattr_set_dir_ilist_lock);
+#endif
 
 	/* Load the checksum driver */
 	sbi->s_chksum_driver = crypto_alloc_shash("crc32", 0, 0);
