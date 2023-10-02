@@ -162,6 +162,12 @@ enum {
 #define DIR_CACHE_SIZE		\
 	(DIV_ROUND_UP(EXFAT_DEN_TO_B(ES_MAX_ENTRY_NUM), SECTOR_SIZE) + 1)
 
+/*
+ * attribute ioctls, same as their FAT equivalents.
+ */
+#define EXFAT_IOCTL_GET_ATTRIBUTES	_IOR('r', 0x10, __u32)
+#define EXFAT_IOCTL_SET_ATTRIBUTES	_IOW('r', 0x11, __u32)
+
 struct exfat_dentry_namebuf {
 	char *lfn;
 	int lfnbuf_len; /* usually MAX_UNINAME_BUF_SIZE */
@@ -253,6 +259,8 @@ struct exfat_mount_options {
 		 discard:1, /* Issue discard requests on deletions */
 		 keep_last_dots:1; /* Keep trailing periods in paths */
 	int time_offset; /* Offset of timestamps from UTC (in minutes) */
+	/* Support creating zero-size directory, default: false */
+	bool zero_size_dir;
 };
 
 /*
@@ -477,11 +485,19 @@ int __exfat_truncate(struct inode *inode);
 void exfat_truncate(struct inode *inode);
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
+int exfat_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+		  struct iattr *attr);
+int exfat_getattr(struct mnt_idmap *idmap, const struct path *path,
+		  struct kstat *stat, unsigned int request_mask,
+		  unsigned int query_flags);
+#else
 int exfat_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
 		  struct iattr *attr);
 int exfat_getattr(struct user_namespace *mnt_userns, const struct path *path,
 		  struct kstat *stat, unsigned int request_mask,
 		  unsigned int query_flags);
+#endif
 #else
 int exfat_setattr(struct dentry *dentry, struct iattr *attr);
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 11, 0)
