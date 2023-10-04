@@ -76,11 +76,3 @@ menu "Xiaomi board selection"
 		  Support for new camera blobs
 
 endmenu
-
-comment "Xiaomi Optimization Features"
-
-config PERF_HUMANTASK
-	bool "Xiaomi's perf humantask feature"
-	depends on MACH_XIAOMI
-	help
-	  Support for Xiaomi's perf humantask feature.
