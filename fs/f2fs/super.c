@@ -3442,29 +3442,6 @@ try_onemore:
 
 	sbi->sb = sb;
 
-	/* initialize locks within allocated memory */
-	init_f2fs_rwsem(&sbi->gc_lock);
-	mutex_init(&sbi->writepages);
-	init_f2fs_rwsem(&sbi->cp_global_sem);
-	init_f2fs_rwsem(&sbi->node_write);
-	init_f2fs_rwsem(&sbi->node_change);
-	spin_lock_init(&sbi->stat_lock);
-	init_f2fs_rwsem(&sbi->cp_rwsem);
-	init_f2fs_rwsem(&sbi->quota_sem);
-	init_waitqueue_head(&sbi->cp_wait);
-	spin_lock_init(&sbi->error_lock);
-
-	for (i = 0; i < NR_INODE_TYPE; i++) {
-		INIT_LIST_HEAD(&sbi->inode_list[i]);
-		spin_lock_init(&sbi->inode_lock[i]);
-	}
-	mutex_init(&sbi->flush_lock);
-
-#ifdef CONFIG_F2FS_CP_OPT
-	INIT_LIST_HEAD(&sbi->xattr_set_dir_ilist);
-	spin_lock_init(&sbi->xattr_set_dir_ilist_lock);
-#endif
-
 	/* Load the checksum driver */
 	sbi->s_chksum_driver = crypto_alloc_shash("crc32", 0, 0);
 	if (IS_ERR(sbi->s_chksum_driver)) {
@@ -3675,6 +3652,11 @@ try_onemore:
 		spin_lock_init(&sbi->inode_lock[i]);
 	}
 	mutex_init(&sbi->flush_lock);
+
+#ifdef CONFIG_F2FS_CP_OPT
+	INIT_LIST_HEAD(&sbi->xattr_set_dir_ilist);
+	spin_lock_init(&sbi->xattr_set_dir_ilist_lock);
+#endif
 
 	f2fs_init_extent_cache_info(sbi);
 
