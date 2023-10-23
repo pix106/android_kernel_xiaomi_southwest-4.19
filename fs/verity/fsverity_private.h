@@ -122,16 +122,11 @@ int fsverity_init_merkle_tree_params(struct merkle_tree_params *params,
 				     const u8 *salt, size_t salt_size);
 
 struct fsverity_info *fsverity_create_info(const struct inode *inode,
-					   struct fsverity_descriptor *desc,
-					   size_t desc_size);
+					   void *desc, size_t desc_size);
 
 void fsverity_set_info(struct inode *inode, struct fsverity_info *vi);
 
 void fsverity_free_info(struct fsverity_info *vi);
-
-int fsverity_get_descriptor(struct inode *inode,
-			    struct fsverity_descriptor **desc_ret,
-			    size_t *desc_size_ret);
 
 int __init fsverity_init_info_cache(void);
 void __init fsverity_exit_info_cache(void);
@@ -140,13 +135,15 @@ void __init fsverity_exit_info_cache(void);
 
 #ifdef CONFIG_FS_VERITY_BUILTIN_SIGNATURES
 int fsverity_verify_signature(const struct fsverity_info *vi,
-			      const u8 *signature, size_t sig_size);
+			      const struct fsverity_descriptor *desc,
+			      size_t desc_size);
 
 int __init fsverity_init_signature(void);
 #else /* !CONFIG_FS_VERITY_BUILTIN_SIGNATURES */
 static inline int
 fsverity_verify_signature(const struct fsverity_info *vi,
-			  const u8 *signature, size_t sig_size)
+			  const struct fsverity_descriptor *desc,
+			  size_t desc_size)
 {
 	return 0;
 }
