@@ -1107,7 +1107,7 @@ static bool cqhci_halt(struct mmc_host *mmc, unsigned int timeout)
  * layers will need to send a STOP command), so we set the timeout based on a
  * generous command timeout.
  */
-#define CQHCI_START_HALT_TIMEOUT	5000
+#define CQHCI_START_HALT_TIMEOUT	5
 
 static void cqhci_recovery_start(struct mmc_host *mmc)
 {
