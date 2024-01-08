@@ -20737,6 +20737,8 @@ static void csr_update_score_params(struct mac_context *mac_ctx,
 	req_score_params->bw_weightage = weight_config->chan_width_weightage;
 	req_score_params->band_weightage = weight_config->chan_band_weightage;
 	req_score_params->nss_weightage = weight_config->nss_weightage;
+	req_score_params->security_weightage =
+					weight_config->security_weightage;
 	req_score_params->esp_qbss_weightage =
 		weight_config->channel_congestion_weightage;
 	req_score_params->beamforming_weightage =
@@ -20751,6 +20753,8 @@ static void csr_update_score_params(struct mac_context *mac_ctx,
 		bss_score_params->band_weight_per_index;
 	req_score_params->nss_index_score =
 		bss_score_params->nss_weight_per_index;
+	req_score_params->security_index_score =
+		bss_score_params->security_weight_per_index;
 
 	req_score_params->vendor_roam_score_algorithm =
 			bss_score_params->vendor_roam_score_algorithm;
