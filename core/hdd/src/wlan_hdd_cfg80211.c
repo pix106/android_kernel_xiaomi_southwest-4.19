@@ -18083,6 +18083,7 @@ static int wlan_hdd_cfg80211_set_roam_profile(struct hdd_adapter *adapter,
 	roam_profile->orig_sec_info.ucastcipherset = crypto_params->ucastcipherset;
 	roam_profile->orig_sec_info.mcastcipherset = crypto_params->mcastcipherset;
 	roam_profile->orig_sec_info.key_mgmt = crypto_params->key_mgmt;
+	roam_profile->orig_sec_info.mgmtcipherset = crypto_params->mgmtcipherset;
 
 	sme_debug("roam_profile[orig_sec]: key_mgmt 0x%x", roam_profile->orig_sec_info.key_mgmt);
 
