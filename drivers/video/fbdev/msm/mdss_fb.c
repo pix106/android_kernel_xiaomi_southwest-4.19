@@ -46,8 +46,9 @@
 #endif
 
 #ifdef CONFIG_MACH_XIAOMI_CLOVER
+#include <linux/interrupt.h>
 #include <linux/mdss_io_util.h>
-#include <linux/wakelock.h>
+#include <linux/pm_wakeup.h>
 #endif
 
 #include "mdss_fb.h"
