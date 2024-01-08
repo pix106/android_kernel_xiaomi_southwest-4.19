@@ -1618,6 +1618,8 @@ send_roam_scan_offload_ap_profile_cmd_tlv(wmi_unified_t wmi_handle,
 	score_param->bw_weightage_pcnt = ap_profile->param.bw_weightage;
 	score_param->band_weightage_pcnt = ap_profile->param.band_weightage;
 	score_param->nss_weightage_pcnt = ap_profile->param.nss_weightage;
+	score_param->security_weightage_pcnt =
+				   ap_profile->param.security_weightage;
 	score_param->esp_qbss_weightage_pcnt =
 			ap_profile->param.esp_qbss_weightage;
 	score_param->beamforming_weightage_pcnt =
@@ -1628,7 +1630,7 @@ send_roam_scan_offload_ap_profile_cmd_tlv(wmi_unified_t wmi_handle,
 	score_param->vendor_roam_score_algorithm_id =
 			ap_profile->param.vendor_roam_score_algorithm;
 
-	WMI_LOGD("Score params weightage: disable_bitmap %x rssi %d ht %d vht %d he %d BW %d band %d NSS %d ESP %d BF %d PCL %d OCE WAN %d roam score algo %d",
+	WMI_LOGD("Score params weightage: disable_bitmap %x rssi %d ht %d vht %d he %d BW %d band %d NSS %d ESP %d BF %d PCL %d OCE WAN %d roam score algo %d security %d",
 		 score_param->disable_bitmap, score_param->rssi_weightage_pcnt,
 		 score_param->ht_weightage_pcnt,
 		 score_param->vht_weightage_pcnt,
@@ -1639,18 +1641,22 @@ send_roam_scan_offload_ap_profile_cmd_tlv(wmi_unified_t wmi_handle,
 		 score_param->beamforming_weightage_pcnt,
 		 score_param->pcl_weightage_pcnt,
 		 score_param->oce_wan_weightage_pcnt,
-		 score_param->vendor_roam_score_algorithm_id);
+		 score_param->vendor_roam_score_algorithm_id,
+		 score_param->security_weightage_pcnt);
 
 	score_param->bw_scoring.score_pcnt = ap_profile->param.bw_index_score;
 	score_param->band_scoring.score_pcnt =
 			ap_profile->param.band_index_score;
 	score_param->nss_scoring.score_pcnt =
 			ap_profile->param.nss_index_score;
+	score_param->security_scoring.score_pcnt =
+			ap_profile->param.security_index_score;
 
-	WMI_LOGD("Params index score bitmask: bw_index_score %x band_index_score %x nss_index_score %x",
+	WMI_LOGD("Params index score bitmask: bw_index_score %x band_index_score %x nss_index_score %x security_index_score %x",
 		 score_param->bw_scoring.score_pcnt,
 		 score_param->band_scoring.score_pcnt,
-		 score_param->nss_scoring.score_pcnt);
+		 score_param->nss_scoring.score_pcnt,
+		 score_param->security_scoring.score_pcnt);
 
 	score_param->rssi_scoring.best_rssi_threshold =
 		(-1) * ap_profile->param.rssi_scoring.best_rssi_threshold;
