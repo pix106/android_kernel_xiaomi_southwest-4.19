@@ -6418,3 +6418,40 @@ void lim_add_roam_blacklist_ap(struct mac_context *mac_ctx,
 		blacklist++;
 	}
 }
+
+bool
+lim_get_vdev_rmf_capable(struct mac_context *mac, struct pe_session *session)
+{
+	struct wlan_objmgr_vdev *vdev;
+	int32_t rsn_caps;
+	bool peer_rmf_capable = false;
+
+	vdev = wlan_objmgr_get_vdev_by_id_from_psoc(mac->psoc,
+						    session->vdev_id,
+						    WLAN_LEGACY_SME_ID);
+	if (!vdev) {
+		pe_err("Invalid vdev");
+		return false;
+	}
+	rsn_caps = wlan_crypto_get_param(vdev, WLAN_CRYPTO_PARAM_RSN_CAP);
+	if (rsn_caps < 0) {
+		pe_err("Invalid mgmt cipher");
+		wlan_objmgr_vdev_release_ref(vdev, WLAN_LEGACY_SME_ID);
+		return false;
+	}
+	if (wlan_crypto_vdev_has_mgmtcipher(
+				vdev,
+				(1 << WLAN_CRYPTO_CIPHER_AES_GMAC) |
+				(1 << WLAN_CRYPTO_CIPHER_AES_GMAC_256) |
+				(1 << WLAN_CRYPTO_CIPHER_AES_CMAC)) &&
+	    (rsn_caps & WLAN_CRYPTO_RSN_CAP_MFP_ENABLED))
+		peer_rmf_capable = true;
+
+	wlan_objmgr_vdev_release_ref(vdev, WLAN_LEGACY_SME_ID);
+
+	pe_debug("vdev %d peer_rmf_capable %d rsn_caps 0x%x",
+		 session->vdev_id, peer_rmf_capable,
+		 rsn_caps);
+
+	return peer_rmf_capable;
+}
