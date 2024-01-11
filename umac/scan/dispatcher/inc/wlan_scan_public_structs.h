@@ -275,6 +275,24 @@ struct security_info {
 };
 
 /**
+ * struct security_info - self cache security info
+ * @authmodeset: auth mode
+ * @key_mgmt: key management
+ * @ucastcipherset: unicast cipher set
+ * @mcastcipherset: multicast cipher set
+ * @mgmtcipherset: mgmt cipher set
+ * @rsn_caps: rsn caps
+ */
+struct self_security_info {
+	uint32_t authmodeset;
+	uint32_t key_mgmt;
+	uint32_t ucastcipherset;
+	uint32_t mcastcipherset;
+	uint32_t mgmtcipherset;
+	uint16_t rsn_caps;
+};
+
+/**
  * struct scan_mbssid_info - Scan mbssid information
  * @profile_num: profile number
  * @profile_count: total profile count

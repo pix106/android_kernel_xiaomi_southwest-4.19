@@ -284,6 +284,8 @@ struct plm_req_params {
  *                   absolute RSSI threshold. Zero means no absolute minimum
  *                   RSSI is required. units are the offset from the noise
  *                   floor in dB
+ * @num_allowed_authmode: Number of allowerd authmode
+ * @allowed_authmode: List of allowed authmode other than connected
  */
 struct ap_profile {
 	uint32_t flags;
@@ -294,6 +296,8 @@ struct ap_profile {
 	uint32_t rsn_mcastcipherset;
 	uint32_t rsn_mcastmgmtcipherset;
 	uint32_t rssi_abs_thresh;
+	uint32_t num_allowed_authmode;
+	uint32_t allowed_authmode[WLAN_CRYPTO_AUTH_MAX];
 };
 
 /**
