@@ -19097,14 +19097,20 @@ static void hdd_populate_crypto_auth_type(struct wlan_objmgr_vdev *vdev,
  * Return: None
  */
 static void hdd_populate_crypto_akm_type(struct wlan_objmgr_vdev *vdev,
-					 u32 key_mgmt)
+					 struct cfg80211_connect_params *req)
 {
+	uint32_t i;
 	QDF_STATUS status;
 	uint32_t set_val = 0;
-	wlan_crypto_key_mgmt crypto_akm_type =
-			osif_nl_to_crypto_akm_type(key_mgmt);
+	wlan_crypto_key_mgmt crypto_akm_type;
 
-	HDD_SET_BIT(set_val, crypto_akm_type);
+	/* Fill AKM suites */
+	for (i = 0; i < req->crypto.n_akm_suites &&
+		     i < NL80211_MAX_NR_AKM_SUITES; i++) {
+		     crypto_akm_type =
+			osif_nl_to_crypto_akm_type(req->crypto.akm_suites[i]);
+			HDD_SET_BIT(set_val, crypto_akm_type);
+	}
 
 	status = wlan_crypto_set_vdev_param(vdev,
 					    WLAN_CRYPTO_PARAM_KEY_MGMT,
@@ -19160,7 +19166,7 @@ static void hdd_populate_crypto_params(struct wlan_objmgr_vdev *vdev,
 	wlan_crypto_set_vdev_param(vdev, WLAN_CRYPTO_PARAM_RSN_CAP, set_val);
 
 	if (req->crypto.n_akm_suites) {
-		hdd_populate_crypto_akm_type(vdev, req->crypto.akm_suites[0]);
+		hdd_populate_crypto_akm_type(vdev, req);
 	} else {
 		/* Reset to none */
 		HDD_SET_BIT(set_val, WLAN_CRYPTO_KEY_MGMT_NONE);
@@ -19737,13 +19743,14 @@ static int wlan_hdd_cfg80211_set_privacy(struct hdd_adapter *adapter,
 
 	roam_profile = hdd_roam_profile(adapter);
 
-	/* populate auth,akm and cipher params for crypto */
 	vdev = hdd_objmgr_get_vdev(adapter);
 	if (!vdev)
 		return -EINVAL;
+
+	/* populate auth,akm and cipher params for crypto */
 	hdd_populate_crypto_params(vdev, req);
 
-	/*set authentication type */
+	/* set authentication type */
 	status = wlan_hdd_cfg80211_set_auth_type(adapter, req->auth_type);
 
 	if (wlan_hdd_is_conn_type_fils(req)) {
@@ -19768,8 +19775,7 @@ static int wlan_hdd_cfg80211_set_privacy(struct hdd_adapter *adapter,
 	/*set pairwise cipher type */
 	if (req->crypto.n_ciphers_pairwise) {
 		status = wlan_hdd_cfg80211_set_cipher(adapter,
-						      req->crypto.
-						      ciphers_pairwise[0],
+						      req->crypto.ciphers_pairwise[0],
 						      true);
 		if (0 > status) {
 			hdd_err("Failed to set unicast cipher type");
@@ -20274,7 +20280,7 @@ static int __wlan_hdd_cfg80211_connect(struct wiphy *wiphy,
 		return -EALREADY;
 	}
 
-	/*initialise security parameters */
+	/* Initialise security parameters */
 	status = wlan_hdd_cfg80211_set_privacy(adapter, req);
 
 	if (status < 0) {
