@@ -300,6 +300,9 @@ void rpcif_hw_init(struct rpcif *rpc, bool hyperflash)
 	regmap_write(rpc->regmap, RPCIF_PHYCNT, RPCIF_PHYCNT_STRTIM(7) |
 		     RPCIF_PHYCNT_PHYMEM(hyperflash ? 3 : 0) | 0x260);
 
+	/* DMA Transfer is not supported */
+	regmap_update_bits(rpc->regmap, RPCIF_PHYCNT, RPCIF_PHYCNT_HS, 0);
+
 	/*
 	 * NOTE: The 0x1511144 are undocumented bits, but they must be set
 	 *       for RPCIF_PHYOFFSET1.
