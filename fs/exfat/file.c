@@ -14,6 +14,7 @@
 #include <linux/blkdev.h>
 #include <linux/fsnotify.h>
 #include <linux/security.h>
+#include <linux/msdos_fs.h>
 
 #include "exfat_raw.h"
 #include "exfat_fs.h"
@@ -29,7 +30,15 @@ static int exfat_cont_expand(struct inode *inode, loff_t size)
 		return err;
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 10, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 6, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 7, 0)
+	inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
+#else
+	inode->i_mtime = inode_set_ctime_current(inode);
+#endif
+#else
 	inode->i_ctime = inode->i_mtime = current_time(inode);
+#endif
 #else
 	inode->i_ctime = inode->i_mtime = CURRENT_TIME_SEC;
 #endif
@@ -154,7 +163,7 @@ int __exfat_truncate(struct inode *inode)
 	}
 
 	if (ei->type == TYPE_FILE)
-		ei->attr |= ATTR_ARCHIVE;
+		ei->attr |= EXFAT_ATTR_ARCHIVE;
 
 	/*
 	 * update the directory entry
@@ -268,7 +277,11 @@ int exfat_getattr(struct vfsmount *mnt, struct dentry *dentry,
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 6, 0)
+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
+#else
 	generic_fillattr(&nop_mnt_idmap, inode, stat);
+#endif
 #else
 	generic_fillattr(&init_user_ns, inode, stat);
 #endif
@@ -358,11 +371,23 @@ int exfat_setattr(struct dentry *dentry, struct iattr *attr)
 
 	if (attr->ia_valid & ATTR_SIZE)
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 10, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 6, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 7, 0)
+		inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
+#else
+		inode->i_mtime = inode_set_ctime_current(inode);
+#endif
+#else
 		inode->i_mtime = inode->i_ctime = current_time(inode);
+#endif
 #else
 		inode->i_mtime = inode->i_ctime = CURRENT_TIME_SEC;
 #endif
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 7, 0)
+	setattr_copy(&nop_mnt_idmap, inode, attr);
+	exfat_truncate_inode_atime(inode);
+#else
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
 	setattr_copy(&nop_mnt_idmap, inode, attr);
@@ -373,6 +398,7 @@ int exfat_setattr(struct dentry *dentry, struct iattr *attr)
 	setattr_copy(inode, attr);
 #endif
 	exfat_truncate_atime(&inode->i_atime);
+#endif
 
 	if (attr->ia_valid & ATTR_SIZE) {
 		error = exfat_block_truncate_page(inode, attr->ia_size);
@@ -443,8 +469,9 @@ static int exfat_ioctl_set_attributes(struct file *file, u32 __user *user_attr)
 	/*
 	 * Mask attributes so we don't set reserved fields.
 	 */
-	attr &= (ATTR_READONLY | ATTR_HIDDEN | ATTR_SYSTEM | ATTR_ARCHIVE);
-	attr |= (is_dir ? ATTR_SUBDIR : 0);
+	attr &= (EXFAT_ATTR_READONLY | EXFAT_ATTR_HIDDEN | EXFAT_ATTR_SYSTEM |
+		 EXFAT_ATTR_ARCHIVE);
+	attr |= (is_dir ? EXFAT_ATTR_SUBDIR : 0);
 
 	/* Equivalent to a chmod() */
 	ia.ia_valid = ATTR_MODE | ATTR_CTIME;
@@ -459,12 +486,12 @@ static int exfat_ioctl_set_attributes(struct file *file, u32 __user *user_attr)
 		ia.ia_mode = exfat_make_mode(sbi, attr, 0666 | (inode->i_mode & 0111));
 
 	/* The root directory has no attributes */
-	if (inode->i_ino == EXFAT_ROOT_INO && attr != ATTR_SUBDIR) {
+	if (inode->i_ino == EXFAT_ROOT_INO && attr != EXFAT_ATTR_SUBDIR) {
 		err = -EINVAL;
 		goto out_unlock_inode;
 	}
 
-	if (((attr | oldattr) & ATTR_SYSTEM) &&
+	if (((attr | oldattr) & EXFAT_ATTR_SYSTEM) &&
 	    !capable(CAP_LINUX_IMMUTABLE)) {
 		err = -EPERM;
 		goto out_unlock_inode;
@@ -562,9 +589,9 @@ long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	u32 __user *user_attr = (u32 __user *)arg;
 
 	switch (cmd) {
-	case EXFAT_IOCTL_GET_ATTRIBUTES:
+	case FAT_IOCTL_GET_ATTRIBUTES:
 		return exfat_ioctl_get_attributes(inode, user_attr);
-	case EXFAT_IOCTL_SET_ATTRIBUTES:
+	case FAT_IOCTL_SET_ATTRIBUTES:
 		return exfat_ioctl_set_attributes(filp, user_attr);
 	case FITRIM:
 		return exfat_ioctl_fitrim(inode, arg);
