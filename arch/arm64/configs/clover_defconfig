@@ -1747,7 +1747,7 @@ CONFIG_FORCE_FAST_CHARGE=y
 # qrc device driver
 #
 # CONFIG_QRC is not set
-CONFIG_HQ_HARDWARE_INFO=y
+# CONFIG_HQ_HARDWARE_INFO is not set
 
 #
 # SCSI device support
