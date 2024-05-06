@@ -222,12 +222,6 @@
 	pinctrl-0 = <&sdc1_clk_on &sdc1_cmd_on &sdc1_data_on &sdc1_rclk_on>;
 	pinctrl-1 = <&sdc1_clk_off &sdc1_cmd_off &sdc1_data_off &sdc1_rclk_off>;
 
-	qcom,clk-rates = <400000 20000000 25000000 50000000 100000000 192000000
-								384000000>;
-
-	qcom,nonremovable;
-	qcom,bus-speed-mode = "HS400_1p8v", "HS200_1p8v", "DDR_1p8v";
-
 	status = "ok";
 };
 
@@ -248,18 +242,14 @@
 
 	#address-cells = <0>;
 	interrupt-parent = <&sdhc_2>;
-	interrupts = <0 1 2>;
+	interrupts = <GIC_SPI 1 IRQ_TYPE_EDGE_FALLING>;
 	#interrupt-cells = <1>;
 	interrupt-map-mask = <0xffffffff>;
-	interrupt-map = <0 &intc 0 0 125 0
-			1 &intc 0 0 221 0
-			2 &tlmm 54 0>;
+	interrupt-map = <0 &intc 0 0 125 IRQ_TYPE_LEVEL_HIGH
+			1 &intc 0 0 221 IRQ_TYPE_LEVEL_HIGH
+			2 &tlmm 54 IRQ_TYPE_LEVEL_HIGH>;
 	interrupt-names = "hc_irq", "pwr_irq", "status_irq";
 	cd-gpios = <&tlmm 54 0x0>;
-
-	qcom,clk-rates = <400000 20000000 25000000 50000000 100000000
-								200000000>;
-	qcom,bus-speed-mode = "SDR12", "SDR25", "SDR50", "DDR50", "SDR104";
 
 	status = "ok";
 };
