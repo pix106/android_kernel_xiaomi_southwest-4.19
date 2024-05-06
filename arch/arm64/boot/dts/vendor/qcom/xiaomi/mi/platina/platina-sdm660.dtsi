@@ -107,18 +107,19 @@
 				   752500 525000>;
 };
 
-&vendor {
+/{
+	/delete-node/ qcom,battery-data;
+
 	mtp_batterydata: qcom,battery-data {
 		qcom,batt-id-range-pct = <15>;
 		#include "battery/batterydata-D2T-coslight-3350mAh.dtsi"
 		#include "battery/batterydata-D2T-desay-3350mAh.dtsi"
 		#include "battery/fg-gen3-batterydata-itech-3000mah.dtsi"
-		/delete-node/ qcom,itech_3000mah;
-		/delete-node/ qcom,ascent_3450mah;
 	};
 };
 
 &pm660_fg {
+	qcom,battery-data = <&mtp_batterydata>;
 	qcom,fg-force-load-profile;
 	qcom,fg-sys-term-current = <(-300)>;
 	qcom,fg-chg-term-current = <200>;
@@ -183,7 +184,6 @@
 
 &i2c_4 { /* BLSP1 QUP3 (TP) */
 	status = "okay";
-	qcom,disable-dma;
 	/* Novatek device tree node */
 	novatek@62 {
 		compatible = "novatek,NVT-ts";
@@ -243,10 +243,6 @@
 		synaptics,power-delay-ms = <200>;
 		synaptics,ubl-i2c-addr = <0x2c>;
 	};
-};
-
-&i2c_4 { /* BLSP1 QUP3 (TP) */
-	status = "okay";
 	focaltech@38 {
 		compatible = "focaltech,fts";
 		reg = <0x38>;
@@ -377,9 +373,6 @@
 		pinctrl-1 = <&spk_id_pull_up>;
 		pinctrl-2 = <&spk_id_no_pull>;
 	};
-	qcom,sps {
-		status = "ok";
-	};
 };
 
 &pm660_gpios {
@@ -400,7 +393,6 @@
 
 &i2c_2 { /* smart PA device. */
 		status = "okay";
-		qcom,disable-dma;		
 		tfa98xx@34 {
 		compatible = "nxp,tfa98xx";
 		reset-gpio = <&tlmm 43 0>;
