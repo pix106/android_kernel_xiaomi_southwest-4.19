@@ -2598,7 +2598,7 @@ int smblib_get_prop_input_current_limited(struct smb_charger *chg,
 	return 0;
 }
 
-#ifdef CONFIG_MACH_XIAOMI_CLOVER
+#if defined(CONFIG_MACH_MI) || defined(CONFIG_MACH_XIAOMI_CLOVER)
 int smblib_get_prop_batt_voltage_now(struct smb_charger *chg,
 				     union power_supply_propval *val)
 {
@@ -2648,47 +2648,6 @@ int smblib_get_prop_batt_charge_full_design(struct smb_charger *chg,
 
 	rc = power_supply_get_property(chg->bms_psy,
 				       POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN, val);
-	return rc;
-}
-
-int smblib_get_prop_batt_temp(struct smb_charger *chg,
-			      union power_supply_propval *val)
-{
-	int rc;
-
-	if (!chg->bms_psy)
-		return -EINVAL;
-
-	rc = power_supply_get_property(chg->bms_psy,
-				       POWER_SUPPLY_PROP_TEMP, val);
-	return rc;
-}
-#endif
-
-#ifdef CONFIG_MACH_MI
-int smblib_get_prop_batt_voltage_now(struct smb_charger *chg,
-				     union power_supply_propval *val)
-{
-	int rc;
-
-	if (!chg->bms_psy)
-		return -EINVAL;
-
-	rc = power_supply_get_property(chg->bms_psy,
-				       POWER_SUPPLY_PROP_VOLTAGE_NOW, val);
-	return rc;
-}
-
-int smblib_get_prop_batt_current_now(struct smb_charger *chg,
-				     union power_supply_propval *val)
-{
-	int rc;
-
-	if (!chg->bms_psy)
-		return -EINVAL;
-
-	rc = power_supply_get_property(chg->bms_psy,
-				       POWER_SUPPLY_PROP_CURRENT_NOW, val);
 	return rc;
 }
 
@@ -5802,6 +5761,20 @@ static void smblib_handle_hvdcp_3p0_auth_done(struct smb_charger *chg,
 	apsd_result = smblib_get_apsd_result(chg);
 
 #ifdef CONFIG_MACH_MI
+	if (get_effective_result(chg->hvdcp_hw_inov_dis_votable)
+			&& !chg->use_usbmid) {
+		if (apsd_result->pst == POWER_SUPPLY_TYPE_USB_HVDCP) {
+			/* force HVDCP2 to 9V if INOV is disabled */
+			if (!chg->check_vbus_once) {
+			rc = smblib_masked_write(chg, CMD_HVDCP_2_REG,
+					FORCE_9V_BIT, FORCE_9V_BIT);
+			if (rc < 0)
+				smblib_err(chg,
+					"Couldn't force 9V HVDCP rc=%d\n", rc);
+			}
+		}
+	}
+
 	/* vote 1.5A for QC2.0 here to avoid weak QC2.0 OPP */
 	if (apsd_result->bit & QC_2P0_BIT) {
 		if (chg->use_usbmid) {
