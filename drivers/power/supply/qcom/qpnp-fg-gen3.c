@@ -983,6 +983,15 @@ static int fg_get_batt_profile(struct fg_dev *fg)
 		fg->bp.vbatt_full_mv = -EINVAL;
 	}
 
+#ifdef CONFIG_MACH_MI
+	rc = of_property_read_u32(profile_node, "qcom,nom-batt-capacity-mah",
+                       &fg->bp.nom_cap_uah);
+	if (rc < 0) {
+               pr_err("battery nominal capacity unavailable, rc:%d\n", rc);
+               fg->bp.nom_cap_uah = -EINVAL;
+       }
+#endif
+
 #ifdef CONFIG_MACH_XIAOMI_CLOVER
 	rc = of_property_read_u32(profile_node, "qcom,nom-batt-capacity-mah",
 			&fg->bp.batt_capacity_mah);
@@ -990,20 +999,6 @@ static int fg_get_batt_profile(struct fg_dev *fg)
 		pr_err("battery capacity mah unavailable, rc:%d\n", rc);
 		fg->bp.batt_capacity_mah = -EINVAL;
 	}
-#elif defined(CONFIG_MACH_MI)
-	rc = of_property_read_u32(profile_node, "qcom,nom-batt-capacity-mah",
-                       &fg->bp.nom_cap_uah);
-	if (rc < 0) {
-               pr_err("battery nominal capacity unavailable, rc:%d\n", rc);
-               fg->bp.nom_cap_uah = -EINVAL;
-       }
-#else
-        rc = of_property_read_u32(profile_node, "qcom,fg-cc-cv-threshold-mv",
-                        &fg->bp.vbatt_full_mv);
-        if (rc < 0) {
-                pr_err("battery cc_cv threshold unavailable, rc:%d\n", rc);
-                fg->bp.vbatt_full_mv = -EINVAL;
-        }
 #endif
 
 	data = of_get_property(profile_node, "qcom,fg-profile-data", &len);
@@ -2849,7 +2844,7 @@ static void status_change_work(struct work_struct *work)
 	union power_supply_propval prop = {0, };
 	int rc, batt_temp;
 #if defined(CONFIG_MACH_XIAOMI_LAVENDER) || defined(CONFIG_MACH_XIAOMI_WAYNE) || defined(CONFIG_MACH_MI)
-	int msoc;
+	int msoc = 0;
 #endif
 
 	if (!batt_psy_initialized(fg)) {
@@ -3231,10 +3226,6 @@ done:
 
 	fg_dbg(fg, FG_STATUS, "profile loaded successfully");
 out:
-#ifdef CONFIG_MACH_MI
-	if (fg->empty_restart_fg)
-		fg->empty_restart_fg = false;
-#endif
 	fg->soc_reporting_ready = true;
 	vote(fg->awake_votable, ESR_FCC_VOTER, true, 0);
 	queue_delayed_work(system_power_efficient_wq, &chip->pl_enable_work, msecs_to_jiffies(5000));
@@ -4012,11 +4003,13 @@ static int fg_psy_get_property(struct power_supply *psy,
 		rc = fg_get_sram_prop(fg, FG_SRAM_OCV, &pval->intval);
 		break;
 	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
+#ifdef CONFIG_MACH_MI
+		if (-EINVAL != fg->bp.nom_cap_uah)
+			pval->intval = fg->bp.nom_cap_uah * 1000;
+		else
+#endif
 #ifdef CONFIG_MACH_XIAOMI_CLOVER
 		pval->intval = fg->bp.batt_capacity_mah;
-#elif defined(CONFIG_MACH_MI)
-		pval->intval = fg->bp.nom_cap_uah * 1000;
-#else
 		pval->intval = chip->cl.nom_cap_uah;
 #endif
 		break;
@@ -4511,7 +4504,7 @@ static int fg_hw_init(struct fg_dev *fg)
 	if (chip->dt.delta_soc_thr > 0 && chip->dt.delta_soc_thr < 100) {
 		fg_encode(fg->sp, FG_SRAM_DELTA_MSOC_THR,
 			chip->dt.delta_soc_thr, buf);
-#if defined(CONFIG_MACH_XIAOMI_WAYNE) || defined(CONFIG_MACH_MI)
+#ifdef CONFIG_MACH_XIAOMI_WAYNE
 		buf[0] = 0x8;
 #endif
 		rc = fg_sram_write(fg,
@@ -5835,7 +5828,7 @@ static void empty_restart_fg_work(struct work_struct *work)
 
 	/* only when usb is absent, restart fg */
 	if (!usb_present) {
-		if (fg->profile_load_status == PROFILE_LOADED) {
+		if (fg->profile_load_status) {
 			pr_info("soc empty after cold to warm, need to restart fg\n");
 			fg->empty_restart_fg = true;
 			rc = fg_restart(fg, SOC_READY_WAIT_TIME_MS);
