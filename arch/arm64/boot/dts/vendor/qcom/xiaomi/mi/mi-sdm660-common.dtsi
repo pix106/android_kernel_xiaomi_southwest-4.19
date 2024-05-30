@@ -282,12 +282,6 @@
 	};
 };
 
-&usb3 {
-	dwc3@a800000 {
-		maximum-speed = "high-speed";
-	};
-};
-
 
 &i2c_2 {
 	status = "ok";
