@@ -532,7 +532,7 @@
 		ramoops {
 			compatible = "removed-dma-pool", "ramoops";
 			no-map;
-			reg = <0x0 0xb0000000 0x0 0x400000>;
+			reg = <0 0xb0000000 0 0x400000>;
 			status = "ok";
 			console-size = <0x200000>;
 			pmsg-size = <0x200000>;
