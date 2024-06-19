@@ -1,19 +1,13 @@
 /*
- * Copyright 2014-2017 NXP Semiconductors
- * Copyright (C) 2020 XiaoMi, Inc.
+ * Copyright (C) 2014-2020 NXP Semiconductors, All Rights Reserved.
+ * Copyright 2021 GOODIX
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
  *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
+
 
 typedef struct TfaBfName {
    unsigned short bfEnum;
@@ -34,8 +28,14 @@ typedef struct TfaIrqName {
 #include "tfa9872_tfafieldnames.h"
 #include "tfa9912_tfafieldnames.h"
 #include "tfa9896_tfafieldnames.h"
+#include "tfa9873_tfafieldnames.h"
+#include "tfa9873_tfafieldnames_B0.h"
 #include "tfa9874_tfafieldnames.h"
+#include "tfa9878_tfafieldnames.h"
 #include "tfa9894_tfafieldnames.h"
+#include "tfa9894_tfafieldnames_N2.h"
+#include "tfa9875_tfafieldnames.h"
+#include "tfa9875_tfafieldnames_A1.h"
 
 /* missing 'common' defs break the build but unused in TFA1 context */
 #define TFA1_BF_AMPINSEL -1
@@ -60,6 +60,9 @@ typedef struct TfaIrqName {
 #define TFA1_BF_SWPROFIL 0x8045    /*!< profile save   */
 #define TFA1_BF_SWVSTEP  0x80a5    /*!< vstep save  */
 
+#define TFA1_BF_TDMNBCK     -1
+#define TFA1_BF_TDMSSIZE     -1
+
 /* missing 'common' defs break the build */
 #define TFA2_BF_CFSM -1
 
@@ -67,8 +70,8 @@ typedef struct TfaIrqName {
 /* MTP access uses registers
  *  defs are derived from corresponding bitfield names as used in the BF macros
  */
-#define MTPKEY2  	MTPK		/* unlock key2 MTPK */
-#define MTP0     	MTPOTC 	/* MTP data */
+#define MTPKEY2	MTPK		/* unlock key2 MTPK */
+#define MTP0	MTPOTC	/* MTP data */
 #define MTP_CONTROL CIMTP	/* copy i2c to mtp */
 
 /* interrupt enable register uses HW name in TFA2 */
