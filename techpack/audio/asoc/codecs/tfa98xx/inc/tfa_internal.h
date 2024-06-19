@@ -1,6 +1,6 @@
 /*
  * Copyright 2014-2017 NXP Semiconductors
- * Copyright (C) 2020 XiaoMi, Inc.
+ * Copyright (C) 2019 XiaoMi, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@
 #include "tfa_ext.h"
 
 #if __GNUC__ >= 4
-  #define TFA_INTERNAL __attribute__ ((visibility ("hidden")))
+  #define TFA_INTERNAL __attribute__ ((visibility("hidden")))
 #else
   #define TFA_INTERNAL
 #endif
