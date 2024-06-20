@@ -2317,6 +2317,15 @@ static struct snd_soc_dai_link msm_int_compress_capture_dai[] = {
 	},
 };
 
+static struct snd_soc_dai_link_component tfa98xx_codecs[] = {
+	{
+		.name     = "tfa98xx.2-0034",
+		.of_node  = NULL,
+		.dai_name = "tfa98xx-aif-2-34",
+	},
+
+};
+
 static struct snd_soc_dai_link msm_int_be_dai[] = {
 	/* Backend I2S DAI Links */
 	{
@@ -2713,8 +2722,8 @@ static struct snd_soc_dai_link msm_mi2s_be_dai_links[] = {
 		.cpu_dai_name = "msm-dai-q6-mi2s.1",
 		.platform_name = "msm-pcm-routing",
 #ifdef CONFIG_SND_SOC_TFA9894
-		.codec_name = "tfa98xx.2-0034",
-		.codec_dai_name = "tfa98xx-aif-2-34",
+		.codecs = tfa98xx_codecs,
+		.num_codecs = 1,
 #else
 		.codec_name = "msm-stub-codec.1",
 		.codec_dai_name = "msm-stub-rx",
@@ -2732,8 +2741,13 @@ static struct snd_soc_dai_link msm_mi2s_be_dai_links[] = {
 		.stream_name = "Secondary MI2S Capture",
 		.cpu_dai_name = "msm-dai-q6-mi2s.1",
 		.platform_name = "msm-pcm-routing",
+#ifdef CONFIG_SND_SOC_TFA9894
+		.codecs = tfa98xx_codecs,
+		.num_codecs = 1,
+#else
 		.codec_name = "msm-stub-codec.1",
 		.codec_dai_name = "msm-stub-tx",
+#endif
 		.no_pcm = 1,
 		.dpcm_capture = 1,
 		.id = MSM_BACKEND_DAI_SECONDARY_MI2S_TX,
