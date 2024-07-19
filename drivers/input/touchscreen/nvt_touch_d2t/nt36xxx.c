@@ -25,6 +25,7 @@
 #include <linux/proc_fs.h>
 #include <linux/uaccess.h>
 #include <linux/input/mt.h>
+#include <linux/slab.h>
 #include <linux/of_gpio.h>
 #include <linux/of_irq.h>
 #include <linux/slab.h>
@@ -170,25 +171,34 @@ return:
 int32_t CTP_I2C_READ(struct i2c_client *client, uint16_t address, uint8_t *buf, uint16_t len)
 {
 	struct i2c_msg msgs[2];
-	int32_t ret;
+	int32_t ret = -EIO;
 	int32_t retries;
+
+	char *dma = kmalloc(len, GFP_KERNEL | GFP_DMA);
+	memcpy(dma, buf, len);
+
 	msgs[0].flags = !I2C_M_RD;
 	msgs[0].addr  = address;
 	msgs[0].len   = 1;
-	msgs[0].buf   = &buf[0];
+	msgs[0].buf   = dma;
+
 	msgs[1].flags = I2C_M_RD;
 	msgs[1].addr  = address;
 	msgs[1].len   = len - 1;
-	msgs[1].buf   = &buf[1];
+	msgs[1].buf   = dma + 1;
 
 	for (retries = 0; retries < 5; retries++) {
 		ret = i2c_transfer(client->adapter, msgs, 2);
 		if (likely(ret == 2))
-			return ret;
+			goto out;
 	}
 
 	NVT_ERR("i2c read error\n");
-	return -EIO;
+
+out:
+	memcpy(buf, dma, len);
+	kfree(dma);
+	return ret;
 }
 
 /*******************************************************
@@ -201,21 +211,28 @@ return:
 int32_t CTP_I2C_WRITE(struct i2c_client *client, uint16_t address, uint8_t *buf, uint16_t len)
 {
 	struct i2c_msg msg;
-	int32_t ret;
+	int32_t ret = -EIO;
 	int32_t retries;
+
+	char *dma = kmalloc(len, GFP_KERNEL | GFP_DMA);
+	memcpy(dma, buf, len);
+
 	msg.flags = !I2C_M_RD;
 	msg.addr  = address;
 	msg.len   = len;
-	msg.buf   = buf;
+	msg.buf   = dma;
 
 	for (retries = 0; retries < 5; retries++) {
 		ret = i2c_transfer(client->adapter, &msg, 1);
 		if (likely(ret == 1))
-			return ret;
+			goto out;
 	}
 
 	NVT_ERR("i2c write error\n");
-	return -EIO;
+
+out:
+	kfree(dma);
+	return ret;
 }
 
 
