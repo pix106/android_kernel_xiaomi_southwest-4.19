@@ -1958,7 +1958,7 @@ static int32_t nvt_ts_probe(struct i2c_client *client, const struct i2c_device_i
 	}
 #endif
 #endif
-	snprintf(ts->phys, strlen("input/ts"), "input/ts");
+	scnprintf(ts->phys, strlen("input/ts"), "input/ts");
 	ts->input_dev->name = NVT_TS_NAME;
 	ts->input_dev->phys = ts->phys;
 	ts->input_dev->id.bustype = BUS_I2C;
