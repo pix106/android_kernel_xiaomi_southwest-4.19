@@ -1093,7 +1093,7 @@ void Boot_Update_Firmware(void)
 	if (ts->fw_name)
 		snprintf(firmware_name, strlen(ts->fw_name) + 1, ts->fw_name);
 	else
-		snprintf(firmware_name, strlen(BOOT_UPDATE_FIRMWARE_NAME), BOOT_UPDATE_FIRMWARE_NAME);
+		scnprintf(firmware_name, strlen(BOOT_UPDATE_FIRMWARE_NAME), BOOT_UPDATE_FIRMWARE_NAME);
 
 	/* request bin file in "/etc/firmware" */
 	ret = update_firmware_request(firmware_name);
