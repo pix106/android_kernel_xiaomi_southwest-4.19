@@ -7790,11 +7790,11 @@ static long qseecom_ioctl(struct file *file,
 			ret = -EINVAL;
 			break;
 		}
+		mutex_unlock(&listener_access_lock);
 		atomic_inc(&data->ioctl_count);
 		ret = qseecom_receive_req(data);
 		atomic_dec(&data->ioctl_count);
 		wake_up_all(&data->abort_wq);
-		mutex_unlock(&listener_access_lock);
 		if (ret && (ret != -ERESTARTSYS))
 			pr_err("failed qseecom_receive_req: %d\n", ret);
 		break;
