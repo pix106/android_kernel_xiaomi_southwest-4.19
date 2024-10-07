@@ -3,7 +3,7 @@
 
 #ifdef CONFIG_ION_LEGACY
 
-#include "../uapi/ion.h"
+#include <uapi/linux/ion.h>
 
 typedef int ion_user_handle_t;
 
