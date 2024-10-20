@@ -1449,6 +1449,10 @@ typedef enum {
     WMITLV_TAG_STRUC_wmi_mlo_peer_tid_to_link_map_event_fixed_param,
     WMITLV_TAG_STRUC_wmi_usd_service_cmd_fixed_param,
     WMITLV_TAG_STRUC_wmi_usd_service_event_fixed_param,
+    WMITLV_TAG_STRUC_wmi_vdev_create_wfdr2_mode_params,
+    WMITLV_TAG_STRUC_wmi_pdev_power_boost_event_fixed_param,
+    WMITLV_TAG_STRUC_wmi_pdev_power_boost_cmd_fixed_param,
+    WMITLV_TAG_STRUC_wmi_pdev_power_boost_mem_addr_cmd_fixed_param,
 } WMITLV_TAG_ID;
 /*
  * IMPORTANT: Please add _ALL_ WMI Commands Here.
@@ -2003,6 +2007,8 @@ typedef enum {
     OP(WMI_P2P_GO_DFS_AP_CONFIG_CMDID) \
     OP(WMI_VDEV_REPORT_AP_OPER_BW_CMDID) \
     OP(WMI_USD_SERVICE_CMDID) \
+    OP(WMI_PDEV_POWER_BOOST_CMDID) \
+    OP(WMI_PDEV_POWER_BOOST_MEM_ADDR_CMDID) \
     /* add new CMD_LIST elements above this line */
 
 
@@ -2331,6 +2337,7 @@ typedef enum {
     OP(WMI_MLO_TLT_SELECTION_FOR_TID_SPRAY_EVENTID) \
     OP(WMI_MLO_PEER_TID_TO_LINK_MAP_EVENTID) \
     OP(WMI_USD_SERVICE_EVENTID) \
+    OP(WMI_PDEV_POWER_BOOST_EVENTID) \
     /* add new EVT_LIST elements above this line */
 
 
@@ -3557,7 +3564,8 @@ WMITLV_CREATE_PARAM_STRUC(WMI_VDEV_SET_CUSTOM_AGGR_SIZE_CMDID);
 #define WMITLV_TABLE_WMI_VDEV_CREATE_CMDID(id,op,buf,len) \
     WMITLV_ELEM(id,op,buf,len, WMITLV_TAG_STRUC_wmi_vdev_create_cmd_fixed_param, wmi_vdev_create_cmd_fixed_param, fixed_param, WMITLV_SIZE_FIX) \
     WMITLV_ELEM(id,op,buf,len, WMITLV_TAG_ARRAY_STRUC, wmi_vdev_txrx_streams, cfg_txrx_streams, WMITLV_SIZE_VAR) \
-    WMITLV_ELEM(id,op,buf,len, WMITLV_TAG_ARRAY_STRUC, wmi_vdev_create_mlo_params, mlo_params, WMITLV_SIZE_VAR)
+    WMITLV_ELEM(id,op,buf,len, WMITLV_TAG_ARRAY_STRUC, wmi_vdev_create_mlo_params, mlo_params, WMITLV_SIZE_VAR) \
+    WMITLV_ELEM(id,op,buf,len, WMITLV_TAG_ARRAY_STRUC, wmi_vdev_create_wfdr2_mode_params, wfdr2_mode, WMITLV_SIZE_VAR)
 
 WMITLV_CREATE_PARAM_STRUC(WMI_VDEV_CREATE_CMDID);
 
@@ -5664,6 +5672,16 @@ WMITLV_CREATE_PARAM_STRUC(WMI_VDEV_REPORT_AP_OPER_BW_CMDID);
     WMITLV_ELEM(id,op,buf,len, WMITLV_TAG_ARRAY_BYTE, A_UINT8, service_specific_info, WMITLV_SIZE_VAR)
 WMITLV_CREATE_PARAM_STRUC(WMI_USD_SERVICE_CMDID);
 
+/* WMI cmd used to send Power Boost status update from Host to Target */
+#define WMITLV_TABLE_WMI_PDEV_POWER_BOOST_CMDID(id,op,buf,len) \
+    WMITLV_ELEM(id,op,buf,len, WMITLV_TAG_STRUC_wmi_pdev_power_boost_cmd_fixed_param, wmi_pdev_power_boost_cmd_fixed_param, fixed_param, WMITLV_SIZE_FIX)
+WMITLV_CREATE_PARAM_STRUC(WMI_PDEV_POWER_BOOST_CMDID);
+
+/* WMI cmd used to exchange the DDR address to the target for Power Boost feature */
+#define WMITLV_TABLE_WMI_PDEV_POWER_BOOST_MEM_ADDR_CMDID(id,op,buf,len) \
+    WMITLV_ELEM(id,op,buf,len, WMITLV_TAG_STRUC_wmi_pdev_power_boost_mem_addr_cmd_fixed_param, wmi_pdev_power_boost_mem_addr_cmd_fixed_param, fixed_param, WMITLV_SIZE_FIX)
+WMITLV_CREATE_PARAM_STRUC(WMI_PDEV_POWER_BOOST_MEM_ADDR_CMDID);
+
 
 
 /************************** TLV definitions of WMI events *******************************/
@@ -7731,6 +7749,11 @@ WMITLV_CREATE_PARAM_STRUC(WMI_MLO_PEER_TID_TO_LINK_MAP_EVENTID);
 #define WMITLV_TABLE_WMI_USD_SERVICE_EVENTID(id,op,buf,len) \
     WMITLV_ELEM(id,op,buf,len, WMITLV_TAG_STRUC_wmi_usd_service_event_fixed_param, wmi_usd_service_event_fixed_param, fixed_param, WMITLV_SIZE_FIX)
 WMITLV_CREATE_PARAM_STRUC(WMI_USD_SERVICE_EVENTID);
+
+/* WMI Event used to send Power Boost status update */
+#define WMITLV_TABLE_WMI_PDEV_POWER_BOOST_EVENTID(id,op,buf,len) \
+    WMITLV_ELEM(id,op,buf,len, WMITLV_TAG_STRUC_wmi_pdev_power_boost_event_fixed_param, wmi_pdev_power_boost_event_fixed_param, fixed_param, WMITLV_SIZE_FIX)
+WMITLV_CREATE_PARAM_STRUC(WMI_PDEV_POWER_BOOST_EVENTID);
 
 
 #ifdef __cplusplus
