@@ -2246,8 +2246,9 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
 				struct cpufreq_policy *new_policy)
 {
 	struct cpufreq_governor *old_gov;
+	struct task_struct *p;
 	int ret;
-	static bool libperfmgr = false;
+	bool available = false;
 
 	pr_debug("setting new policy for CPU %u: %u - %u kHz\n",
 		 new_policy->cpu, new_policy->min, new_policy->max);
@@ -2255,31 +2256,22 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
 	memcpy(&new_policy->cpuinfo, &policy->cpuinfo, sizeof(policy->cpuinfo));
 
 	/*
-	 * Check if libperfmgr exists and cache the result to avoid
-	 * expensive strstr() calls and acquiring read lock every
-	 * time just to check it.
-	 */
-	if (!libperfmgr) {
-		struct task_struct *p;
+	* This check works well when we store new min/max freq attributes,
+	* because new_policy is a copy of policy with one field updated.
+	*/
+	if (new_policy->min > new_policy->max) {
 		read_lock(&tasklist_lock);
 		for_each_process(p) {
 			/* Check if libperfmgr exists */
 			if (strstr(p->comm, "libperfmgr")) {
-				libperfmgr = true;
-				break;
+				available = true;
+				new_policy->min = new_policy->max;
 			}
 		}
 		read_unlock(&tasklist_lock);
-	}
 
-	/*
-	 * This check works well when we store new min/max freq attributes,
-	 * because new_policy is a copy of policy with one field updated.
-	 */
-	if (new_policy->min > new_policy->max) {
-		if (!libperfmgr)
+		if (!available)
 			return -EINVAL;
-		new_policy->min = new_policy->max;
 	}
 
 	/* verify the cpu speed can be set within this limit */
