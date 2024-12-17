@@ -510,6 +510,25 @@
 	qcom,pet-time = <15000>;
 };
 
+&soc {
+	qcom,sensor-information {
+		sensor_information22: qcom,sensor-information-22 {
+			qcom,sensor-type =  "adc";
+			qcom,sensor-name = "cam_therm1";
+		};
+		sensor_information23: qcom,sensor-information-23 {
+			qcom,sensor-type =  "adc";
+			qcom,sensor-name = "backlight_therm";
+		};
+	};
+
+	qcom,bcl {
+		qcom,ibat-monitor {
+			qcom,soc-low-threshold = <5>;
+		};
+	};
+};
+
 &qcom_seecom {
 	/delete-property/ qcom,fde-key-size;
 	/delete-property/ qcom,qsee-reentrancy-support;
