@@ -669,7 +669,6 @@ deliver:
 
 		if (time_to_send <= now &&  q->slot.slot_next <= now) {
 			rb_erase(p, &q->t_root);
-			sch->q.qlen--;
 			q->t_len--;
 			skb->next = NULL;
 			skb->prev = NULL;
