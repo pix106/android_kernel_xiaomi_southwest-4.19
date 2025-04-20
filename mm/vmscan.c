@@ -2952,10 +2952,6 @@ static bool iterate_mm_list(struct lruvec *lruvec, struct lru_gen_mm_walk *walk,
  	 * 3. It ended the current iteration: it needs to reset the mm stats
  	 *    counters and tell its caller to increment max_seq.
 	 */
-	if (*iter)
-		mmput_async(*iter);
-	else if (walk->max_seq <= READ_ONCE(mm_state->seq))
-		return false;
 
 	spin_lock(&mm_list->lock);
 
@@ -2990,13 +2986,16 @@ static bool iterate_mm_list(struct lruvec *lruvec, struct lru_gen_mm_walk *walk,
 	} while (!mm);
 done:
 
-	if (mm && first)
-		reset_bloom_filter(lruvec, walk->max_seq + 1);
-
 	if (*iter || last)
 		reset_mm_stats(lruvec, walk, last);
 
 	spin_unlock(&mm_list->lock);
+
+	if (mm && first)
+ 		reset_bloom_filter(lruvec, walk->max_seq + 1);
+
+ 	if (*iter)
+ 		mmput_async(*iter);
 
 	*iter = mm;
 
