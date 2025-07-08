@@ -707,8 +707,12 @@ no_delete:
 
 	if (likely(!is_set_ckpt_flags(sbi, CP_ERROR_FLAG)))
 		f2fs_bug_on(sbi, is_inode_flag_set(inode, FI_DIRTY_INODE));
-	else
-		f2fs_inode_synced(inode);
+
+	/*
+	 * anyway, it needs to remove the inode from sbi->inode_list[DIRTY_META]
+	 * list to avoid UAF in f2fs_sync_inode_meta() during checkpoint.
+	 */
+	f2fs_inode_synced(inode);
 
 	/* ino == 0, if f2fs_new_inode() was failed t*/
 	if (inode->i_ino)
