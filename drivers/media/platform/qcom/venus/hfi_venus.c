@@ -1620,6 +1620,7 @@ void venus_hfi_destroy(struct venus_core *core)
 	mutex_destroy(&hdev->lock);
 	kfree(hdev);
 	core->priv = NULL;
+	disable_irq(core->irq);
 	core->ops = NULL;
 }
 
